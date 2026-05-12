@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mediclin.Business\Mediclin.Business.csproj" />
+    <ProjectReference Include="..\Mediclin.Data\Mediclin.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+    <Page Include="Resources\Colors.xaml" />
+    <Page Include="Resources\Styles.xaml" />
+    <Page Include="Views\Auth\LoginWindow.xaml" />
+    <Page Include="Views\Auth\RegisterWindow.xaml" />
+    <Page Include="Views\Doctor\DoctorMainWindow.xaml" />
+    <Page Include="Views\Patient\PatientMainWindow.xaml" />
+    <Page Include="Views\Admin\AdminMainWindow.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
