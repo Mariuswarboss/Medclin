@@ -31,6 +31,27 @@ public class UtilizatorRepository : IUtilizatorRepository
         return Map(rows[0]);
     }
 
+    public async Task<List<Utilizator>> GetAllAsync()
+    {
+        const string sql = """
+            SELECT id, email, parola_hash, rol, prenume, nume, telefon, avatar_url, activ, creat_la, actualizat_la, ultim_login
+            FROM utilizatori
+            ORDER BY creat_la DESC
+            """;
+        return (await _db.QueryAsync(sql)).Select(Map).ToList();
+    }
+
+    public async Task<Utilizator?> GetByIdAsync(int id)
+    {
+        const string sql = """
+            SELECT id, email, parola_hash, rol, prenume, nume, telefon, avatar_url, activ, creat_la, actualizat_la, ultim_login
+            FROM utilizatori
+            WHERE id = @id
+            """;
+        var rows = await _db.QueryAsync(sql, new Dictionary<string, object> { ["@id"] = id });
+        return rows.Count == 0 ? null : Map(rows[0]);
+    }
+
     public async Task<int> CreateAsync(Utilizator utilizator)
     {
         await using var conexiune = ConnectionFactory.GetConnection();
@@ -60,6 +81,45 @@ public class UtilizatorRepository : IUtilizatorRepository
     {
         const string sql = "UPDATE utilizatori SET ultim_login = NOW(), actualizat_la = NOW() WHERE id = @id";
         await _db.ExecuteAsync(sql, new Dictionary<string, object> { ["@id"] = id });
+    }
+
+    public async Task UpdateAsync(Utilizator utilizator)
+    {
+        const string sql = """
+            UPDATE utilizatori
+            SET email=@email, rol=@rol, prenume=@prenume, nume=@nume, telefon=@telefon,
+                avatar_url=@avatar_url, activ=@activ, actualizat_la=NOW()
+            WHERE id=@id
+            """;
+        await _db.ExecuteAsync(sql, new Dictionary<string, object>
+        {
+            ["@id"] = utilizator.Id,
+            ["@email"] = utilizator.Email,
+            ["@rol"] = utilizator.Rol,
+            ["@prenume"] = utilizator.Prenume,
+            ["@nume"] = utilizator.Nume,
+            ["@telefon"] = (object?)utilizator.Telefon ?? DBNull.Value,
+            ["@avatar_url"] = (object?)utilizator.AvatarUrl ?? DBNull.Value,
+            ["@activ"] = utilizator.Activ
+        });
+    }
+
+    public async Task UpdateParolaHashAsync(int id, string parolaHash)
+    {
+        const string sql = "UPDATE utilizatori SET parola_hash=@h, actualizat_la=NOW() WHERE id=@id";
+        await _db.ExecuteAsync(sql, new Dictionary<string, object> { ["@id"] = id, ["@h"] = parolaHash });
+    }
+
+    public Task DeleteAsync(int id)
+    {
+        const string sql = "DELETE FROM utilizatori WHERE id = @id";
+        return _db.ExecuteAsync(sql, new Dictionary<string, object> { ["@id"] = id });
+    }
+
+    public Task SetActivAsync(int id, bool activ)
+    {
+        const string sql = "UPDATE utilizatori SET activ=@activ, actualizat_la=NOW() WHERE id=@id";
+        return _db.ExecuteAsync(sql, new Dictionary<string, object> { ["@id"] = id, ["@activ"] = activ });
     }
 
     public async Task<bool> ExistsEmailAsync(string email)

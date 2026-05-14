@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.33" />
+    <Reference Include="MySql.Data">
+      <HintPath>..\libs\MySql.Data.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

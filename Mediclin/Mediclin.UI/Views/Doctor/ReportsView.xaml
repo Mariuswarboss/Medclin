@@ -1,0 +1,94 @@
+<UserControl x:Class="Mediclin.UI.Views.Doctor.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Margin="24">
+        <DockPanel LastChildFill="False">
+            <TextBlock Text="Rapoarte medic" Style="{StaticResource HeadingText}" />
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Content="Export PDF" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ExportPdfCommand}" Margin="0,0,8,0" />
+                <Button Content="Export CSV" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding ExportCsvCommand}" />
+            </StackPanel>
+        </DockPanel>
+
+        <ComboBox Width="220" Height="38" HorizontalAlignment="Left" Margin="0,12,0,16"
+                  ItemsSource="{Binding Perioduri}"
+                  SelectedItem="{Binding SelectedPeriod}"
+                  Style="{StaticResource RoundedComboBox}" />
+
+        <UniformGrid Columns="4" Margin="0,0,0,16">
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="{Binding CardTotal}" FontSize="26" FontWeight="SemiBold" />
+                    <TextBlock Text="Total (programări / consultații)" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="{Binding CardFinalizate}" FontSize="26" FontWeight="SemiBold" />
+                    <TextBlock Text="Finalizate / consultații" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock FontSize="26" FontWeight="SemiBold"
+                               Text="{Binding CardVenit, StringFormat='{}{0:N2} lei'}" />
+                    <TextBlock Text="Venit estimat" Style="{StaticResource MutedText}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorder}">
+                <StackPanel>
+                    <TextBlock Text="{Binding CardNeprezentate}" FontSize="26" FontWeight="SemiBold" />
+                    <TextBlock Text="Neprezentări / rată în raport" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Activitate" Style="{StaticResource SectionTitleText}" Margin="0,0,0,12" />
+                <ItemsControl ItemsSource="{Binding ChartBars}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="10,0" VerticalAlignment="Bottom">
+                                <Grid Height="160" Width="36">
+                                    <Border VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                                            Width="{Binding BarWidth}"
+                                            Height="{Binding BarHeight}"
+                                            CornerRadius="4"
+                                            Background="{StaticResource PrimaryGreenBrush}" />
+                                </Grid>
+                                <TextBlock Text="{Binding Label}" HorizontalAlignment="Center" Margin="0,8,0,0"
+                                           Style="{StaticResource MutedText}" FontSize="11" />
+                                <TextBlock Text="{Binding Count}" HorizontalAlignment="Center" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource CardBorder}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Programări recente" Style="{StaticResource SectionTitleText}" Margin="0,0,0,12" />
+                <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding RecentProgramari}"
+                          AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="280">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Data" Binding="{Binding DataOra, StringFormat=dd.MM.yyyy HH:mm}" Width="130" />
+                        <DataGridTextColumn Header="Pacient" Binding="{Binding PacientNume}" Width="*" />
+                        <DataGridTextColumn Header="Tip" Binding="{Binding Tip}" Width="100" />
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="110" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+
+        <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource MutedText}" Margin="0,12,0,0" />
+    </StackPanel>
+</UserControl>

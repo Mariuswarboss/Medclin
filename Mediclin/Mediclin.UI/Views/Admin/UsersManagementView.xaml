@@ -1,0 +1,33 @@
+<UserControl x:Class="Mediclin.UI.Views.Admin.UsersManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="24">
+        <StackPanel DockPanel.Dock="Top">
+            <DockPanel LastChildFill="False">
+                <TextBlock Text="Utilizatori" Style="{StaticResource HeadingText}" />
+                <Button DockPanel.Dock="Right" Content="Adaugă utilizator" Style="{StaticResource PrimaryButton}" Command="{Binding AddUserCommand}" />
+            </DockPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,12">
+                <TextBox Style="{StaticResource RoundedTextBox}" Width="260" Text="Caută utilizator..." />
+                <ComboBox Height="38" Width="150" Margin="8,0"><ComboBoxItem Content="Toate rolurile" /></ComboBox>
+                <ComboBox Height="38" Width="150"><ComboBoxItem Content="Toate statusurile" /></ComboBox>
+            </StackPanel>
+        </StackPanel>
+        <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding Users}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nume" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*" />
+                <DataGridTextColumn Header="Rol" Binding="{Binding Role}" Width="120" />
+                <DataGridTextColumn Header="Înregistrare" Binding="{Binding RegisteredAt, StringFormat=dd.MM.yyyy}" Width="130" />
+                <DataGridTextColumn Header="Status" Binding="{Binding StatusLabel}" Width="110" />
+                <DataGridTemplateColumn Header="Acțiuni" Width="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Activează/Dezactivează" Style="{StaticResource SecondaryButton}" Command="{Binding DataContext.ToggleUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

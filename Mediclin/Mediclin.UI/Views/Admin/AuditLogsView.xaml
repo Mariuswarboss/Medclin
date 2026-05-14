@@ -1,0 +1,25 @@
+<UserControl x:Class="Mediclin.UI.Views.Admin.AuditLogsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="24">
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock Text="Jurnale activitate" Style="{StaticResource HeadingText}" />
+            <StackPanel Orientation="Horizontal" Margin="0,12">
+                <Button Content="Toate" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" />
+                <Button Content="Info" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" />
+                <Button Content="Avertisment" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" />
+                <Button Content="Eroare" Style="{StaticResource DangerButton}" />
+            </StackPanel>
+        </StackPanel>
+        <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding AuditLogs}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Moment" Binding="{Binding TimestampLabel}" Width="150" />
+                <DataGridTextColumn Header="Severitate" Binding="{Binding Severity}" Width="120" />
+                <DataGridTextColumn Header="Utilizator" Binding="{Binding User}" Width="180" />
+                <DataGridTextColumn Header="Acțiune" Binding="{Binding Action}" Width="*" />
+                <DataGridTextColumn Header="Modul" Binding="{Binding Module}" Width="120" />
+                <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="120" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

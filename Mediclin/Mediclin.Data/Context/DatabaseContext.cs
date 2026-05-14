@@ -71,6 +71,11 @@ public class DatabaseContext
         }
     }
 
+    public Task<object?> ScalarAsync(string sql, Dictionary<string, object>? parameters = null)
+    {
+        return ExecuteScalarAsync(sql, parameters);
+    }
+
     private static MySqlCommand BuildCommand(
         MySqlConnection conexiune,
         string sql,

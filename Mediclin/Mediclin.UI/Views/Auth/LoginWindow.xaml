@@ -50,24 +50,43 @@
                            FontSize="13"
                            Foreground="{StaticResource TextSecondaryBrush}" />
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
-                    <ToggleButton Content="Medic" IsChecked="True" Margin="0,0,8,0" />
-                    <ToggleButton Content="Pacient" Margin="0,0,8,0" />
-                    <ToggleButton Content="Admin" />
-                </StackPanel>
+                <Grid Margin="0,0,0,10">
+                    <TextBox x:Name="TxtEmail"
+                             Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource RoundedTextBox}" />
+                    <TextBlock IsHitTestVisible="False"
+                               Text="Adresa de email"
+                               Foreground="#AAAAAA"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Email}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Email}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
 
-                <TextBox Style="{StaticResource RoundedTextBox}"
-                         Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,0,0,10" />
-
-                <PasswordBox Margin="0,0,0,10"
-                             Height="38"
-                             Padding="12,8"
-                             helpers:PasswordBoxHelper.BindPassword="True"
-                             helpers:PasswordBoxHelper.BoundPassword="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                <Button Content="Am uitat parola" Style="{StaticResource LinkButton}" HorizontalAlignment="Right" Margin="0,0,0,10" />
-                <CheckBox Content="Tine-ma autentificat" Margin="0,0,0,16" />
+                <Grid Margin="0,0,0,16">
+                    <PasswordBox Height="38"
+                                 Padding="12,8"
+                                 helpers:PasswordBoxHelper.BindPassword="True"
+                                 helpers:PasswordBoxHelper.BoundPassword="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock IsHitTestVisible="False"
+                               Text="Parola"
+                               Foreground="#AAAAAA"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Visibility="{Binding IsParolaEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </Grid>
 
                 <Button Content="Autentificati-va"
                         Style="{StaticResource PrimaryButton}"

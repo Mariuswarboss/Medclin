@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediclin.Data", "Mediclin.Data\Mediclin.Data.csproj", "{CE4F3550-14EE-48D5-AD7D-AB34B8690951}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediclin.Business", "Mediclin.Business\Mediclin.Business.csproj", "{97587EB7-07E2-4F8A-88E8-7FD6F67EC71E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediclin.UI", "Mediclin.UI\Mediclin.UI.csproj", "{05896CE2-5D17-450E-8C02-8A3E06995DE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mediclin.Tests", "Mediclin.Tests\Mediclin.Tests.csproj", "{0347175A-0908-46CC-B891-23A3C233C90D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE4F3550-14EE-48D5-AD7D-AB34B8690951}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE4F3550-14EE-48D5-AD7D-AB34B8690951}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE4F3550-14EE-48D5-AD7D-AB34B8690951}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE4F3550-14EE-48D5-AD7D-AB34B8690951}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97587EB7-07E2-4F8A-88E8-7FD6F67EC71E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97587EB7-07E2-4F8A-88E8-7FD6F67EC71E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97587EB7-07E2-4F8A-88E8-7FD6F67EC71E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97587EB7-07E2-4F8A-88E8-7FD6F67EC71E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05896CE2-5D17-450E-8C02-8A3E06995DE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05896CE2-5D17-450E-8C02-8A3E06995DE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05896CE2-5D17-450E-8C02-8A3E06995DE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05896CE2-5D17-450E-8C02-8A3E06995DE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0347175A-0908-46CC-B891-23A3C233C90D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0347175A-0908-46CC-B891-23A3C233C90D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0347175A-0908-46CC-B891-23A3C233C90D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0347175A-0908-46CC-B891-23A3C233C90D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -27,4 +27,7 @@ public class Consultatie
     public string? NotePrivate { get; set; }
     [Required]
     public DateTime CreatLa { get; set; }
+
+    public string? MedicNume { get; set; }
+    public string? Specialitate { get; set; }
 }

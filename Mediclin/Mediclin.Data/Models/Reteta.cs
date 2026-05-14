@@ -19,4 +19,7 @@ public class Reteta
     [Required]
     public string Status { get; set; } = string.Empty;
     public string? Observatii { get; set; }
+
+    public string? MedicNume { get; set; }
+    public List<Medicament> Medicamente { get; set; } = new();
 }

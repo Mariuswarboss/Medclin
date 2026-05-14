@@ -1,0 +1,171 @@
+<UserControl x:Class="Mediclin.UI.Views.Doctor.PatientsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="0,4,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,18">
+            <StackPanel>
+                <TextBlock Text="Patient Analytics" Style="{StaticResource HeadingText}" />
+                <TextBlock Text="Hover pentru context clinic rapid, apoi intră direct în fișa pacientului."
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Margin="0,6,0,18" />
+
+                <Grid Margin="0,0,0,18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Style="{StaticResource RoundedTextBox}"
+                             Margin="0,0,14,0"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Căutare după nume sau email" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Fișă pacient"
+                                Style="{StaticResource PrimaryButton}"
+                                Command="{Binding OpenEMRCommand}"
+                                Margin="0,0,10,0" />
+                        <Button Content="Pacient nou"
+                                Style="{StaticResource SecondaryButton}"
+                                Command="{Binding AddPacientCommand}" />
+                    </StackPanel>
+                </Grid>
+
+                <ItemsControl ItemsSource="{Binding Specialitati}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding}"
+                                    Margin="0,0,10,10"
+                                    Padding="16,8"
+                                    Command="{Binding DataContext.SelectSpecialitateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource SecondaryButton}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource CardBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="PACIENT" Style="{StaticResource CardTitle}" />
+                    <TextBlock Grid.Column="1" Text="PROFIL" Style="{StaticResource CardTitle}" />
+                    <TextBlock Grid.Column="2" Text="ULTIMA VIZITĂ" Style="{StaticResource CardTitle}" />
+                    <TextBlock Grid.Column="3" Text="READY" Style="{StaticResource CardTitle}" />
+                    <TextBlock Grid.Column="4" Text="FOLLOW-UP" Style="{StaticResource CardTitle}" />
+                </Grid>
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding FilteredPacients}"
+                         SelectedItem="{Binding SelectedPacient}"
+                         Background="Transparent"
+                         BorderThickness="0">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,0,0,12" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#FCFDFE"
+                                    BorderBrush="{StaticResource BorderBrushNeutral}"
+                                    BorderThickness="1"
+                                    CornerRadius="20"
+                                    Padding="16">
+                                <Border.ToolTip>
+                                    <ToolTip Background="Transparent" BorderThickness="0" HasDropShadow="False" Placement="MousePoint">
+                                        <Border Style="{StaticResource GlassToolTipBorder}">
+                                            <StackPanel Width="260">
+                                                <TextBlock Text="{Binding DisplayName}" FontSize="16" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding LastVisitText, StringFormat=Ultima vizită: {0}}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,8,0,0"/>
+                                                <TextBlock Text="{Binding AllergySummary, StringFormat=Alergii active: {0}}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ToolTip>
+                                </Border.ToolTip>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="160" />
+                                        <ColumnDefinition Width="160" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="54" Height="54" CornerRadius="27" Background="#EAF4F0" Margin="0,0,14,0">
+                                            <TextBlock Text="{Binding Initials}" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenDarkBrush}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding DisplayName}" FontSize="15" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Email}" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Specialty}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding AgeText}" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,4,0,0"/>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Column="2" Text="{Binding LastVisitText}" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
+
+                                    <CheckBox Grid.Column="3"
+                                              Style="{StaticResource ToggleSwitchCheckBox}"
+                                              IsChecked="{Binding IsReadyForReview, Mode=TwoWay}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+
+                                    <CheckBox Grid.Column="4"
+                                              Style="{StaticResource ToggleSwitchCheckBox}"
+                                              IsChecked="{Binding NeedsFollowUp, Mode=TwoWay}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+
+                                    <Button Grid.Column="5"
+                                            Content="Deschide"
+                                            Style="{StaticResource SecondaryButton}"
+                                            Padding="16,0"
+                                            Height="38"
+                                            Command="{Binding DataContext.OpenEMRCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

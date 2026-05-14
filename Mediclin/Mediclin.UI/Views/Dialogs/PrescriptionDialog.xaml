@@ -1,0 +1,78 @@
+<Window x:Class="Mediclin.UI.Views.Dialogs.PrescriptionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Emitere rețetă" Width="520" MinHeight="560" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="White">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Background="#0F6E56">
+            <TextBlock Text="Emitere rețetă" Foreground="White" VerticalAlignment="Center" Margin="16,0" FontWeight="SemiBold" />
+        </Border>
+        <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="Medicament nou" Style="{StaticResource SectionTitleText}" />
+                <TextBlock Text="Denumire" Style="{StaticResource FieldLabel}" Margin="0,12,0,4" />
+                <TextBox Text="{Binding Denumire, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource RoundedTextBox}" />
+                <UniformGrid Columns="2" Margin="0,10,0,0">
+                    <StackPanel Margin="0,0,8,0">
+                        <TextBlock Text="Concentrație" Style="{StaticResource FieldLabel}" />
+                        <TextBox Text="{Binding Concentratie}" Style="{StaticResource RoundedTextBox}" Margin="0,4,0,0" />
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="Formă" Style="{StaticResource FieldLabel}" />
+                        <TextBox Text="{Binding Forma}" Style="{StaticResource RoundedTextBox}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </UniformGrid>
+                <UniformGrid Columns="3" Margin="0,10,0,0">
+                    <StackPanel Margin="0,0,8,0">
+                        <TextBlock Text="Cantitate" Style="{StaticResource FieldLabel}" />
+                        <TextBox Text="{Binding Cantitate}" Style="{StaticResource RoundedTextBox}" Margin="0,4,0,0" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,8,0">
+                        <TextBlock Text="Dozaj" Style="{StaticResource FieldLabel}" />
+                        <TextBox Text="{Binding Dozaj}" Style="{StaticResource RoundedTextBox}" Margin="0,4,0,0" />
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="Frecvență" Style="{StaticResource FieldLabel}" />
+                        <TextBox Text="{Binding Frecventa}" Style="{StaticResource RoundedTextBox}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </UniformGrid>
+                <UniformGrid Columns="2" Margin="0,10,0,0">
+                    <StackPanel Margin="0,0,8,0">
+                        <TextBlock Text="Durată (zile)" Style="{StaticResource FieldLabel}" />
+                        <TextBox Text="{Binding DurataZile}" Style="{StaticResource RoundedTextBox}" Margin="0,4,0,0" />
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="Instrucțiuni" Style="{StaticResource FieldLabel}" />
+                        <TextBox Text="{Binding Instructiuni}" Style="{StaticResource RoundedTextBox}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </UniformGrid>
+                <Button Content="Adaugă pe rețetă" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding AddMedicamentCommand}" HorizontalAlignment="Left" Margin="0,12,0,0" />
+
+                <TextBlock Text="Linii rețetă" Style="{StaticResource SectionTitleText}" Margin="0,20,0,8" />
+                <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding Medicamente}"
+                          AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Medicament" Binding="{Binding Denumire}" Width="*" />
+                        <DataGridTextColumn Header="Cant." Binding="{Binding Cantitate}" Width="60" />
+                        <DataGridTextColumn Header="Dozaj" Binding="{Binding Dozaj}" Width="*" />
+                        <DataGridTextColumn Header="Zile" Binding="{Binding DurataZile}" Width="60" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <TextBlock Text="Observații rețetă" Style="{StaticResource FieldLabel}" Margin="0,12,0,4" />
+                <TextBox Style="{StaticResource RoundedTextBox}" Height="72" TextWrapping="Wrap"
+                         Text="{Binding Observatii, UpdateSourceTrigger=PropertyChanged}" />
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                    <Button Content="Renunță" Style="{StaticResource SecondaryButton}" Command="{Binding CancelCommand}" Margin="0,0,8,0" />
+                    <Button Content="Emite rețeta" Style="{StaticResource PrimaryButton}" Command="{Binding EmitCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

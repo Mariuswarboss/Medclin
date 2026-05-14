@@ -23,4 +23,6 @@ public class Mesaj
     public DateTime? CititLa { get; set; }
     [Required]
     public DateTime TrimisLa { get; set; }
+
+    public string? ExpeditorNume { get; set; }
 }

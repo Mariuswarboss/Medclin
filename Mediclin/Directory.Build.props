@@ -1,0 +1,57 @@
+<Project>
+  <ItemGroup>
+    <Reference Include="Google.Protobuf">
+      <HintPath>$(MSBuildThisFileDirectory)libs\Google.Protobuf.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4.Streams">
+      <HintPath>$(MSBuildThisFileDirectory)libs\K4os.Compression.LZ4.Streams.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="K4os.Compression.LZ4">
+      <HintPath>$(MSBuildThisFileDirectory)libs\K4os.Compression.LZ4.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="K4os.Hash.xxHash">
+      <HintPath>$(MSBuildThisFileDirectory)libs\K4os.Hash.xxHash.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>$(MSBuildThisFileDirectory)libs\BouncyCastle.Crypto.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System.Configuration.ConfigurationManager">
+      <HintPath>$(MSBuildThisFileDirectory)libs\System.Configuration.ConfigurationManager.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System.IO.Pipelines">
+      <HintPath>$(MSBuildThisFileDirectory)libs\System.IO.Pipelines.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>$(MSBuildThisFileDirectory)libs\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.ProtectedData">
+      <HintPath>$(MSBuildThisFileDirectory)libs\System.Security.Cryptography.ProtectedData.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System.Security.Permissions">
+      <HintPath>$(MSBuildThisFileDirectory)libs\System.Security.Permissions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System.Text.Encoding.CodePages">
+      <HintPath>$(MSBuildThisFileDirectory)libs\System.Text.Encoding.CodePages.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>$(MSBuildThisFileDirectory)libs\System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <None Include="$(MSBuildThisFileDirectory)libs\*.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </None>
+  </ItemGroup>
+</Project>

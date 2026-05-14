@@ -25,4 +25,9 @@ public class Programare
     public DateTime CreatLa { get; set; }
     [Required]
     public DateTime ActualizatLa { get; set; }
+
+    public string? PacientNume { get; set; }
+    public string? MedicNume { get; set; }
+    public string? MedicTitlu { get; set; }
+    public string? SpecialitateNume { get; set; }
 }

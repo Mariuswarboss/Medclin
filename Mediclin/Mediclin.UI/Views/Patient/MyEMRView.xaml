@@ -1,0 +1,172 @@
+<UserControl x:Class="Mediclin.UI.Views.Patient.MyEMRView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="200" Height="4"/>
+                <TextBlock Text="Se încarcă fișa medicală..." Margin="0,12" Foreground="#888780"/>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Visibility="{Binding IsLoading, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            <StackPanel Margin="24,20,24,24">
+                <Border Background="#FCEBEB"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12"
+                        Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibilityConverter}}">
+                    <TextBlock Text="{Binding ErrorMessage, TargetNullValue='', FallbackValue=''}"
+                               Foreground="#C0392B"
+                               TextWrapping="Wrap"/>
+                </Border>
+
+                <Border CornerRadius="12" Background="#F5F5F3" Padding="20" Margin="0,0,0,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="64"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Width="56" Height="56" CornerRadius="28" Background="#E1F5EE">
+                            <TextBlock Text="{Binding Initiale, TargetNullValue='', FallbackValue=''}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#085041"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding NumeComplet, TargetNullValue='', FallbackValue=''}"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="#1A1A18"/>
+                            <TextBlock Text="{Binding MetaPacient, TargetNullValue='', FallbackValue=''}"
+                                       FontSize="12"
+                                       Foreground="#888780"
+                                       Margin="0,3,0,0"/>
+                            <ItemsControl ItemsSource="{Binding Alergii}" Margin="0,8,0,0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#FCEBEB" CornerRadius="12" Padding="8,3" Margin="0,0,6,4">
+                                            <TextBlock Text="{Binding Denumire, TargetNullValue='', FallbackValue=''}"
+                                                       Foreground="#C0392B"
+                                                       FontSize="11"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <Button Content="Solicită fișă de la medic"
+                                    Command="{Binding RequestEMRFromDoctorCommand}"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Padding="12,8"/>
+                            <TextBlock Text="{Binding RequestEMRMessage, TargetNullValue='', FallbackValue=''}"
+                                       FontSize="11"
+                                       Foreground="#0F6E56"
+                                       TextWrapping="Wrap"
+                                       MaxWidth="220"
+                                       Margin="0,6,0,0"
+                                       Visibility="{Binding RequestEMRMessage, Converter={StaticResource NullToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Style="{StaticResource CardBorder}" Margin="0">
+                        <StackPanel>
+                            <TextBlock Text="ALERGII" Style="{StaticResource CardTitle}"/>
+                            <ItemsControl ItemsSource="{Binding Alergii}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Denumire, TargetNullValue='', FallbackValue=''}"
+                                                   Margin="0,2"
+                                                   TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Style="{StaticResource CardBorder}" Margin="0">
+                        <StackPanel>
+                            <TextBlock Text="BOLI CRONICE" Style="{StaticResource CardTitle}"/>
+                            <ItemsControl ItemsSource="{Binding BolicCronice}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Denumire, TargetNullValue='', FallbackValue=''}"
+                                                   Margin="0,2"
+                                                   TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Style="{StaticResource CardBorder}" Margin="0,16,0,0">
+                    <StackPanel>
+                        <TextBlock Text="REȚETE ACTIVE" Style="{StaticResource CardTitle}"/>
+                        <ItemsControl ItemsSource="{Binding RetetActive}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F5F5F3" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding MedicamenteText, TargetNullValue='', FallbackValue=''}"
+                                                       FontWeight="SemiBold"
+                                                       TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding MedicNume, TargetNullValue='', FallbackValue=''}"
+                                                       FontSize="12"
+                                                       Foreground="#888780"/>
+                                            <TextBlock Text="{Binding ExpiraText, StringFormat=Expiră: {0}, TargetNullValue='', FallbackValue=''}"
+                                                       FontSize="12"
+                                                       Foreground="#0F6E56"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource CardBorder}" Margin="0,16,0,0">
+                    <StackPanel>
+                        <TextBlock Text="ISTORIC CONSULTAȚII" Style="{StaticResource CardTitle}"/>
+                        <ItemsControl ItemsSource="{Binding IstoricConsltatii}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F5F5F3" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding DataText, TargetNullValue='', FallbackValue=''}"
+                                                       FontSize="12"
+                                                       Foreground="#888780"/>
+                                            <TextBlock Text="{Binding Diagnostic, TargetNullValue='', FallbackValue=''}"
+                                                       FontWeight="SemiBold"
+                                                       TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding Recomandari, TargetNullValue='', FallbackValue=''}"
+                                                       FontSize="12"
+                                                       Foreground="#5C5C5A"
+                                                       TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -1,0 +1,1 @@
+<UserControl x:Class="Mediclin.UI.Views.Controls.StatusBadgeControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><Border Style="{StaticResource StatusPill}"><TextBlock Text="Programată" Foreground="{StaticResource BlueInfoBrush}"/></Border></UserControl>

@@ -18,4 +18,7 @@ public class RezultatAnaliza
     public string? PdfUrl { get; set; }
     [Required]
     public DateTime CreatLa { get; set; }
+
+    public int NrValori { get; set; }
+    public int Anormale { get; set; }
 }

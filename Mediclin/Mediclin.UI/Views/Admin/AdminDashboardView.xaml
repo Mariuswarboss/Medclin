@@ -1,0 +1,31 @@
+<UserControl x:Class="Mediclin.UI.Views.Admin.AdminDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Margin="24">
+        <Border Background="{StaticResource PrimaryLightBrush}" CornerRadius="8" Padding="14">
+            <TextBlock Text="Sistem funcțional. Monitorizarea utilizatorilor, medicilor, programărilor și jurnalelor este activă." />
+        </Border>
+        <ItemsControl ItemsSource="{Binding Metrics}" Margin="0,16">
+            <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource CardBorder}" Margin="0,0,8,0"><StackPanel><TextBlock Text="{Binding Value}" FontSize="24" FontWeight="SemiBold" /><TextBlock Text="{Binding Title}" /></StackPanel></Border></DataTemplate></ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition /></Grid.ColumnDefinitions>
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,12,0">
+                <StackPanel>
+                    <TextBlock Text="Activitate recentă" Style="{StaticResource SectionTitleText}" />
+                    <ItemsControl ItemsSource="{Binding AuditLogs}" Margin="0,10,0,0">
+                        <ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding Action}" Margin="0,0,0,8" /></DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Style="{StaticResource CardBorder}">
+                <Canvas Height="180">
+                    <Rectangle Canvas.Left="25" Canvas.Top="70" Width="30" Height="90" Fill="{StaticResource AccentGreenBrush}" />
+                    <Rectangle Canvas.Left="75" Canvas.Top="35" Width="30" Height="125" Fill="{StaticResource PrimaryGreenBrush}" />
+                    <Rectangle Canvas.Left="125" Canvas.Top="95" Width="30" Height="65" Fill="{StaticResource BlueInfoBrush}" />
+                </Canvas>
+            </Border>
+        </Grid>
+    </StackPanel>
+</UserControl>

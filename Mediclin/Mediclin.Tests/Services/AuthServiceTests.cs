@@ -58,6 +58,29 @@ public class AuthServiceTests
     }
 
     [Fact]
+    public async Task LoginAsync_ReturnsNull_WhenParolaHashIsInvalid_DoesNotThrow()
+    {
+        var repo = new FakeUtilizatorRepository
+        {
+            UtilizatorByEmail = new Utilizator
+            {
+                Id = 3,
+                Email = "legacy@mediclin.ro",
+                ParolaHash = "plaintext-or-invalid",
+                Rol = "pacient",
+                Prenume = "X",
+                Nume = "Y"
+            }
+        };
+        var service = new AuthService(repo);
+
+        var user = await service.LoginAsync(new LoginDto { Email = "legacy@mediclin.ro", Parola = "anything" });
+
+        Assert.Null(user);
+        Assert.Null(repo.UpdatedUltimLoginId);
+    }
+
+    [Fact]
     public async Task RegisterAsync_ReturnsError_WhenEmailExists()
     {
         var repo = new FakeUtilizatorRepository { EmailExists = true };
@@ -86,6 +109,10 @@ public class AuthServiceTests
 
         public Task<Utilizator?> GetByEmailAsync(string email) => Task.FromResult(UtilizatorByEmail);
 
+        public Task<List<Utilizator>> GetAllAsync() => Task.FromResult(new List<Utilizator>());
+
+        public Task<Utilizator?> GetByIdAsync(int id) => Task.FromResult(UtilizatorByEmail);
+
         public Task<int> CreateAsync(Utilizator utilizator)
         {
             CreatedUtilizator = utilizator;
@@ -99,5 +126,13 @@ public class AuthServiceTests
         }
 
         public Task<bool> ExistsEmailAsync(string email) => Task.FromResult(EmailExists);
+
+        public Task UpdateAsync(Utilizator entity) => Task.CompletedTask;
+
+        public Task DeleteAsync(int id) => Task.CompletedTask;
+
+        public Task SetActivAsync(int id, bool activ) => Task.CompletedTask;
+
+        public Task UpdateParolaHashAsync(int id, string parolaHash) => Task.CompletedTask;
     }
 }

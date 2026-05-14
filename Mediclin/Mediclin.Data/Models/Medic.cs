@@ -24,4 +24,16 @@ public class Medic
     public DateTime? VerificatLa { get; set; }
     [Required]
     public DateTime CreatLa { get; set; }
+
+    // Populat la JOIN cu utilizatori / specialitati
+    public string? Prenume { get; set; }
+    public string? Nume { get; set; }
+    public string? Email { get; set; }
+    public string? Telefon { get; set; }
+    public string? SpecialitateNume { get; set; }
+    public string NumeComplet => $"{Prenume} {Nume}".Trim();
+    public string NumeCompletCuTitlu => $"{Titlu} {Prenume} {Nume}".Trim();
+    public string Initiale => $"{(string.IsNullOrWhiteSpace(Prenume) ? string.Empty : Prenume[0])}{(string.IsNullOrWhiteSpace(Nume) ? string.Empty : Nume[0])}";
+    public string TarifText => TarifConsultatie > 0 ? $"{TarifConsultatie:N0} MDL" : "Gratuit";
+    public string DurataText => $"{DurataConsultatie} min";
 }

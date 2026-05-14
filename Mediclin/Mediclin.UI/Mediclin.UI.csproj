@@ -16,14 +16,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="MySql.Data">
+      <HintPath>..\libs\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="BCrypt.Net-Next">
+      <HintPath>..\libs\BCrypt.Net-Next.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
-    <Page Include="Resources\Colors.xaml" />
-    <Page Include="Resources\Styles.xaml" />
-    <Page Include="Views\Auth\LoginWindow.xaml" />
-    <Page Include="Views\Auth\RegisterWindow.xaml" />
-    <Page Include="Views\Doctor\DoctorMainWindow.xaml" />
-    <Page Include="Views\Patient\PatientMainWindow.xaml" />
-    <Page Include="Views\Admin\AdminMainWindow.xaml" />
+    <Page Include="Resources\*.xaml" />
+    <Page Include="Views\**\*.xaml" />
   </ItemGroup>
 
   <ItemGroup>

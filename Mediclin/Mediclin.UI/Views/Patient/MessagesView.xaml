@@ -1,0 +1,41 @@
+<UserControl x:Class="Mediclin.UI.Views.Patient.MessagesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="270" /><ColumnDefinition /></Grid.ColumnDefinitions>
+        <Border Style="{StaticResource CardBorder}" Margin="0,0,16,0">
+            <StackPanel>
+                <TextBlock Text="Conversații" Style="{StaticResource SectionTitleText}" />
+                <ListBox Margin="0,12,0,0">
+                    <ListBoxItem Content="Dr. Rusu - Cardiologie" IsSelected="True" />
+                    <ListBoxItem Content="Dr. Ceban - Neurologie" />
+                    <ListBoxItem Content="Recepție MediClin" />
+                </ListBox>
+            </StackPanel>
+        </Border>
+        <Border Grid.Column="1" Style="{StaticResource CardBorder}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Dr. Rusu" Style="{StaticResource SectionTitleText}" Margin="0,0,0,12" />
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,12,0,0">
+                    <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding ChatText, UpdateSourceTrigger=PropertyChanged}" Width="620" />
+                    <Button Content="Trimite" Style="{StaticResource PrimaryButton}" Command="{Binding SendMessageCommand}" Margin="8,0,0,0" />
+                </StackPanel>
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding Messages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{Binding IsMine, Converter={StaticResource StatusToColorConverter}}" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8" MaxWidth="520" HorizontalAlignment="Left">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Sender}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding TimeLabel}" Style="{StaticResource MutedText}" HorizontalAlignment="Right" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -6,6 +6,42 @@
         Title="MediClin - Register" Height="720" Width="1100" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <Style x:Key="RolePillButton" TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="20"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="#0F6E56"/>
+                                <Setter Property="BorderBrush" Value="#0F6E56"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E1F5EE"/>
+                                <Setter Property="BorderBrush" Value="#1D9E75"/>
+                                <Setter Property="Foreground" Value="#085041"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -31,24 +67,136 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Margin="0,0,8,0" Style="{StaticResource RoundedTextBox}" Text="{Binding Prenume, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBox Grid.Column="1" Margin="8,0,0,0" Style="{StaticResource RoundedTextBox}" Text="{Binding Nume, UpdateSourceTrigger=PropertyChanged}" />
+                    <Grid Grid.Column="0" Margin="0,0,8,0">
+                        <TextBox x:Name="TxtPrenume"
+                                 Text="{Binding Prenume, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource RoundedTextBox}" />
+                        <TextBlock IsHitTestVisible="False"
+                                   Text="Prenume"
+                                   Foreground="#AAAAAA"
+                                   Margin="12,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="13">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Prenume}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Prenume}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    <Grid Grid.Column="1" Margin="8,0,0,0">
+                        <TextBox x:Name="TxtNume"
+                                 Text="{Binding Nume, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource RoundedTextBox}" />
+                        <TextBlock IsHitTestVisible="False"
+                                   Text="Nume"
+                                   Foreground="#AAAAAA"
+                                   Margin="12,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="13">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Nume}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Nume}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
                 </Grid>
 
-                <TextBox Style="{StaticResource RoundedTextBox}" Margin="0,0,0,10" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Style="{StaticResource RoundedTextBox}" Margin="0,0,0,10" Text="{Binding Telefon, UpdateSourceTrigger=PropertyChanged}" />
+                <Grid Margin="0,0,0,10">
+                    <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource RoundedTextBox}" />
+                    <TextBlock IsHitTestVisible="False"
+                               Text="exemplu@email.com"
+                               Foreground="#AAAAAA"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="13">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Email}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Email}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <TextBox Text="{Binding Telefon, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource RoundedTextBox}" />
+                    <TextBlock IsHitTestVisible="False"
+                               Text="+373 XX XXX XXX"
+                               Foreground="#AAAAAA"
+                               Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="13">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Telefon}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Telefon}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
 
                 <Grid Margin="0,0,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <PasswordBox Grid.Column="0" Margin="0,0,8,0" Height="38" Padding="12,8"
-                                 helpers:PasswordBoxHelper.BindPassword="True"
-                                 helpers:PasswordBoxHelper.BoundPassword="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <PasswordBox Grid.Column="1" Margin="8,0,0,0" Height="38" Padding="12,8"
-                                 helpers:PasswordBoxHelper.BindPassword="True"
-                                 helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmareParola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Grid Grid.Column="0" Margin="0,0,8,0">
+                        <PasswordBox Height="38"
+                                     Padding="12,8"
+                                     helpers:PasswordBoxHelper.BindPassword="True"
+                                     helpers:PasswordBoxHelper.BoundPassword="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock IsHitTestVisible="False"
+                                   Text="Minim 8 caractere"
+                                   Foreground="#AAAAAA"
+                                   Margin="12,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="13"
+                                   Visibility="{Binding IsParolaEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </Grid>
+                    <Grid Grid.Column="1" Margin="8,0,0,0">
+                        <PasswordBox Height="38"
+                                     Padding="12,8"
+                                     helpers:PasswordBoxHelper.BindPassword="True"
+                                     helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmareParola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock IsHitTestVisible="False"
+                                   Text="Repeta parola"
+                                   Foreground="#AAAAAA"
+                                   Margin="12,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="13"
+                                   Visibility="{Binding IsConfirmareParolaEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </Grid>
                 </Grid>
 
                 <ProgressBar Height="8" Maximum="100" Value="{Binding PasswordStrength}" Margin="0,0,0,16">
@@ -66,6 +214,50 @@
                         </Style>
                     </ProgressBar.Style>
                 </ProgressBar>
+
+                <TextBlock Text="Selecteaza rolul:"
+                           FontSize="12"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Margin="0,0,0,8" />
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ToggleButton Grid.Column="0"
+                                  Style="{StaticResource RolePillButton}"
+                                  Margin="0,0,8,0"
+                                  IsChecked="{Binding IsPacientSelected, Mode=TwoWay}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="👤" Margin="0,0,6,0" />
+                            <TextBlock Text="Pacient" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Grid.Column="1"
+                                  Style="{StaticResource RolePillButton}"
+                                  Margin="0,0,8,0"
+                                  IsChecked="{Binding IsMedicSelected, Mode=TwoWay}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="🩺" Margin="0,0,6,0" />
+                            <TextBlock Text="Medic" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton Grid.Column="2"
+                                  Style="{StaticResource RolePillButton}"
+                                  Margin="0"
+                                  IsChecked="{Binding IsAdminSelected, Mode=TwoWay}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="⚙" Margin="0,0,6,0" />
+                            <TextBlock Text="Admin" />
+                        </StackPanel>
+                    </ToggleButton>
+                </Grid>
+
+                <ProgressBar IsIndeterminate="True"
+                             Height="3"
+                             Margin="0,0,0,10"
+                             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                 <Button Content="Inregistreaza-te" Style="{StaticResource PrimaryButton}" Command="{Binding RegisterCommand}" />
 

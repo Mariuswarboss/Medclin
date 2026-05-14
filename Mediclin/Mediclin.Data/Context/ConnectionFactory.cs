@@ -6,6 +6,7 @@ namespace Mediclin.Data.Context;
 public static class ConnectionFactory
 {
     private static readonly Lazy<MySqlConnectionStringBuilder> Builder = new(CreateBuilder);
+    public static string? LastErrorMessage { get; private set; }
 
     public static MySqlConnection GetConnection()
     {
@@ -16,12 +17,16 @@ public static class ConnectionFactory
     {
         try
         {
+            LastErrorMessage = null;
             await using var conexiune = GetConnection();
             await conexiune.OpenAsync();
             return true;
         }
         catch (Exception ex)
         {
+            LastErrorMessage = ex.InnerException is null
+                ? ex.Message
+                : $"{ex.Message} Detalii: {ex.InnerException.Message}";
             Console.Error.WriteLine($"[ConnectionFactory] Eroare conexiune DB: {ex}");
             return false;
         }
@@ -41,15 +46,16 @@ public static class ConnectionFactory
         using var doc = JsonDocument.Parse(json);
         var db = doc.RootElement.GetProperty("Database");
 
-        return new MySqlConnectionStringBuilder
-        {
-            Server = db.GetProperty("Host").GetString(),
-            Port = db.GetProperty("Port").GetUInt32(),
-            Database = db.GetProperty("Name").GetString(),
-            UserID = db.GetProperty("User").GetString(),
-            Password = db.GetProperty("Password").GetString(),
-            SslMode = MySqlSslMode.Disabled,
-            AllowUserVariables = true
-        };
+        var csb = new MySqlConnectionStringBuilder();
+        csb.Server = db.GetProperty("Host").GetString();
+        csb.Port = db.GetProperty("Port").GetUInt32();
+        csb.Database = db.GetProperty("Name").GetString();
+        csb.UserID = db.GetProperty("User").GetString();
+        csb.Password = db.GetProperty("Password").GetString();
+        csb.CharacterSet = "utf8mb4";
+        csb.ConnectionTimeout = 10;
+        csb.AllowUserVariables = true;
+        csb.ConvertZeroDateTime = true;
+        return csb;
     }
 }

@@ -1,0 +1,61 @@
+<UserControl x:Class="Mediclin.UI.Views.Patient.MyAppointmentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="360" /></Grid.ColumnDefinitions>
+        <StackPanel>
+            <TextBlock Text="Programările mele" Style="{StaticResource HeadingText}" />
+            <StackPanel Orientation="Horizontal" Margin="0,12,0,16">
+                <Button Content="Toate" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" />
+                <Button Content="Viitoare" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" />
+                <Button Content="Finalizate" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" />
+                <Button Content="Anulate" Style="{StaticResource SecondaryButton}" />
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Appointments}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,12">
+                            <DockPanel>
+                                <Border DockPanel.Dock="Left" Width="70" Height="58" Background="{StaticResource PrimaryLightBrush}" CornerRadius="8" Margin="0,0,14,0">
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding DateLabel}" HorizontalAlignment="Center" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding TimeLabel}" HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                    <Button Content="Anulează" Style="{StaticResource DangerButton}" Command="{Binding DataContext.CancelAppointmentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,0,8,0" />
+                                    <Button Content="Detalii" Style="{StaticResource SecondaryButton}" />
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DoctorName}" Style="{StaticResource SectionTitleText}" />
+                                    <TextBlock Text="{Binding Specialty}" Style="{StaticResource MutedText}" />
+                                    <TextBlock Text="{Binding Reason}" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding Status}" Foreground="{Binding Status, Converter={StaticResource StatusToColorConverter}}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+        <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="16,0,0,0">
+            <StackPanel>
+                <TextBlock Text="Programare rapidă" Style="{StaticResource SectionTitleText}" />
+                <WrapPanel Margin="0,12,0,8">
+                    <Button Content="Cardiologie" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" />
+                    <Button Content="Neurologie" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" />
+                    <Button Content="Medicină internă" Style="{StaticResource SecondaryButton}" />
+                </WrapPanel>
+                <DatePicker Height="38" Margin="0,0,0,8" />
+                <ComboBox Height="38" Margin="0,0,0,8">
+                    <ComboBoxItem Content="09:00" />
+                    <ComboBoxItem Content="10:30" />
+                    <ComboBoxItem Content="14:00" />
+                </ComboBox>
+                <TextBox Style="{StaticResource RoundedTextBox}" Text="Motivul vizitei" Height="80" />
+                <Button Content="Confirmă programarea" Style="{StaticResource PrimaryButton}" Command="{Binding AddAppointmentCommand}" Margin="0,14,0,0" />
+                <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource MutedText}" Margin="0,12,0,0" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

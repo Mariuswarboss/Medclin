@@ -21,4 +21,12 @@ public class Pacient
     public int? MedicDeFamilieId { get; set; }
     [Required]
     public DateTime CreatLa { get; set; }
+
+    public string? Prenume { get; set; }
+    public string? Nume { get; set; }
+    public string? Email { get; set; }
+    public string? Telefon { get; set; }
+    public string NumeComplet => string.IsNullOrWhiteSpace($"{Prenume} {Nume}".Trim()) ? $"Pacient #{Id}" : $"{Prenume} {Nume}".Trim();
+    public string? SpecialitateNume { get; set; }
+    public DateTime? UltimaVizita { get; set; }
 }
