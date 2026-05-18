@@ -63,13 +63,114 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="24">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border HorizontalAlignment="Center"
+        <!-- ══ SEARCH PANEL ══ -->
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorder}"
+                Margin="0,0,0,14"
+                Visibility="{Binding IsSearchPanelVisible,
+                            Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Text="Caută pacient"
+                           Style="{StaticResource SectionTitleText}"
+                           Margin="0,0,0,12"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="SearchBox"
+                             Style="{StaticResource RoundedTextBox}"
+                             Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                             Tag="Caută după nume sau email..."
+                             FontSize="14"/>
+                    <ProgressBar Grid.Column="1" IsIndeterminate="True"
+                                 Width="18" Height="18" Margin="10,0,0,0"
+                                 VerticalAlignment="Center"
+                                 Visibility="{Binding IsSearching,
+                                 Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </Grid>
+
+                <!-- Results dropdown -->
+                <Border Margin="0,8,0,0" CornerRadius="12"
+                        Background="{StaticResource BackgroundSecondaryBrush}"
+                        Visibility="{Binding SearchResults.Count,
+                        Converter={StaticResource ZeroToInverseVisibilityConverter}}">
+                    <ItemsControl ItemsSource="{Binding SearchResults}" MaxHeight="260">
+                        <ItemsControl.Template>
+                            <ControlTemplate TargetType="ItemsControl">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.SelectPatientCommand,
+                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent" BorderThickness="0"
+                                        HorizontalContentAlignment="Stretch"
+                                        Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Row" Background="Transparent"
+                                                    CornerRadius="10" Padding="14,10"
+                                                    Margin="4,2">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="40"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Width="34" Height="34" CornerRadius="17"
+                                                            Background="{StaticResource PrimaryLightBrush}">
+                                                        <TextBlock Text="{Binding Initiale}"
+                                                                   FontSize="12" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource PrimaryGreenDarkBrush}"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding NumeComplet}"
+                                                                   FontWeight="SemiBold" FontSize="13"
+                                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                        <TextBlock Text="{Binding Email}"
+                                                                   FontSize="11"
+                                                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="{Binding UltimaVizita, StringFormat={}{0:dd.MM.yyyy}}"
+                                                               FontSize="11"
+                                                               Foreground="{StaticResource TextTertiaryBrush}"
+                                                               VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Row" Property="Background"
+                                                            Value="{StaticResource PrimaryLightBrush}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </StackPanel>
+        </Border>
+        <!-- ══ TOAST ══ -->
+        <Border Grid.Row="1"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Margin="0,0,0,16"
                 Visibility="{Binding ShowSaveToast, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -135,7 +236,7 @@
             </StackPanel>
         </Border>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <Border Style="{StaticResource CardBorder}" Margin="0,0,0,18">
                     <Grid>
@@ -155,13 +256,55 @@
                         <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                             <TextBlock Text="{Binding CurrentPacient.NumeComplet}" Style="{StaticResource HeadingText}" FontSize="26"/>
                             <TextBlock Text="{Binding CurrentPatientMeta}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
+                            <Button Content="Schimbă pacientul"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Padding="0" BorderThickness="0"
+                                    Background="Transparent"
+                                    Foreground="{StaticResource AccentGreenBrush}"
+                                    FontSize="11" HorizontalAlignment="Left"
+                                    Margin="0,6,0,0"
+                                    Command="{Binding OpenSearchCommand}"
+                                    Click="OnChangePatientClick"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
-                            <Button Content="Save"
-                                    Style="{StaticResource EmrSaveButton}"
-                                    Command="{Binding SaveConsultatieCommand}" />
-                            <TextBlock Text="Consultația este salvată și programarea este închisă automat."
-                                       Width="230"
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="+ Consultație Nouă"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding StartConsultatieNouaCommand}"
+                                        Height="40" Padding="16,0" Margin="0,0,8,0"
+                                        Visibility="{Binding CanStartNew, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                <!-- Salvează Draft -->
+                                <Button Command="{Binding SaveDraftCommand}"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Height="40" Padding="16,0" Margin="0,0,8,0"
+                                        IsEnabled="{Binding IsSaving, Converter={StaticResource InverseBoolConverter}}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ProgressBar IsIndeterminate="True" Width="12" Height="12"
+                                                         Margin="0,0,6,0" VerticalAlignment="Center"
+                                                         Visibility="{Binding IsSaving, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                            <TextBlock Text="Salvează" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+
+                                <!-- Trimite la pacient -->
+                                <Button Command="{Binding TrimiteRezultatCommand}"
+                                        Style="{StaticResource EmrSaveButton}"
+                                        IsEnabled="{Binding IsTrimiting, Converter={StaticResource InverseBoolConverter}}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ProgressBar IsIndeterminate="True" Width="14" Height="14"
+                                                         Margin="0,0,8,0" VerticalAlignment="Center"
+                                                         Visibility="{Binding IsTrimiting, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                            <TextBlock Text="Trimite la pacient" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+                            </StackPanel>
+                            <TextBlock Text="Salvează datele sau trimite fișa direct pacientului."
+                                       Width="340"
                                        Foreground="{StaticResource TextTertiaryBrush}"
                                        FontSize="11"
                                        TextAlignment="Right"

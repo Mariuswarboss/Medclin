@@ -31,8 +31,36 @@ public partial class App : Application
         }
 
         Services = new ApplicationServices();
+
+        await EnsureProgramMediciAsync();
+
         var authService = new AuthService(Services.Utilizatori);
         var loginVm = new LoginViewModel(authService, Services);
         new LoginWindow(loginVm).Show();
+    }
+
+    private static async Task EnsureProgramMediciAsync()
+    {
+        try
+        {
+            var db = new DatabaseContext();
+            await db.ExecuteAsync(@"
+                INSERT IGNORE INTO program_medici
+                    (medic_id, zi_saptamana, ora_start, ora_sfarsit, activ)
+                SELECT m.id, z.zi, '09:00:00', '17:00:00', 1
+                FROM   medici m
+                CROSS  JOIN (
+                    SELECT 'Luni'     AS zi UNION ALL
+                    SELECT 'Marti'         UNION ALL
+                    SELECT 'Miercuri'      UNION ALL
+                    SELECT 'Joi'           UNION ALL
+                    SELECT 'Vineri'
+                ) z
+                WHERE  m.id NOT IN (
+                    SELECT DISTINCT medic_id FROM program_medici
+                )",
+                null);
+        }
+        catch { }
     }
 }

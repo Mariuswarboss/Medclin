@@ -1,142 +1,262 @@
 <UserControl x:Class="Mediclin.UI.Views.Doctor.AppointmentsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Margin="24">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="320" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="340" />
-        </Grid.ColumnDefinitions>
 
-        <!-- Calendar -->
-        <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="0,0,12,0">
-            <StackPanel>
-                <DockPanel LastChildFill="False">
-                    <Button DockPanel.Dock="Left" Content="‹" Width="36" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding PreviousMonthCommand}" />
-                    <Button DockPanel.Dock="Right" Content="›" Width="36" Style="{StaticResource SecondaryButton}"
-                            Command="{Binding NextMonthCommand}" />
-                    <TextBlock Text="{Binding MonthYearText}" Style="{StaticResource SectionTitleText}"
-                               HorizontalAlignment="Center" />
-                </DockPanel>
-                <UniformGrid Rows="1" Columns="7" Margin="0,12,0,4">
-                    <TextBlock Text="Lu" HorizontalAlignment="Center" Style="{StaticResource MutedText}" />
-                    <TextBlock Text="Ma" HorizontalAlignment="Center" Style="{StaticResource MutedText}" />
-                    <TextBlock Text="Mi" HorizontalAlignment="Center" Style="{StaticResource MutedText}" />
-                    <TextBlock Text="Jo" HorizontalAlignment="Center" Style="{StaticResource MutedText}" />
-                    <TextBlock Text="Vi" HorizontalAlignment="Center" Style="{StaticResource MutedText}" />
-                    <TextBlock Text="Sâ" HorizontalAlignment="Center" Style="{StaticResource MutedText}" />
-                    <TextBlock Text="Du" HorizontalAlignment="Center" Style="{StaticResource MutedText}" />
-                </UniformGrid>
-                <ItemsControl ItemsSource="{Binding CalendarDays}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="7" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Margin="2" Padding="0,8"
-                                    Command="{Binding DataContext.SelectDayCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}">
-                                <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
-                                        <Setter Property="Opacity" Value="0.35" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsCurrentMonth}" Value="True">
-                                                <Setter Property="Opacity" Value="1" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
-                                                <Setter Property="BorderBrush" Value="{StaticResource PrimaryGreenBrush}" />
-                                                <Setter Property="BorderThickness" Value="2" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource PrimaryGreenBrush}" />
-                                                <Setter Property="Foreground" Value="White" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding HasAppointments}" Value="True">
-                                                <Setter Property="FontWeight" Value="SemiBold" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding DayNumber}" HorizontalAlignment="Center" />
-                                    <Ellipse Width="6" Height="6" Margin="0,4,0,0" HorizontalAlignment="Center"
-                                             Visibility="{Binding HasAppointments, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                </StackPanel>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+  <Grid Margin="24">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="300"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- ══════════════ CALENDAR ══════════════ -->
+    <Border Style="{StaticResource CardBorder}" Margin="0,0,16,0">
+      <StackPanel>
+
+        <!-- Month nav -->
+        <DockPanel LastChildFill="False" Margin="0,0,0,16">
+          <Button DockPanel.Dock="Left" Content="&#8249;"
+                  Style="{StaticResource IconButton}"
+                  Command="{Binding PrevMonthCmd}"
+                  Width="36" Height="36" FontSize="20"/>
+          <Button DockPanel.Dock="Right" Content="&#8250;"
+                  Style="{StaticResource IconButton}"
+                  Command="{Binding NextMonthCmd}"
+                  Width="36" Height="36" FontSize="20"/>
+          <TextBlock Text="{Binding MonthYear}"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                     FontSize="15" FontWeight="SemiBold"
+                     Foreground="{StaticResource TextPrimaryBrush}"/>
+        </DockPanel>
+
+        <!-- Day labels -->
+        <UniformGrid Columns="7" Margin="0,0,0,8">
+          <TextBlock Text="Lu" TextAlignment="Center" FontSize="11"
+                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+          <TextBlock Text="Ma" TextAlignment="Center" FontSize="11"
+                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+          <TextBlock Text="Mi" TextAlignment="Center" FontSize="11"
+                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+          <TextBlock Text="Jo" TextAlignment="Center" FontSize="11"
+                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+          <TextBlock Text="Vi" TextAlignment="Center" FontSize="11"
+                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+          <TextBlock Text="S&#226;" TextAlignment="Center" FontSize="11"
+                     FontWeight="SemiBold" Foreground="#AAAAAA"/>
+          <TextBlock Text="Du" TextAlignment="Center" FontSize="11"
+                     FontWeight="SemiBold" Foreground="#AAAAAA"/>
+        </UniformGrid>
+
+        <!-- Calendar grid -->
+        <ItemsControl ItemsSource="{Binding CalDays}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <UniformGrid Columns="7"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Button Width="36" Height="36" Margin="1" Cursor="Hand"
+                      Command="{Binding DataContext.SelectDayCmd,
+                                RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                      CommandParameter="{Binding}">
+                <Button.Style>
+                  <Style TargetType="Button">
+                    <Setter Property="Background"      Value="Transparent"/>
+                    <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FontSize"        Value="13"/>
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                          <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                  CornerRadius="18">
+                            <StackPanel VerticalAlignment="Center">
+                              <ContentPresenter HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                              <Ellipse x:Name="Dot" Width="4" Height="4"
+                                       Margin="0,2,0,0" HorizontalAlignment="Center"
+                                       Fill="{StaticResource AccentGreenBrush}"
+                                       Visibility="Collapsed"/>
+                            </StackPanel>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                              <Setter TargetName="Bd" Property="Background"
+                                      Value="{StaticResource BackgroundSecondaryBrush}"/>
+                            </Trigger>
+                          </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsCurrentMonth}" Value="False">
+                        <Setter Property="Foreground" Value="#CCCCCC"/>
+                        <Setter Property="Opacity"    Value="0.4"/>
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding HasAppointments}" Value="True">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsToday}" Value="True">
+                        <Setter Property="Background" Value="{StaticResource PrimaryGreenBrush}"/>
+                        <Setter Property="Foreground" Value="White"/>
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="Background" Value="{StaticResource PrimaryGreenDarkBrush}"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Button.Style>
+                <Button.Content>
+                  <TextBlock Text="{Binding DayNumber}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"/>
+                </Button.Content>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Legend -->
+        <StackPanel Orientation="Horizontal" Margin="0,16,0,0" HorizontalAlignment="Center">
+          <Ellipse Width="8" Height="8" Fill="{StaticResource AccentGreenBrush}"
+                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+          <TextBlock Text="Zile cu programări" Style="{StaticResource MutedText}" FontSize="11"/>
+        </StackPanel>
+
+      </StackPanel>
+    </Border>
+
+    <!-- ══════════════ DAY APPOINTMENTS LIST ══════════════ -->
+    <Border Grid.Column="1" Style="{StaticResource CardBorder}">
+      <DockPanel>
+
+        <!-- Header -->
+        <DockPanel DockPanel.Dock="Top" LastChildFill="False" Margin="0,0,0,16">
+          <TextBlock DockPanel.Dock="Left" Text="{Binding DayTitle}"
+                     Style="{StaticResource SectionTitleText}"
+                     VerticalAlignment="Center"/>
+          <Button DockPanel.Dock="Right" Content="&#8635; Actualizează"
+                  Style="{StaticResource SecondaryButton}"
+                  Command="{Binding RefreshCmd}"
+                  Padding="14,8" FontSize="12"/>
+        </DockPanel>
+
+        <!-- Loading bar -->
+        <ProgressBar DockPanel.Dock="Top" IsIndeterminate="True" Height="3"
+                     Margin="0,0,0,12"
+                     Visibility="{Binding Loading,
+                     Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+        <!-- Error -->
+        <Border DockPanel.Dock="Top"
+                Background="#FCEDEC" CornerRadius="12" Padding="14,10"
+                Margin="0,0,0,12"
+                Visibility="{Binding Error,
+                Converter={StaticResource NullToVisibilityConverter}}">
+          <TextBlock Text="{Binding Error}"
+                     Foreground="{StaticResource ErrorRedBrush}"
+                     FontSize="12" TextWrapping="Wrap"/>
         </Border>
 
-        <!-- Listă zi -->
-        <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="0,0,12,0">
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Top" Style="{StaticResource HeadingText}"
-                           Text="{Binding SelectedDate, StringFormat='Programări — {0:dd.MM.yyyy}'}" />
-                <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding SelectedDateAppointments}"
-                          AutoGenerateColumns="False" IsReadOnly="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Ora" Width="70"
-                                            Binding="{Binding DataOra, StringFormat=HH:mm}" />
-                        <DataGridTextColumn Header="Pacient" Binding="{Binding PacientNume}" Width="*" />
-                        <DataGridTextColumn Header="Tip" Binding="{Binding Tip}" Width="110" />
-                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120" />
-                        <DataGridTextColumn Header="Motiv" Binding="{Binding MotivVizita}" Width="2*" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </DockPanel>
-        </Border>
+        <!-- Empty state -->
+        <StackPanel DockPanel.Dock="Top"
+                    HorizontalAlignment="Center" Margin="0,60,0,0"
+                    Visibility="{Binding DayAppts.Count,
+                    Converter={StaticResource ZeroToVisibilityConverter}}">
+          <TextBlock Text="&#128197;" FontSize="52"
+                     HorizontalAlignment="Center" Margin="0,0,0,16"/>
+          <TextBlock Text="Nicio programare în această zi"
+                     Style="{StaticResource MutedText}"
+                     HorizontalAlignment="Center" FontSize="14"/>
+          <TextBlock Text="Programările se creează din pagina de start."
+                     Style="{StaticResource MutedText}"
+                     HorizontalAlignment="Center" Margin="0,6,0,0"/>
+        </StackPanel>
 
-        <!-- Formular -->
-        <Border Grid.Column="2" Style="{StaticResource CardBorder}">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <TextBlock Text="Programare nouă" Style="{StaticResource SectionTitleText}" />
-                    <TextBlock Text="Medic" Style="{StaticResource FieldLabel}" Margin="0,12,0,4" />
-                    <ComboBox ItemsSource="{Binding AllMedici}"
-                              SelectedItem="{Binding SelectedMedic}"
-                              DisplayMemberPath="NumeComplet"
-                              Style="{StaticResource RoundedComboBox}" />
-                    <TextBlock Text="Pacient" Style="{StaticResource FieldLabel}" Margin="0,12,0,4" />
-                    <ComboBox ItemsSource="{Binding AllPacients}"
-                              SelectedItem="{Binding SelectedPacient}"
-                              DisplayMemberPath="NumeComplet"
-                              IsEditable="True"
-                              Style="{StaticResource RoundedComboBox}" />
-                    <TextBlock Text="Tip consultație" Style="{StaticResource FieldLabel}" Margin="0,12,0,4" />
-                    <ComboBox ItemsSource="{Binding TipuriConsultatie}"
-                              SelectedItem="{Binding SelectedTip}"
-                              Style="{StaticResource RoundedComboBox}" />
-                    <TextBlock Text="Interval disponibil" Style="{StaticResource FieldLabel}" Margin="0,12,0,8" />
-                    <ItemsControl ItemsSource="{Binding AvailableSlots}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <ToggleButton Margin="0,0,8,8" Padding="10,6"
-                                              Content="{Binding HourText}"
-                                              Style="{StaticResource SecondaryButton}"
-                                              Command="{Binding DataContext.SelectSlotCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              CommandParameter="{Binding}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <TextBlock Text="Motiv vizită" Style="{StaticResource FieldLabel}" Margin="0,8,0,4" />
-                    <TextBox Style="{StaticResource RoundedTextBox}" Height="72" TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             Text="{Binding MotiVizita, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Content="Confirmă programarea" Style="{StaticResource PrimaryButton}"
-                            Command="{Binding CreateProgramareCommand}" Margin="0,14,0,0" />
-                    <TextBlock Text="{Binding ErrorMessage}" Foreground="#C0392B" TextWrapping="Wrap" Margin="0,12,0,0" />
-                </StackPanel>
-            </ScrollViewer>
-        </Border>
-    </Grid>
+        <!-- Appointments -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding DayAppts}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Margin="0,0,0,10" CornerRadius="14"
+                        Background="{StaticResource BackgroundSecondaryBrush}"
+                        BorderBrush="{StaticResource BorderBrushNeutral}"
+                        BorderThickness="1" Padding="16,14">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="60"/>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Time badge -->
+                    <Border Width="52" Height="52" CornerRadius="12"
+                            Background="{StaticResource PrimaryLightBrush}"
+                            VerticalAlignment="Center">
+                      <TextBlock Text="{Binding OraText}"
+                                 FontSize="15" FontWeight="Bold"
+                                 Foreground="{StaticResource PrimaryGreenDarkBrush}"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"/>
+                    </Border>
+
+                    <!-- Patient + details -->
+                    <StackPanel Grid.Column="1" Margin="14,0"
+                                VerticalAlignment="Center">
+                      <TextBlock Text="{Binding PacientNume}"
+                                 FontSize="14" FontWeight="SemiBold"
+                                 Foreground="{StaticResource TextPrimaryBrush}"
+                                 Margin="0,0,0,3"/>
+                      <TextBlock Text="{Binding Tip}"
+                                 Style="{StaticResource MutedText}"
+                                 Margin="0,0,0,4"/>
+                      <TextBlock Text="{Binding MotivVizita}"
+                                 Style="{StaticResource MutedText}"
+                                 TextWrapping="Wrap" FontSize="12"
+                                 Visibility="{Binding MotivVizita,
+                                 Converter={StaticResource NullToVisibilityConverter}}"/>
+                    </StackPanel>
+
+                    <!-- Status pill -->
+                    <Border Grid.Column="2" CornerRadius="20"
+                            Padding="14,6" VerticalAlignment="Center">
+                      <Border.Style>
+                        <Style TargetType="Border">
+                          <Setter Property="Background" Value="#F0F3F6"/>
+                          <Style.Triggers>
+                            <DataTrigger Binding="{Binding Status}" Value="Confirmata">
+                              <Setter Property="Background" Value="{StaticResource BlueInfoBgBrush}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="In_asteptare">
+                              <Setter Property="Background" Value="#FFF3E0"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="In_cabinet">
+                              <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="Finalizata">
+                              <Setter Property="Background" Value="#EDF7F3"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="Anulata">
+                              <Setter Property="Background" Value="#FCEDEC"/>
+                            </DataTrigger>
+                          </Style.Triggers>
+                        </Style>
+                      </Border.Style>
+                      <TextBlock Text="{Binding Status}"
+                                 FontSize="12" FontWeight="SemiBold"
+                                 Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </Border>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+      </DockPanel>
+    </Border>
+
+  </Grid>
 </UserControl>

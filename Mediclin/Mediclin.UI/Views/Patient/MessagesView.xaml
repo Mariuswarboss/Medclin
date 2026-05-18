@@ -1,41 +1,170 @@
 <UserControl x:Class="Mediclin.UI.Views.Patient.MessagesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Margin="24">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="270" /><ColumnDefinition /></Grid.ColumnDefinitions>
-        <Border Style="{StaticResource CardBorder}" Margin="0,0,16,0">
-            <StackPanel>
-                <TextBlock Text="Conversații" Style="{StaticResource SectionTitleText}" />
-                <ListBox Margin="0,12,0,0">
-                    <ListBoxItem Content="Dr. Rusu - Cardiologie" IsSelected="True" />
-                    <ListBoxItem Content="Dr. Ceban - Neurologie" />
-                    <ListBoxItem Content="Recepție MediClin" />
-                </ListBox>
-            </StackPanel>
-        </Border>
-        <Border Grid.Column="1" Style="{StaticResource CardBorder}">
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Top" Text="Dr. Rusu" Style="{StaticResource SectionTitleText}" Margin="0,0,0,12" />
-                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,12,0,0">
-                    <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding ChatText, UpdateSourceTrigger=PropertyChanged}" Width="620" />
-                    <Button Content="Trimite" Style="{StaticResource PrimaryButton}" Command="{Binding SendMessageCommand}" Margin="8,0,0,0" />
-                </StackPanel>
-                <ScrollViewer>
-                    <ItemsControl ItemsSource="{Binding Messages}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="{Binding IsMine, Converter={StaticResource StatusToColorConverter}}" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8" MaxWidth="520" HorizontalAlignment="Left">
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Sender}" FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
-                                        <TextBlock Text="{Binding TimeLabel}" Style="{StaticResource MutedText}" HorizontalAlignment="Right" />
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" MinWidth="260" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Lista conversații -->
+        <Border Grid.Column="0" Style="{StaticResource CardBorder}" Padding="0" Margin="0,0,16,0">
+            <DockPanel LastChildFill="True">
+                <Border DockPanel.Dock="Top" Padding="18,14" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="#FAFCFD">
+                    <TextBlock Text="Conversații" Style="{StaticResource SectionTitleText}" Margin="0" />
+                </Border>
+
+                <Border DockPanel.Dock="Bottom" Padding="12" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,1,0,0" Background="#F8FAFB">
+                    <StackPanel>
+                        <TextBlock Text="Conversație nouă" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{StaticResource TextSecondaryBrush}" />
+                        <StackPanel Visibility="{Binding EsteMedic, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                            <ComboBox ItemsSource="{Binding MediciPentruNou}"
+                                      SelectedItem="{Binding MedicNou, Mode=TwoWay}"
+                                      DisplayMemberPath="NumeCompletCuTitlu"
+                                      Height="40" Margin="0,0,0,8" />
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding EsteMedic, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <ComboBox ItemsSource="{Binding PacientiPentruNou}"
+                                      SelectedItem="{Binding PacientNou, Mode=TwoWay}"
+                                      DisplayMemberPath="NumeComplet"
+                                      Height="40" Margin="0,0,0,8" />
+                        </StackPanel>
+                        <Button Content="Deschide conversația" Style="{StaticResource PrimaryButton}"
+                                Command="{Binding StartConversatieNouaCommand}" />
+                    </StackPanel>
+                </Border>
+
+                <ListBox ItemsSource="{Binding Conversatii}"
+                         SelectedItem="{Binding Selectata, Mode=TwoWay}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#E8F4EF" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#F0F7F4" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="14,12" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="44" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="40" Height="40" CornerRadius="20" Background="{StaticResource PrimaryGreenBrush}" Margin="0,0,10,0">
+                                        <TextBlock Text="{Binding InitialePartener}" FontWeight="SemiBold" Foreground="White"
+                                                   FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding NumePartener}" FontWeight="SemiBold" FontSize="14" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding UltimMesajScurt}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                                        <TextBlock Text="{Binding UltimMesajLa, StringFormat=dd.MM · HH:mm}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"
+                                                   Visibility="{Binding UltimMesajLa, Converter={StaticResource NullToVisibilityConverter}}" />
                                     </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                                    <Border Grid.Column="2" CornerRadius="10" Background="{StaticResource PrimaryGreenDarkBrush}" Padding="6,2"
+                                            VerticalAlignment="Center" Visibility="{Binding Necitite, Converter={StaticResource CountToBadgeVisibilityConverter}}">
+                                        <TextBlock Text="{Binding Necitite}" Foreground="White" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </DockPanel>
+        </Border>
+
+        <!-- Chat -->
+        <Border Grid.Column="1" Style="{StaticResource CardBorder}" Padding="0">
+            <Grid>
+                <TextBlock Text="Selectați o conversație din stânga sau deschideți una nouă."
+                           Foreground="{StaticResource TextTertiaryBrush}"
+                           FontSize="15"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           Margin="32"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Visibility="{Binding HasConversation, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+
+                <DockPanel Visibility="{Binding HasConversation, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Border DockPanel.Dock="Top" Padding="18,14" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="#FAFCFD">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="40" Height="40" CornerRadius="20" Background="{StaticResource PrimaryGreenBrush}" Margin="0,0,12,0">
+                                <TextBlock Text="{Binding Selectata.InitialePartener}" FontWeight="SemiBold" Foreground="White"
+                                           FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Selectata.NumePartener}" Style="{StaticResource SectionTitleText}" Margin="0" />
+                                <TextBlock Text="Mesager securizat MediClin" Foreground="{StaticResource TextTertiaryBrush}" FontSize="12" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border DockPanel.Dock="Bottom" Padding="14" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,1,0,0" Background="#FAFCFD">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Style="{StaticResource RoundedTextBox}"
+                                     Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="46"
+                                     VerticalContentAlignment="Center"
+                                     Padding="14,10"
+                                     Margin="0,0,10,0"
+                                     AcceptsReturn="False" />
+                            <Button Grid.Column="1" Content="Trimite" Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding SendCommand}" Height="46" Padding="22,0" IsDefault="True" />
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Padding="16" Background="#EEF1F5" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding ChatItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,10">
+                                        <!-- Partener -->
+                                        <Border Padding="12,10" CornerRadius="4,16,16,16" Background="White"
+                                                BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1"
+                                                MaxWidth="520" HorizontalAlignment="Left"
+                                                Visibility="{Binding IsMine, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding SenderLabel}" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,0,0,4"
+                                                           Visibility="{Binding SenderLabel, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                <TextBlock Text="{Binding TimeLabel}" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,6,0,0" HorizontalAlignment="Right" />
+                                            </StackPanel>
+                                        </Border>
+                                        <!-- Eu -->
+                                        <Border Padding="12,10" CornerRadius="16,4,16,16" Background="{StaticResource PrimaryGreenBrush}"
+                                                MaxWidth="520" HorizontalAlignment="Right"
+                                                Visibility="{Binding IsMine, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="14" Foreground="White" />
+                                                <TextBlock Text="{Binding TimeLabel}" FontSize="11" Foreground="#C8EDE3" Margin="0,6,0,0" HorizontalAlignment="Right" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

@@ -1,8 +1,11 @@
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows;
 using Mediclin.Business.DTOs;
 using Mediclin.Business.Services;
 using Mediclin.Business.Validators;
+using System.Linq;
+using Mediclin.Data.Models;
 using Mediclin.UI.Services;
 using Mediclin.UI.Views.Admin;
 using Mediclin.UI.Views.Auth;
@@ -29,14 +32,19 @@ public class RegisterViewModel : BaseViewModel
     private bool _isPacientSelected = true;
     private bool _isMedicSelected;
     private bool _isAdminSelected;
+    private Specialitate? _selectedSpecialitate;
 
     public RegisterViewModel(IAuthService authService, ApplicationServices app)
     {
         _authService = authService;
         _app = app;
+        Specialitati = new ObservableCollection<Specialitate>();
         RegisterCommand = new AsyncRelayCommand(async _ => await RegisterAsync(), _ => !IsLoading);
         NavigateToLoginCommand = new RelayCommand(_ => NavigateToLogin());
+        _ = LoadSpecialitatiAsync();
     }
+
+    public ObservableCollection<Specialitate> Specialitati { get; }
 
     public Action? CloseAction { get; set; }
 
@@ -96,6 +104,7 @@ public class RegisterViewModel : BaseViewModel
             RolSelectat = "medic";
             IsPacientSelected = false;
             IsAdminSelected = false;
+            EnsureDefaultSpecialitate();
         }
     }
 
@@ -114,6 +123,45 @@ public class RegisterViewModel : BaseViewModel
     public ICommand RegisterCommand { get; }
     public ICommand NavigateToLoginCommand { get; }
 
+    public Specialitate? SelectedSpecialitate
+    {
+        get => _selectedSpecialitate;
+        set => SetProperty(ref _selectedSpecialitate, value);
+    }
+
+    private async Task LoadSpecialitatiAsync()
+    {
+        try
+        {
+            Specialitati.Clear();
+            foreach (var s in await _app.Specialitati.GetAllAsync())
+            {
+                Specialitati.Add(s);
+            }
+
+            EnsureDefaultSpecialitate();
+        }
+        catch
+        {
+            // ignorat — validarea va cere specialitate doar dacă există în listă
+        }
+    }
+
+    private void EnsureDefaultSpecialitate()
+    {
+        if (!IsMedicSelected || Specialitati.Count == 0)
+        {
+            return;
+        }
+
+        if (SelectedSpecialitate is not null && Specialitati.Any(s => s.Id == SelectedSpecialitate.Id))
+        {
+            return;
+        }
+
+        SelectedSpecialitate = Specialitati[0];
+    }
+
     private async Task RegisterAsync()
     {
         IsLoading = true;
@@ -130,7 +178,10 @@ public class RegisterViewModel : BaseViewModel
                 Prenume = Prenume.Trim(),
                 Nume = Nume.Trim(),
                 Telefon = Telefon.Trim(),
-                Rol = RolSelectat
+                Rol = RolSelectat,
+                SpecialitateId = string.Equals(RolSelectat, "medic", StringComparison.OrdinalIgnoreCase)
+                    ? SelectedSpecialitate?.Id
+                    : null
             };
 
             var validationErrors = UserValidator.ValidateRegisterDto(dto);
@@ -157,7 +208,10 @@ public class RegisterViewModel : BaseViewModel
             if (utilizator != null)
             {
                 _app.CurrentUserId = utilizator.Id;
-                await UserProfileInitializer.EnsureRoleProfileAsync(_app, utilizator);
+                var specId = string.Equals(utilizator.Rol, "medic", StringComparison.OrdinalIgnoreCase)
+                    ? dto.SpecialitateId
+                    : null;
+                await UserProfileInitializer.EnsureRoleProfileAsync(_app, utilizator, specId);
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {

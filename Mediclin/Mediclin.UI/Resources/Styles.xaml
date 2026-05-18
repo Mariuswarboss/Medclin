@@ -87,7 +87,8 @@
     <Style x:Key="TopNavButton" TargetType="Button">
         <Setter Property="Height" Value="36" />
         <Setter Property="Padding" Value="14,0" />
-        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Margin" Value="0,0,8,0" />
+        <Setter Property="Foreground" Value="White" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
@@ -95,12 +96,12 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Chrome" Background="{TemplateBinding Background}" CornerRadius="18">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Chrome" Property="Background" Value="#EAF4F0" />
-                            <Setter Property="Foreground" Value="{StaticResource PrimaryGreenBrush}" />
+                            <Setter TargetName="Chrome" Property="Background" Value="#26FFFFFF" />
+                            <Setter Property="Foreground" Value="White" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -142,6 +143,24 @@
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrushNeutral}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Background" Value="#FCFDFE" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Border x:Name="Chrome"
+                            CornerRadius="18"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="0" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource AccentGreenBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="RolePillToggleButton" TargetType="ToggleButton">
@@ -228,7 +247,6 @@
         <Setter Property="Padding" Value="20" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="Effect" Value="{StaticResource SoftCardShadow}" />
     </Style>
 
     <Style x:Key="CardTitle" TargetType="TextBlock">
@@ -264,7 +282,7 @@
 
     <Style x:Key="TopbarStyle" TargetType="Border">
         <Setter Property="Height" Value="60" />
-        <Setter Property="Background" Value="{StaticResource BackgroundPrimaryBrush}" />
+        <Setter Property="Background" Value="{StaticResource PrimaryGreenBrush}" />
     </Style>
 
     <Style x:Key="DataGridStyle" TargetType="DataGrid">

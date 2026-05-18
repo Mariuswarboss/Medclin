@@ -6,6 +6,16 @@ namespace Mediclin.Data.Repositories;
 public class RetetaRepository : IRepository<Reteta>
 {
     private readonly DatabaseContext _db;
+    private static readonly HashSet<string> FormePermise = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Comprimat",
+        "Capsula",
+        "Sirop",
+        "Injectie",
+        "Crema",
+        "Picaturi",
+        "Alt"
+    };
 
     public RetetaRepository(DatabaseContext db)
     {
@@ -176,14 +186,14 @@ public class RetetaRepository : IRepository<Reteta>
             await _db.ExecuteAsync(sql, new Dictionary<string, object>
             {
                 ["@reteta_id"] = medicament.RetetaId,
-                ["@denumire"] = medicament.Denumire,
-                ["@concentratie"] = (object?)medicament.Concentratie ?? DBNull.Value,
-                ["@forma"] = (object?)medicament.Forma ?? DBNull.Value,
-                ["@cantitate"] = medicament.Cantitate,
-                ["@dozaj"] = (object?)medicament.Dozaj ?? DBNull.Value,
-                ["@frecventa"] = (object?)medicament.Frecventa ?? DBNull.Value,
+                ["@denumire"] = medicament.Denumire.Trim(),
+                ["@concentratie"] = ToDbText(medicament.Concentratie),
+                ["@forma"] = NormalizeForma(medicament.Forma),
+                ["@cantitate"] = Math.Max(1, medicament.Cantitate),
+                ["@dozaj"] = RequiredText(medicament.Dozaj),
+                ["@frecventa"] = RequiredText(medicament.Frecventa),
                 ["@durata_zile"] = (object?)medicament.DurataZile ?? DBNull.Value,
-                ["@instructiuni"] = (object?)medicament.Instructiuni ?? DBNull.Value
+                ["@instructiuni"] = ToDbText(medicament.Instructiuni)
             });
         }
         catch (Exception ex)
@@ -202,14 +212,14 @@ public class RetetaRepository : IRepository<Reteta>
         var id = await _db.ScalarAsync(sql, new Dictionary<string, object>
         {
             ["@reteta_id"] = medicament.RetetaId,
-            ["@denumire"] = medicament.Denumire,
-            ["@concentratie"] = (object?)medicament.Concentratie ?? DBNull.Value,
-            ["@forma"] = (object?)medicament.Forma ?? DBNull.Value,
-            ["@cantitate"] = medicament.Cantitate,
-            ["@dozaj"] = (object?)medicament.Dozaj ?? DBNull.Value,
-            ["@frecventa"] = (object?)medicament.Frecventa ?? DBNull.Value,
+            ["@denumire"] = medicament.Denumire.Trim(),
+            ["@concentratie"] = ToDbText(medicament.Concentratie),
+            ["@forma"] = NormalizeForma(medicament.Forma),
+            ["@cantitate"] = Math.Max(1, medicament.Cantitate),
+            ["@dozaj"] = RequiredText(medicament.Dozaj),
+            ["@frecventa"] = RequiredText(medicament.Frecventa),
             ["@durata_zile"] = (object?)medicament.DurataZile ?? DBNull.Value,
-            ["@instructiuni"] = (object?)medicament.Instructiuni ?? DBNull.Value
+            ["@instructiuni"] = ToDbText(medicament.Instructiuni)
         });
         return Convert.ToInt32(id);
     }

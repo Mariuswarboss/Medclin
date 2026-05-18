@@ -19,6 +19,7 @@ public class ReportsViewModel : BaseViewModel
     private int _cardTotal;
     private int _cardFinalizate;
     private int _cardNeprezentate;
+    private int _cardConsultatiiDirecte;
     private decimal _cardVenit;
 
     public ReportsViewModel(ApplicationServices app, int medicId)
@@ -80,6 +81,12 @@ public class ReportsViewModel : BaseViewModel
         set => SetProperty(ref _cardNeprezentate, value);
     }
 
+    public int CardConsultatiiDirecte
+    {
+        get => _cardConsultatiiDirecte;
+        set => SetProperty(ref _cardConsultatiiDirecte, value);
+    }
+
     public decimal CardVenit
     {
         get => _cardVenit;
@@ -134,6 +141,9 @@ public class ReportsViewModel : BaseViewModel
             CardFinalizate = CurrentRaport.ProgramariFinalizate > 0 ? CurrentRaport.ProgramariFinalizate : CurrentRaport.TotalConsultatii;
             CardNeprezentate = CurrentRaport.ProgramariNeprezentate;
             CardVenit = CurrentRaport.VenitEstimat;
+
+            // Numărăm consultațiile fără programare (directe) din totalul de consultații
+            CardConsultatiiDirecte = Math.Max(0, CurrentRaport.TotalConsultatii - CurrentRaport.ProgramariFinalizate);
 
             BuildChart();
             await LoadRecentProgramariAsync(from, to);

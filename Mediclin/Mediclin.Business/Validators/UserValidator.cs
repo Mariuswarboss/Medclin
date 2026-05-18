@@ -70,6 +70,14 @@ public static class UserValidator
             errors.Add("Numele este obligatoriu.");
         }
 
+        if (string.Equals(dto.Rol?.Trim(), "medic", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!dto.SpecialitateId.HasValue || dto.SpecialitateId.Value <= 0)
+            {
+                errors.Add("Selectați specialitatea medicală pentru contul de medic.");
+            }
+        }
+
         return errors;
     }
 }

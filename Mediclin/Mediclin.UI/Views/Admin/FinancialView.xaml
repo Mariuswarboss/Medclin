@@ -1,1 +1,43 @@
-<UserControl x:Class="Mediclin.UI.Views.Admin.FinancialView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><StackPanel Margin="24"><TextBlock Text="Financiar" Style="{StaticResource HeadingText}"/><UniformGrid Columns="3" Margin="0,16"><Border Style="{StaticResource CardBorder}" Margin="0,0,12,0"><TextBlock Text="Venituri lunare: 128000 MDL"/></Border><Border Style="{StaticResource CardBorder}" Margin="0,0,12,0"><TextBlock Text="Consultații facturate: 412"/></Border><Border Style="{StaticResource CardBorder}"><TextBlock Text="Tarif mediu: 310 MDL"/></Border></UniformGrid><DataGrid Style="{StaticResource DataGridStyle}" Height="360"><DataGrid.Columns><DataGridTextColumn Header="Data" Binding="{Binding Data}"/><DataGridTextColumn Header="Medic" Binding="{Binding Medic}"/><DataGridTextColumn Header="Serviciu" Binding="{Binding Serviciu}"/><DataGridTextColumn Header="Sumă" Binding="{Binding Suma}"/></DataGrid.Columns></DataGrid></StackPanel></UserControl>
+<UserControl x:Class="Mediclin.UI.Views.Admin.FinancialView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel Margin="24">
+        <TextBlock DockPanel.Dock="Top" Text="Financiar" Style="{StaticResource HeadingText}" />
+        <TextBlock DockPanel.Dock="Top" Text="Estimări din consultațiile lunii curente (din baza de date)." Style="{StaticResource MutedText}" Margin="0,6,0,16" />
+
+        <UniformGrid DockPanel.Dock="Top" Columns="3" Margin="0,0,0,20">
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,12,0" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Venit estimat (lună)" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding VenitLunarText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" Foreground="{StaticResource PrimaryGreenDarkBrush}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,12,0" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Consultații în perioadă" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding ConsultatiiText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorder}" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Tarif mediu estimat" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding TarifMediuText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Border Style="{StaticResource CardBorder}" Padding="0">
+            <DockPanel LastChildFill="True">
+                <Border DockPanel.Dock="Top" Padding="16,12" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="#FAFCFD">
+                    <TextBlock Text="Consultații pe zi (luna curentă)" Style="{StaticResource SectionTitleText}" Margin="0" />
+                </Border>
+                <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding Zilnic}" AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="420">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Data" Binding="{Binding Data, StringFormat=dd.MM.yyyy}" Width="140" />
+                        <DataGridTextColumn Header="Nr. consultații" Binding="{Binding Total}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+    </DockPanel>
+</UserControl>

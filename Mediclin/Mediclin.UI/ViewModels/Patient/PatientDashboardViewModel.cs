@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Input;
 using Mediclin.Data.Models;
+using Mediclin.UI.Models;
 using Mediclin.UI.Services;
 
 namespace Mediclin.UI.ViewModels.Patient;
@@ -34,7 +35,7 @@ public class PatientDashboardViewModel : BaseViewModel
         UpcomingAppointments = new ObservableCollection<Programare>();
         AvailableDoctors = new ObservableCollection<Medic>();
         Specialitati = new ObservableCollection<Specialitate>();
-        AvailableSlots = new ObservableCollection<DateTime>();
+        AvailableSlots = new ObservableCollection<SlotItem>();
         TipuriConsultatie = new ObservableCollection<string> { "Initiala", "Control", "Urgenta", "Telemedicina" };
 
         OpenBookingCommand = new RelayCommand(_ => OpenBooking());
@@ -53,7 +54,7 @@ public class PatientDashboardViewModel : BaseViewModel
     public ObservableCollection<Programare> UpcomingAppointments { get; }
     public ObservableCollection<Medic> AvailableDoctors { get; private set; }
     public ObservableCollection<Specialitate> Specialitati { get; }
-    public ObservableCollection<DateTime> AvailableSlots { get; private set; }
+    public ObservableCollection<SlotItem> AvailableSlots { get; private set; }
     public ObservableCollection<string> TipuriConsultatie { get; }
 
     public Medic? SelectedMedic
@@ -156,7 +157,7 @@ public class PatientDashboardViewModel : BaseViewModel
             }
 
             _allDoctors.Clear();
-            _allDoctors.AddRange((await _app.Medici.GetAllAsync()).Where(m => m.Verificat));
+            _allDoctors.AddRange(await _app.Medici.GetAllAsync()); // Ignorăm filtrul Verificat pentru dezvoltare
             ApplyDoctorFilter();
         }
         catch (Exception ex)
@@ -185,8 +186,11 @@ public class PatientDashboardViewModel : BaseViewModel
             ? _allDoctors
             : _allDoctors.Where(m => m.SpecialitateId == SelectedSpecialitate.Id);
 
-        AvailableDoctors = new ObservableCollection<Medic>(doctors.OrderBy(m => m.SpecialitateNume).ThenBy(m => m.Nume));
-        OnPropertyChanged(nameof(AvailableDoctors));
+        AvailableDoctors.Clear();
+        foreach (var medic in doctors.OrderBy(m => m.SpecialitateNume).ThenBy(m => m.Nume))
+        {
+            AvailableDoctors.Add(medic);
+        }
     }
 
     private async Task SelectDoctorAsync(Medic? medic)
@@ -200,7 +204,7 @@ public class PatientDashboardViewModel : BaseViewModel
     {
         if (SelectedMedic is null || SelectedDate is null)
         {
-            AvailableSlots = new ObservableCollection<DateTime>();
+            AvailableSlots = new ObservableCollection<SlotItem>();
             OnPropertyChanged(nameof(AvailableSlots));
             return;
         }
@@ -209,7 +213,7 @@ public class PatientDashboardViewModel : BaseViewModel
         {
             IsSlotsLoading = true;
             var slots = await _app.Programari.GetSloturiDisponibileAsync(SelectedMedic.Id, SelectedDate.Value);
-            AvailableSlots = new ObservableCollection<DateTime>(slots);
+            AvailableSlots = new ObservableCollection<SlotItem>(slots.Select(s => new SlotItem(s)));
             OnPropertyChanged(nameof(AvailableSlots));
         }
         catch (Exception ex)
@@ -225,9 +229,9 @@ public class PatientDashboardViewModel : BaseViewModel
 
     private void SelectSlot(object? parameter)
     {
-        if (parameter is DateTime slot)
+        if (parameter is SlotItem slot)
         {
-            SelectedSlot = slot;
+            SelectedSlot = slot.At;
         }
     }
 

@@ -3,27 +3,92 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DockPanel Margin="24">
         <StackPanel DockPanel.Dock="Top">
-            <DockPanel LastChildFill="False">
-                <TextBlock Text="Utilizatori" Style="{StaticResource HeadingText}" />
-                <Button DockPanel.Dock="Right" Content="Adaugă utilizator" Style="{StaticResource PrimaryButton}" Command="{Binding AddUserCommand}" />
+            <DockPanel LastChildFill="False" Margin="0,0,0,8">
+                <TextBlock Text="Utilizatori" Style="{StaticResource HeadingText}" VerticalAlignment="Center" />
+                <Button DockPanel.Dock="Right" Content="Adaugă utilizator" Style="{StaticResource PrimaryButton}"
+                        Command="{Binding AddUserCommand}" Padding="16,10" />
             </DockPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,12">
-                <TextBox Style="{StaticResource RoundedTextBox}" Width="260" Text="Caută utilizator..." />
-                <ComboBox Height="38" Width="150" Margin="8,0"><ComboBoxItem Content="Toate rolurile" /></ComboBox>
-                <ComboBox Height="38" Width="150"><ComboBoxItem Content="Toate statusurile" /></ComboBox>
-            </StackPanel>
+            <TextBox Style="{StaticResource RoundedTextBox}" Width="360" HorizontalAlignment="Left"
+                     Text="{Binding Cautare, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,16">
+                <TextBox.ToolTip>
+                    <ToolTip Content="Căutare după nume, email sau rol" />
+                </TextBox.ToolTip>
+            </TextBox>
         </StackPanel>
-        <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding Users}">
+
+        <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding Users}" AutoGenerateColumns="False"
+                  IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column" SelectionMode="Single">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Nume" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*" />
-                <DataGridTextColumn Header="Rol" Binding="{Binding Role}" Width="120" />
-                <DataGridTextColumn Header="Înregistrare" Binding="{Binding RegisteredAt, StringFormat=dd.MM.yyyy}" Width="130" />
-                <DataGridTextColumn Header="Status" Binding="{Binding StatusLabel}" Width="110" />
-                <DataGridTemplateColumn Header="Acțiuni" Width="140">
+                <DataGridTextColumn Header="Nume complet" Binding="{Binding NumeComplet}" Width="2*" MinWidth="140" />
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*" MinWidth="160" />
+                <DataGridTextColumn Header="Rol" Binding="{Binding Rol}" Width="100" />
+                <DataGridTextColumn Header="Înregistrat" Binding="{Binding CreatLa, StringFormat=dd.MM.yyyy HH:mm}" Width="150" />
+                <DataGridTemplateColumn Header="Status" Width="110">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Activează/Dezactivează" Style="{StaticResource SecondaryButton}" Command="{Binding DataContext.ToggleUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                            <Border CornerRadius="8" Padding="10,4" HorizontalAlignment="Center">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#E8F5E9" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Activ}" Value="False">
+                                                <Setter Property="Background" Value="#FFEBEE" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock FontWeight="SemiBold" FontSize="12">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Activ" />
+                                            <Setter Property="Foreground" Value="#1B5E20" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Activ}" Value="False">
+                                                    <Setter Property="Text" Value="Inactiv" />
+                                                    <Setter Property="Foreground" Value="#B71C1C" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Acțiuni" Width="220">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="Activează" Margin="0,0,8,0" Padding="12,6"
+                                        Command="{Binding DataContext.ActivateUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Activ}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="True" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                                <Button Content="Dezactivează" Padding="12,6"
+                                        Command="{Binding DataContext.DeactivateUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource DangerButton}">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Activ}" Value="True">
+                                                    <Setter Property="IsEnabled" Value="True" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

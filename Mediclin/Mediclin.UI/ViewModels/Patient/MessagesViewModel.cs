@@ -1,13 +1,29 @@
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Threading;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Mediclin.Data.Models;
 using Mediclin.UI.Services;
 
 namespace Mediclin.UI.ViewModels.Patient;
 
-public class MessagesViewModel : BaseViewModel
+public sealed class MesajChatItem
+{
+    public MesajChatItem(string text, string timeLabel, bool isMine, string? senderLabel = null)
+    {
+        Text = text;
+        TimeLabel = timeLabel;
+        IsMine = isMine;
+        SenderLabel = senderLabel;
+    }
+
+    public string Text { get; }
+    public string TimeLabel { get; }
+    public bool IsMine { get; }
+    public string? SenderLabel { get; }
+}
+
+public class MessagesViewModel : BaseViewModel, IDisposable
 {
     private readonly ApplicationServices _app;
     private readonly Utilizator _utilizator;
@@ -15,6 +31,9 @@ public class MessagesViewModel : BaseViewModel
     private ConversatieLista? _selectata;
     private string _text = string.Empty;
     private readonly DispatcherTimer _timer;
+    private Medic? _medicNou;
+    private Pacient? _pacientNou;
+    private bool _disposed;
 
     public MessagesViewModel(ApplicationServices app, Utilizator utilizator, bool esteMedic)
     {
@@ -22,16 +41,27 @@ public class MessagesViewModel : BaseViewModel
         _utilizator = utilizator;
         _esteMedic = esteMedic;
         Conversatii = new ObservableCollection<ConversatieLista>();
-        CurrentMessages = new ObservableCollection<Mesaj>();
+        ChatItems = new ObservableCollection<MesajChatItem>();
+        MediciPentruNou = new ObservableCollection<Medic>();
+        PacientiPentruNou = new ObservableCollection<Pacient>();
+
         SendCommand = new RelayCommand(_ => _ = SendAsync(), _ => Selectata is not null && !string.IsNullOrWhiteSpace(Text));
-        _ = LoadConversatiiAsync();
-        _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(15) };
-        _timer.Tick += async (_, _) => await RefreshMesajeAsync();
+        StartConversatieNouaCommand = new AsyncRelayCommand(async _ => await StartConversatieNouaAsync(), _ => !IsStartingConversation);
+
+        _ = LoadInitialAsync();
+        _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(12) };
+        _timer.Tick += OnTimerTick;
         _timer.Start();
     }
 
+    private async void OnTimerTick(object? sender, EventArgs e) => await RefreshMesajeAsync();
+
+    public bool EsteMedic => _esteMedic;
+
     public ObservableCollection<ConversatieLista> Conversatii { get; }
-    public ObservableCollection<Mesaj> CurrentMessages { get; }
+    public ObservableCollection<MesajChatItem> ChatItems { get; }
+    public ObservableCollection<Medic> MediciPentruNou { get; }
+    public ObservableCollection<Pacient> PacientiPentruNou { get; }
 
     public ConversatieLista? Selectata
     {
@@ -40,18 +70,88 @@ public class MessagesViewModel : BaseViewModel
         {
             if (SetProperty(ref _selectata, value))
             {
+                OnPropertyChanged(nameof(HasConversation));
                 _ = LoadMesajeAsync();
             }
         }
     }
 
+    public bool HasConversation => Selectata is not null;
+
     public string Text
     {
         get => _text;
-        set => SetProperty(ref _text, value);
+        set
+        {
+            if (SetProperty(ref _text, value))
+            {
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+    }
+
+    public Medic? MedicNou
+    {
+        get => _medicNou;
+        set => SetProperty(ref _medicNou, value);
+    }
+
+    public Pacient? PacientNou
+    {
+        get => _pacientNou;
+        set => SetProperty(ref _pacientNou, value);
+    }
+
+    private bool _isStartingConversation;
+    public bool IsStartingConversation
+    {
+        get => _isStartingConversation;
+        set => SetProperty(ref _isStartingConversation, value);
     }
 
     public ICommand SendCommand { get; }
+    public ICommand StartConversatieNouaCommand { get; }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        _timer.Stop();
+        _timer.Tick -= OnTimerTick;
+    }
+
+    private async Task LoadInitialAsync()
+    {
+        try
+        {
+            if (!_esteMedic)
+            {
+                MediciPentruNou.Clear();
+                foreach (var m in await _app.Medici.GetAllAsync())
+                {
+                    MediciPentruNou.Add(m);
+                }
+            }
+            else
+            {
+                PacientiPentruNou.Clear();
+                foreach (var p in await _app.Pacienti.GetAllAsync())
+                {
+                    PacientiPentruNou.Add(p);
+                }
+            }
+
+            await LoadConversatiiAsync();
+        }
+        catch
+        {
+            // ignorat
+        }
+    }
 
     private async Task LoadConversatiiAsync()
     {
@@ -85,7 +185,7 @@ public class MessagesViewModel : BaseViewModel
                 }
             }
 
-            Selectata = Conversatii.FirstOrDefault();
+            Selectata ??= Conversatii.FirstOrDefault();
         }
         catch
         {
@@ -93,19 +193,78 @@ public class MessagesViewModel : BaseViewModel
         }
     }
 
+    private async Task StartConversatieNouaAsync()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        IsStartingConversation = true;
+        try
+        {
+            if (_esteMedic)
+            {
+                var med = await _app.Medici.GetByUtilizatorIdAsync(_utilizator.Id);
+                if (med is null || PacientNou is null)
+                {
+                    return;
+                }
+
+                _ = await _app.MesajeRepo.GetOrCreateConversatieAsync(PacientNou.Id, med.Id);
+            }
+            else
+            {
+                var p = await _app.Pacienti.GetByUtilizatorIdAsync(_utilizator.Id);
+                if (p is null || MedicNou is null)
+                {
+                    return;
+                }
+
+                _ = await _app.MesajeRepo.GetOrCreateConversatieAsync(p.Id, MedicNou.Id);
+            }
+
+            await LoadConversatiiAsync();
+            if (_esteMedic && PacientNou is not null)
+            {
+                Selectata = Conversatii.FirstOrDefault(c => c.PacientId == PacientNou.Id);
+            }
+            else if (!_esteMedic && MedicNou is not null)
+            {
+                Selectata = Conversatii.FirstOrDefault(c => c.MedicId == MedicNou.Id);
+            }
+            else
+            {
+                Selectata = Conversatii.FirstOrDefault();
+            }
+        }
+        catch
+        {
+            // ignorat
+        }
+        finally
+        {
+            IsStartingConversation = false;
+        }
+    }
+
     private async Task LoadMesajeAsync()
     {
         if (Selectata is null)
         {
+            ChatItems.Clear();
             return;
         }
 
         try
         {
-            CurrentMessages.Clear();
+            ChatItems.Clear();
             foreach (var m in await _app.MesajeRepo.GetMesajeAsync(Selectata.Id))
             {
-                CurrentMessages.Add(m);
+                var mine = m.ExpeditorId == _utilizator.Id;
+                var label = m.TrimisLa.ToString("dd.MM HH:mm");
+        var who = mine ? null : (string.IsNullOrWhiteSpace(m.ExpeditorNume) ? null : m.ExpeditorNume);
+                ChatItems.Add(new MesajChatItem(m.Continut, label, mine, who));
             }
 
             await _app.MesajeRepo.MarkReadAsync(Selectata.Id, _utilizator.Id);
@@ -118,17 +277,20 @@ public class MessagesViewModel : BaseViewModel
 
     private async Task RefreshMesajeAsync()
     {
-        if (Selectata is null)
+        if (Selectata is null || _disposed)
         {
             return;
         }
 
         try
         {
-            CurrentMessages.Clear();
+            ChatItems.Clear();
             foreach (var m in await _app.MesajeRepo.GetMesajeAsync(Selectata.Id))
             {
-                CurrentMessages.Add(m);
+                var mine = m.ExpeditorId == _utilizator.Id;
+                var label = m.TrimisLa.ToString("dd.MM HH:mm");
+        var who = mine ? null : (string.IsNullOrWhiteSpace(m.ExpeditorNume) ? null : m.ExpeditorNume);
+                ChatItems.Add(new MesajChatItem(m.Continut, label, mine, who));
             }
         }
         catch
@@ -163,6 +325,7 @@ public class MessagesViewModel : BaseViewModel
             await _app.MesajeRepo.SendAsync(mesaj);
             Text = string.Empty;
             await LoadMesajeAsync();
+            await LoadConversatiiAsync();
         }
         catch
         {

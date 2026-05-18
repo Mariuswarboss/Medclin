@@ -7,30 +7,23 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,18">
+        <!-- Filtre specialitati -->
+        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,18" Padding="20,16">
             <StackPanel>
-                <TextBlock Text="Patient Analytics" Style="{StaticResource HeadingText}" />
-                <TextBlock Text="Hover pentru context clinic rapid, apoi intră direct în fișa pacientului."
-                           Foreground="{StaticResource TextSecondaryBrush}"
-                           Margin="0,6,0,18" />
-
-                <Grid Margin="0,0,0,18">
+                <Grid Margin="0,0,0,14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBox Style="{StaticResource RoundedTextBox}"
-                             Margin="0,0,14,0"
-                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                             ToolTip="Căutare după nume sau email" />
+                    <StackPanel>
+                        <TextBlock Text="Patient Analytics" Style="{StaticResource HeadingText}" />
+                        <TextBlock Text="Alegeți pacientul pentru context clinic rapid sau creați o fișă nouă." Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                    </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Content="Fișă pacient"
-                                Style="{StaticResource PrimaryButton}"
-                                Command="{Binding OpenEMRCommand}"
-                                Margin="0,0,10,0" />
-                        <Button Content="Pacient nou"
-                                Style="{StaticResource SecondaryButton}"
-                                Command="{Binding AddPacientCommand}" />
+                        <TextBox Style="{StaticResource RoundedTextBox}" Width="260" Margin="0,0,14,0"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Căutare după nume sau email" />
+                        <Button Content="Pacient nou" Style="{StaticResource PrimaryButton}" Command="{Binding AddPacientCommand}" />
                     </StackPanel>
                 </Grid>
 
@@ -42,130 +35,92 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Content="{Binding}"
-                                    Margin="0,0,10,10"
-                                    Padding="16,8"
-                                    Command="{Binding DataContext.SelectSpecialitateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}"
-                                    Style="{StaticResource SecondaryButton}" />
+                            <Button Content="{Binding}" Margin="0,0,8,8" Command="{Binding DataContext.SelectSpecialitateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="#F8FAFC" />
+                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                                        <Setter Property="BorderBrush" Value="#E6EAF0" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="Padding" Value="16,6" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="16">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}" />
+                                                            <Setter Property="Foreground" Value="{StaticResource PrimaryGreenDarkBrush}" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="1" Style="{StaticResource CardBorder}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Grid Margin="0,0,0,14">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="160" />
-                        <ColumnDefinition Width="160" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="PACIENT" Style="{StaticResource CardTitle}" />
-                    <TextBlock Grid.Column="1" Text="PROFIL" Style="{StaticResource CardTitle}" />
-                    <TextBlock Grid.Column="2" Text="ULTIMA VIZITĂ" Style="{StaticResource CardTitle}" />
-                    <TextBlock Grid.Column="3" Text="READY" Style="{StaticResource CardTitle}" />
-                    <TextBlock Grid.Column="4" Text="FOLLOW-UP" Style="{StaticResource CardTitle}" />
-                </Grid>
-
-                <ListBox Grid.Row="1"
-                         ItemsSource="{Binding FilteredPacients}"
-                         SelectedItem="{Binding SelectedPacient}"
-                         Background="Transparent"
-                         BorderThickness="0">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="0" />
-                            <Setter Property="Margin" Value="0,0,0,12" />
-                            <Setter Property="BorderThickness" Value="0" />
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Background" Value="Transparent" />
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="Transparent" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="#FCFDFE"
-                                    BorderBrush="{StaticResource BorderBrushNeutral}"
-                                    BorderThickness="1"
-                                    CornerRadius="20"
-                                    Padding="16">
-                                <Border.ToolTip>
-                                    <ToolTip Background="Transparent" BorderThickness="0" HasDropShadow="False" Placement="MousePoint">
-                                        <Border Style="{StaticResource GlassToolTipBorder}">
-                                            <StackPanel Width="260">
-                                                <TextBlock Text="{Binding DisplayName}" FontSize="16" FontWeight="SemiBold"/>
-                                                <TextBlock Text="{Binding LastVisitText, StringFormat=Ultima vizită: {0}}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,8,0,0"/>
-                                                <TextBlock Text="{Binding AllergySummary, StringFormat=Alergii active: {0}}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </ToolTip>
-                                </Border.ToolTip>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="160" />
-                                        <ColumnDefinition Width="160" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border Width="54" Height="54" CornerRadius="27" Background="#EAF4F0" Margin="0,0,14,0">
-                                            <TextBlock Text="{Binding Initials}" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenDarkBrush}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding DisplayName}" FontSize="15" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding Email}" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,4,0,0"/>
-                                        </StackPanel>
+        <Border Grid.Row="1" Style="{StaticResource CardBorder}" Padding="20">
+            <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding FilteredPacients}" SelectedItem="{Binding SelectedPacient}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="PACIENT" Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="8,0">
+                                    <Border Width="36" Height="36" CornerRadius="18" Background="#EAF4F0" Margin="0,0,12,0">
+                                        <TextBlock Text="{Binding Initials}" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenDarkBrush}" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Email}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"/>
                                     </StackPanel>
-
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding Specialty}" FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding AgeText}" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,4,0,0"/>
-                                    </StackPanel>
-
-                                    <TextBlock Grid.Column="2" Text="{Binding LastVisitText}" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
-
-                                    <CheckBox Grid.Column="3"
-                                              Style="{StaticResource ToggleSwitchCheckBox}"
-                                              IsChecked="{Binding IsReadyForReview, Mode=TwoWay}"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-
-                                    <CheckBox Grid.Column="4"
-                                              Style="{StaticResource ToggleSwitchCheckBox}"
-                                              IsChecked="{Binding NeedsFollowUp, Mode=TwoWay}"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-
-                                    <Button Grid.Column="5"
-                                            Content="Deschide"
-                                            Style="{StaticResource SecondaryButton}"
-                                            Padding="16,0"
-                                            Height="38"
-                                            Command="{Binding DataContext.OpenEMRCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="PROFIL" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Specialty}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding AgeText}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="ULTIMA VIZITĂ" Binding="{Binding LastVisitText}" Width="*" />
+                    <DataGridTemplateColumn Header="READY" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox Style="{StaticResource ToggleSwitchCheckBox}" IsChecked="{Binding IsReadyForReview, Mode=TwoWay}" HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="FOLLOW-UP" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox Style="{StaticResource ToggleSwitchCheckBox}" IsChecked="{Binding NeedsFollowUp, Mode=TwoWay}" HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Deschide fișa" Style="{StaticResource SecondaryButton}" Height="34" Padding="12,0" MinWidth="0" FontSize="12"
+                                        Command="{Binding DataContext.OpenEMRCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
         </Border>
     </Grid>
 </UserControl>

@@ -17,17 +17,23 @@
                   SelectedItem="{Binding SelectedPeriod}"
                   Style="{StaticResource RoundedComboBox}" />
 
-        <UniformGrid Columns="4" Margin="0,0,0,16">
+        <UniformGrid Columns="5" Margin="0,0,0,16">
             <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
                 <StackPanel>
                     <TextBlock Text="{Binding CardTotal}" FontSize="26" FontWeight="SemiBold" />
-                    <TextBlock Text="Total (programări / consultații)" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                    <TextBlock Text="Total programări" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
                 <StackPanel>
                     <TextBlock Text="{Binding CardFinalizate}" FontSize="26" FontWeight="SemiBold" />
-                    <TextBlock Text="Finalizate / consultații" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                    <TextBlock Text="Programări finalizate" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="{Binding CardConsultatiiDirecte}" FontSize="26" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenBrush}" />
+                    <TextBlock Text="Fișe salvate direct" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
@@ -40,7 +46,7 @@
             <Border Style="{StaticResource CardBorder}">
                 <StackPanel>
                     <TextBlock Text="{Binding CardNeprezentate}" FontSize="26" FontWeight="SemiBold" />
-                    <TextBlock Text="Neprezentări / rată în raport" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
+                    <TextBlock Text="Neprezentări" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
         </UniformGrid>

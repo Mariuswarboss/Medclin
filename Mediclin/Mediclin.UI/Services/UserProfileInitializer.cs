@@ -1,10 +1,12 @@
 using Mediclin.Data.Models;
+using System.Linq;
 
 namespace Mediclin.UI.Services;
 
 public static class UserProfileInitializer
 {
-    public static async Task EnsureRoleProfileAsync(ApplicationServices app, Utilizator utilizator)
+    /// <param name="medicSpecialitateId">Specialitate aleasă la înregistrare (doar pentru rol medic).</param>
+    public static async Task EnsureRoleProfileAsync(ApplicationServices app, Utilizator utilizator, int? medicSpecialitateId = null)
     {
         switch ((utilizator.Rol ?? string.Empty).Trim().ToLowerInvariant())
         {
@@ -12,7 +14,7 @@ public static class UserProfileInitializer
                 await EnsurePacientProfileAsync(app, utilizator.Id);
                 break;
             case "medic":
-                await EnsureMedicProfileAsync(app, utilizator.Id);
+                await EnsureMedicProfileAsync(app, utilizator.Id, medicSpecialitateId);
                 break;
         }
     }
@@ -30,7 +32,7 @@ public static class UserProfileInitializer
         });
     }
 
-    private static async Task EnsureMedicProfileAsync(ApplicationServices app, int utilizatorId)
+    private static async Task EnsureMedicProfileAsync(ApplicationServices app, int utilizatorId, int? preferintaSpecialitateId)
     {
         if (await app.Medici.GetByUtilizatorIdAsync(utilizatorId) is not null)
         {
@@ -38,8 +40,16 @@ public static class UserProfileInitializer
         }
 
         var specialitati = await app.Specialitati.GetAllAsync();
-        var specialitateId = specialitati.FirstOrDefault()?.Id
-            ?? throw new InvalidOperationException("Nu exista specialitati configurate pentru crearea profilului de medic.");
+        int specialitateId;
+        if (preferintaSpecialitateId is > 0 && specialitati.Any(s => s.Id == preferintaSpecialitateId))
+        {
+            specialitateId = preferintaSpecialitateId.Value;
+        }
+        else
+        {
+            specialitateId = specialitati.FirstOrDefault()?.Id
+                ?? throw new InvalidOperationException("Nu există specialități configurate pentru crearea profilului de medic.");
+        }
 
         await app.Medici.CreateAsync(new Medic
         {

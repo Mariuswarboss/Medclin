@@ -230,7 +230,7 @@ public class RoleMainViewModel : BaseViewModel
             "PatientEmr" => new MyEMRView(),
             "PatientPrescriptions" => new PrescriptionsView(),
             "PatientLabs" => new LabResultsView(),
-            "PatientMessages" => new MessagesView(),
+            "PatientMessages" => new Mediclin.UI.Views.Patient.MessagesView(),
             "PatientSettings" => new AccountSettingsView(),
             "AdminDashboard" => new AdminDashboardView(),
             "AdminUsers" => new UsersManagementView(),

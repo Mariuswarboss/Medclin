@@ -76,8 +76,7 @@
                 </Grid>
 
                 <Grid Margin="0,0,0,16">
-                    <PasswordBox Height="38"
-                                 Padding="12,8"
+                    <PasswordBox Style="{StaticResource RoundedPasswordBox}"
                                  helpers:PasswordBoxHelper.BindPassword="True"
                                  helpers:PasswordBoxHelper.BoundPassword="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBlock IsHitTestVisible="False"
@@ -90,7 +89,8 @@
 
                 <Button Content="Autentificati-va"
                         Style="{StaticResource PrimaryButton}"
-                        Command="{Binding LoginCommand}" />
+                        Command="{Binding LoginCommand}"
+                        IsDefault="True" />
 
                 <ProgressBar Margin="0,12,0,0"
                              Height="4"

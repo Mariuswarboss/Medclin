@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Input;
 using Mediclin.Data.Models;
 using Mediclin.UI.Services;
@@ -17,6 +18,9 @@ public class MyEMRViewModel : BaseViewModel
     private bool _isRequestingEmr;
     private string _requestEmrMessage = string.Empty;
     private string _errorMessage = string.Empty;
+    private bool _isAssigningMedic;
+    private Medic? _selectedMedicToAssign;
+    private ConsultatieDisplay? _latestConsultatie;
 
     public MyEMRViewModel(ApplicationServices app, Utilizator utilizator)
     {
@@ -26,8 +30,10 @@ public class MyEMRViewModel : BaseViewModel
         IstoricConsltatii = new ObservableCollection<ConsultatieDisplay>();
         BolicCronice = new ObservableCollection<BolaCronica>();
         RetetActive = new ObservableCollection<RetetaDisplay>();
+        AvailableMedici = new ObservableCollection<Medic>();
         RequestEMRFromDoctorCommand = new AsyncRelayCommand(async _ => await RequestEMRFromDoctorAsync(), _ => !IsRequestingEMR);
-        DownloadPDFCommand = new RelayCommand(_ => RequestEMRMessage = "Exportul PDF va fi disponibil după actualizarea fișei medicale.");
+        DownloadPDFCommand = new RelayCommand(_ => RequestEMRMessage = "Exportul PDF va fi disponibil dupa actualizarea fisei medicale.");
+        AssignMedicCommand = new AsyncRelayCommand(async _ => await AssignMedicAsync(), _ => SelectedMedicToAssign is not null && !IsAssigningMedic);
         _ = LoadAsync();
     }
 
@@ -49,13 +55,44 @@ public class MyEMRViewModel : BaseViewModel
     public ObservableCollection<ConsultatieDisplay> IstoricConsltatii { get; private set; }
     public ObservableCollection<BolaCronica> BolicCronice { get; private set; }
     public ObservableCollection<RetetaDisplay> RetetActive { get; private set; }
+    public ObservableCollection<Medic> AvailableMedici { get; private set; }
+
+    public Medic? SelectedMedicToAssign
+    {
+        get => _selectedMedicToAssign;
+        set
+        {
+            if (SetProperty(ref _selectedMedicToAssign, value))
+            {
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+    }
 
     public bool HasMedicPrincipal { get => _hasMedicPrincipal; private set => SetProperty(ref _hasMedicPrincipal, value); }
     public string? MedicPrincipalNume { get => _medicPrincipalNume; private set => SetProperty(ref _medicPrincipalNume, value); }
     public bool IsLoading { get => _isLoading; private set => SetProperty(ref _isLoading, value); }
     public bool IsRequestingEMR { get => _isRequestingEmr; private set => SetProperty(ref _isRequestingEmr, value); }
+    public bool IsAssigningMedic { get => _isAssigningMedic; private set => SetProperty(ref _isAssigningMedic, value); }
     public string RequestEMRMessage { get => _requestEmrMessage; private set => SetProperty(ref _requestEmrMessage, value); }
     public string ErrorMessage { get => _errorMessage; private set => SetProperty(ref _errorMessage, value); }
+
+    public ConsultatieDisplay? LatestConsultatie
+    {
+        get => _latestConsultatie;
+        private set
+        {
+            if (SetProperty(ref _latestConsultatie, value))
+            {
+                OnPropertyChanged(nameof(HasConsultatie));
+            }
+        }
+    }
+
+    public bool HasConsultatie => LatestConsultatie is not null;
+    public bool HasAlergii => Alergii.Count > 0;
+    public bool HasBoliCronice => BolicCronice.Count > 0;
+    public bool HasReteteActive => RetetActive.Count > 0;
     public string Initiale => $"{(string.IsNullOrWhiteSpace(CurrentPacient?.Prenume) ? string.Empty : CurrentPacient!.Prenume![0])}{(string.IsNullOrWhiteSpace(CurrentPacient?.Nume) ? string.Empty : CurrentPacient!.Nume![0])}";
     public string NumeComplet => CurrentPacient?.NumeComplet ?? string.Empty;
     public string MetaPacient
@@ -75,6 +112,7 @@ public class MyEMRViewModel : BaseViewModel
 
     public ICommand RequestEMRFromDoctorCommand { get; }
     public ICommand DownloadPDFCommand { get; }
+    public ICommand AssignMedicCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -82,10 +120,8 @@ public class MyEMRViewModel : BaseViewModel
         IstoricConsltatii = new ObservableCollection<ConsultatieDisplay>();
         BolicCronice = new ObservableCollection<BolaCronica>();
         RetetActive = new ObservableCollection<RetetaDisplay>();
-        OnPropertyChanged(nameof(Alergii));
-        OnPropertyChanged(nameof(IstoricConsltatii));
-        OnPropertyChanged(nameof(BolicCronice));
-        OnPropertyChanged(nameof(RetetActive));
+        LatestConsultatie = null;
+        NotifyMedicalCollectionsChanged();
 
         try
         {
@@ -95,7 +131,7 @@ public class MyEMRViewModel : BaseViewModel
             var pacient = await _app.Pacienti.GetByUtilizatorIdAsync(_utilizator.Id);
             if (pacient is null || pacient.Id <= 0)
             {
-                ErrorMessage = "Nu s-au putut încărca datele medicale.";
+                ErrorMessage = "Nu s-au putut incarca datele medicale.";
                 return;
             }
 
@@ -108,18 +144,22 @@ public class MyEMRViewModel : BaseViewModel
                 _medicPrincipalUtilizatorId = medic?.UtilizatorId;
                 HasMedicPrincipal = medic is not null;
             }
+            else
+            {
+                var medici = await _app.Medici.GetAllAsync();
+                AvailableMedici = new ObservableCollection<Medic>(medici);
+                OnPropertyChanged(nameof(AvailableMedici));
+            }
 
             var alergii = await _app.Pacienti.GetAlergiiAsync(pacient.Id);
             Alergii = new ObservableCollection<Alergie>(alergii ?? new List<Alergie>());
-            OnPropertyChanged(nameof(Alergii));
 
             var boli = await _app.Pacienti.GetBolicroniceAsync(pacient.Id);
             BolicCronice = new ObservableCollection<BolaCronica>(boli ?? new List<BolaCronica>());
-            OnPropertyChanged(nameof(BolicCronice));
 
             var consultatii = await _app.ConsultatiiRepo.GetByPacientAsync(pacient.Id);
             IstoricConsltatii = new ObservableCollection<ConsultatieDisplay>((consultatii ?? new List<Consultatie>()).Select(c => new ConsultatieDisplay(c)));
-            OnPropertyChanged(nameof(IstoricConsltatii));
+            LatestConsultatie = IstoricConsltatii.FirstOrDefault();
 
             var retete = await _app.ReteteRepo.GetActiveAsync(pacient.Id);
             var retetaList = new List<RetetaDisplay>();
@@ -130,11 +170,11 @@ public class MyEMRViewModel : BaseViewModel
             }
 
             RetetActive = new ObservableCollection<RetetaDisplay>(retetaList);
-            OnPropertyChanged(nameof(RetetActive));
+            NotifyMedicalCollectionsChanged();
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Eroare la încărcarea fișei: {ex.Message}";
+            ErrorMessage = $"Eroare la incarcarea fisei: {ex.Message}";
             await _app.JurnalRepo.LogAsync("LOAD_EMR_ERROR", "MyEMRViewModel", ex.Message, "Eroare", _utilizator.Id);
         }
         finally
@@ -143,11 +183,23 @@ public class MyEMRViewModel : BaseViewModel
         }
     }
 
+    private void NotifyMedicalCollectionsChanged()
+    {
+        OnPropertyChanged(nameof(Alergii));
+        OnPropertyChanged(nameof(IstoricConsltatii));
+        OnPropertyChanged(nameof(BolicCronice));
+        OnPropertyChanged(nameof(RetetActive));
+        OnPropertyChanged(nameof(HasAlergii));
+        OnPropertyChanged(nameof(HasBoliCronice));
+        OnPropertyChanged(nameof(HasReteteActive));
+        OnPropertyChanged(nameof(HasConsultatie));
+    }
+
     private async Task RequestEMRFromDoctorAsync()
     {
         if (!HasMedicPrincipal || !_medicPrincipalUtilizatorId.HasValue || CurrentPacient is null)
         {
-            RequestEMRMessage = "Nu ai un medic de familie asociat. Contactează clinica pentru a-ți asigna un medic.";
+            RequestEMRMessage = "Nu ai un medic de familie asociat. Contacteaza clinica pentru a-ti asigna un medic.";
             return;
         }
 
@@ -156,20 +208,47 @@ public class MyEMRViewModel : BaseViewModel
             IsRequestingEMR = true;
             await _app.NotificariRepo.CreateAsync(
                 _medicPrincipalUtilizatorId.Value,
-                "Solicitare fișă medicală",
-                $"Pacientul {CurrentPacient.NumeComplet} solicită vizualizarea/actualizarea fișei medicale.",
+                "Solicitare fisa medicala",
+                $"Pacientul {CurrentPacient.NumeComplet} solicita vizualizarea/actualizarea fisei medicale.",
                 "Mesaj",
                 $"/emr/{CurrentPacient.Id}");
-            RequestEMRMessage = $"Solicitare trimisă către {MedicPrincipalNume}. Vei fi notificat când fișa este actualizată.";
+            RequestEMRMessage = $"Solicitare trimisa catre {MedicPrincipalNume}. Vei fi notificat cand fisa este actualizata.";
         }
         catch (Exception ex)
         {
-            RequestEMRMessage = $"Solicitarea nu a putut fi trimisă: {ex.Message}";
+            RequestEMRMessage = $"Solicitarea nu a putut fi trimisa: {ex.Message}";
             await _app.JurnalRepo.LogAsync("REQUEST_EMR_ERROR", "MyEMRViewModel", ex.Message, "Eroare", _utilizator.Id);
         }
         finally
         {
             IsRequestingEMR = false;
+        }
+    }
+
+    private async Task AssignMedicAsync()
+    {
+        if (SelectedMedicToAssign is null || CurrentPacient is null) return;
+
+        try
+        {
+            IsAssigningMedic = true;
+            CurrentPacient.MedicDeFamilieId = SelectedMedicToAssign.Id;
+            await _app.Pacienti.UpdateAsync(CurrentPacient);
+
+            MedicPrincipalNume = SelectedMedicToAssign.NumeCompletCuTitlu;
+            _medicPrincipalUtilizatorId = SelectedMedicToAssign.UtilizatorId;
+            HasMedicPrincipal = true;
+
+            await _app.JurnalRepo.LogAsync("ASSIGN_MEDIC", "MyEMRViewModel", $"Pacientul {CurrentPacient.Id} si-a ales medicul {SelectedMedicToAssign.Id}", "Info", _utilizator.Id);
+            RequestEMRMessage = "Medicul de familie a fost setat cu succes.";
+        }
+        catch (Exception ex)
+        {
+            RequestEMRMessage = $"Eroare la setarea medicului: {ex.Message}";
+        }
+        finally
+        {
+            IsAssigningMedic = false;
         }
     }
 }
@@ -180,30 +259,74 @@ public class ConsultatieDisplay
     {
         DataText = consultatie.DataConsultatie.ToString("dd.MM.yyyy HH:mm");
         MedicNume = consultatie.MedicNume ?? "Medic";
-        Diagnostic = string.IsNullOrWhiteSpace(consultatie.DiagnosticText) ? "Fără diagnostic completat" : consultatie.DiagnosticText!;
+        MedicSubtitlu = string.IsNullOrWhiteSpace(consultatie.Specialitate) ? MedicNume : $"{MedicNume} · {consultatie.Specialitate}";
+        Simptome = consultatie.Simptome ?? string.Empty;
+        DiagnosticCod = consultatie.DiagnosticCod ?? string.Empty;
+        Diagnostic = string.IsNullOrWhiteSpace(consultatie.DiagnosticText) ? "Fara diagnostic completat" : consultatie.DiagnosticText!;
         Recomandari = consultatie.Recomandari ?? string.Empty;
+        Tensiune = string.IsNullOrWhiteSpace(consultatie.TensiuneArteriala) ? "-" : consultatie.TensiuneArteriala!;
+        Puls = consultatie.Puls?.ToString(CultureInfo.InvariantCulture) ?? "-";
+        Temperatura = consultatie.Temperatura?.ToString("0.##", CultureInfo.InvariantCulture) ?? "-";
+        Greutate = consultatie.Greutate?.ToString("0.##", CultureInfo.InvariantCulture) ?? "-";
+        Inaltime = consultatie.Inaltime?.ToString("0.##", CultureInfo.InvariantCulture) ?? "-";
     }
 
     public string DataText { get; }
     public string MedicNume { get; }
+    public string MedicSubtitlu { get; }
+    public string Simptome { get; }
+    public string DiagnosticCod { get; }
     public string Diagnostic { get; }
     public string Recomandari { get; }
+    public string Tensiune { get; }
+    public string Puls { get; }
+    public string Temperatura { get; }
+    public string Greutate { get; }
+    public string Inaltime { get; }
+    public string DiagnosticCuCod => string.IsNullOrWhiteSpace(DiagnosticCod) ? Diagnostic : $"{DiagnosticCod} · {Diagnostic}";
 }
 
 public class RetetaDisplay
 {
     public RetetaDisplay(Reteta reteta, IEnumerable<Medicament> medicamente)
     {
+        Id = reteta.Id;
         MedicNume = reteta.MedicNume ?? "Medic";
         DataText = reteta.DataEmitere.ToString("dd.MM.yyyy");
-        ExpiraText = reteta.DataExpirare.HasValue ? reteta.DataExpirare.Value.ToString("dd.MM.yyyy") : "fără expirare";
-        MedicamenteText = string.Join(", ", medicamente.Select(m => m.Denumire).Where(x => !string.IsNullOrWhiteSpace(x)));
+        ExpiraText = reteta.DataExpirare.HasValue ? reteta.DataExpirare.Value.ToString("dd.MM.yyyy") : "fara expirare";
+        Observatii = reteta.Observatii ?? string.Empty;
+        Medicamente = new ObservableCollection<MedicamentDisplay>(medicamente.Select(m => new MedicamentDisplay(m)));
+        MedicamenteText = Medicamente.Count == 0 ? "Fara medicamente completate" : string.Join(", ", Medicamente.Select(m => m.NumeScurt));
         Status = reteta.Status;
     }
 
+    public int Id { get; }
     public string MedicNume { get; }
     public string DataText { get; }
     public string ExpiraText { get; }
     public string MedicamenteText { get; }
+    public string Observatii { get; }
     public string Status { get; }
+    public ObservableCollection<MedicamentDisplay> Medicamente { get; }
+}
+
+public class MedicamentDisplay
+{
+    public MedicamentDisplay(Medicament medicament)
+    {
+        NumeScurt = string.Join(" ", new[] { medicament.Denumire, medicament.Concentratie, medicament.Forma }
+            .Where(x => !string.IsNullOrWhiteSpace(x)));
+        CantitateText = $"Cant. {medicament.Cantitate}";
+        DozajText = string.IsNullOrWhiteSpace(medicament.Dozaj) ? "Dozaj necompletat" : medicament.Dozaj!;
+        FrecventaText = medicament.Frecventa ?? string.Empty;
+        DurataText = medicament.DurataZile.HasValue ? $"{medicament.DurataZile.Value} zile" : string.Empty;
+        Instructiuni = medicament.Instructiuni ?? string.Empty;
+    }
+
+    public string NumeScurt { get; }
+    public string CantitateText { get; }
+    public string DozajText { get; }
+    public string FrecventaText { get; }
+    public string DurataText { get; }
+    public string Instructiuni { get; }
 }

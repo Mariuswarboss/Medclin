@@ -254,6 +254,23 @@
                     </ToggleButton>
                 </Grid>
 
+                <StackPanel Margin="0,0,0,16" Visibility="{Binding IsMedicSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Specialitate medicală"
+                               FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,8" />
+                    <ComboBox ItemsSource="{Binding Specialitati}"
+                              SelectedItem="{Binding SelectedSpecialitate, Mode=TwoWay}"
+                              DisplayMemberPath="Nume"
+                              Height="40"
+                              Padding="8,4" />
+                    <TextBlock Text="Specialitatea apare pe profilul dvs. și la verificarea de către administrator."
+                               FontSize="11"
+                               Foreground="{StaticResource TextTertiaryBrush}"
+                               Margin="0,8,0,0"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
                 <ProgressBar IsIndeterminate="True"
                              Height="3"
                              Margin="0,0,0,10"

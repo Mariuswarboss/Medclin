@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Input;
 using Mediclin.Business.Services;
@@ -77,7 +78,8 @@ public class PatientMainViewModel : BaseViewModel
 
     private void Navigate(string section)
     {
-        CurrentView = section switch
+        var previous = CurrentView;
+        var next = section switch
         {
             "PatientDashboard" => new PatientDashboardView { DataContext = new PatientDashboardViewModel(_app, _utilizator) },
             "PatientAppointments" => new MyAppointmentsView { DataContext = new MyAppointmentsViewModel(_app, _utilizator) },
@@ -88,6 +90,11 @@ public class PatientMainViewModel : BaseViewModel
             "PatientSettings" => new AccountSettingsView { DataContext = new AccountSettingsViewModel(_app, _utilizator) },
             _ => CurrentView
         };
+        CurrentView = next;
+        if (previous is IDisposable d && !ReferenceEquals(previous, next))
+        {
+            d.Dispose();
+        }
     }
 
     private void Logout()

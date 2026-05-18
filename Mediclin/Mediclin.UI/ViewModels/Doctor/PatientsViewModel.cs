@@ -14,17 +14,19 @@ public class PatientsViewModel : BaseViewModel
     private readonly ApplicationServices _app;
     private readonly Action<Pacient> _openEmr;
     private readonly DispatcherTimer _searchDebounceTimer;
+    private readonly int _medicId;
+    private readonly int _specialitateId;
     private string _searchText = string.Empty;
-    private string _selectedSpecialitate = "Toți";
     private PatientAnalyticsItem? _selectedPacient;
 
-    public PatientsViewModel(ApplicationServices app, Action<Pacient> openEmr)
+    public PatientsViewModel(ApplicationServices app, Action<Pacient> openEmr, int medicId = 0, int specialitateId = 0)
     {
         _app = app;
         _openEmr = openEmr;
+        _medicId = medicId;
+        _specialitateId = specialitateId;
         AllPacients = new ObservableCollection<PatientAnalyticsItem>();
         FilteredPacients = new ObservableCollection<PatientAnalyticsItem>();
-        Specialitati = new ObservableCollection<string> { "Toți" };
 
         _searchDebounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
         _searchDebounceTimer.Tick += (_, _) =>
@@ -45,13 +47,6 @@ public class PatientsViewModel : BaseViewModel
                 _ = LoadAsync();
             }
         });
-        SelectSpecialitateCommand = new RelayCommand(parameter =>
-        {
-            if (parameter is string specialitate)
-            {
-                SelectedSpecialitate = specialitate;
-            }
-        });
         SearchCommand = new RelayCommand(_ => ApplyFilter());
 
         _ = LoadAsync();
@@ -59,7 +54,6 @@ public class PatientsViewModel : BaseViewModel
 
     public ObservableCollection<PatientAnalyticsItem> AllPacients { get; }
     public ObservableCollection<PatientAnalyticsItem> FilteredPacients { get; }
-    public ObservableCollection<string> Specialitati { get; }
 
     public string SearchText
     {
@@ -74,18 +68,6 @@ public class PatientsViewModel : BaseViewModel
         }
     }
 
-    public string SelectedSpecialitate
-    {
-        get => _selectedSpecialitate;
-        set
-        {
-            if (SetProperty(ref _selectedSpecialitate, value))
-            {
-                ApplyFilter();
-            }
-        }
-    }
-
     public PatientAnalyticsItem? SelectedPacient
     {
         get => _selectedPacient;
@@ -95,23 +77,23 @@ public class PatientsViewModel : BaseViewModel
     public ICommand OpenEMRCommand { get; }
     public ICommand AddPacientCommand { get; }
     public ICommand SearchCommand { get; }
-    public ICommand SelectSpecialitateCommand { get; }
 
     private async Task LoadAsync()
     {
         try
         {
-            Specialitati.Clear();
-            Specialitati.Add("Toți");
-            foreach (var name in (await _app.Specialitati.GetAllAsync()).Select(x => x.Nume))
+            List<Pacient> pacients;
+
+            // Dacă avem specialitateId, filtrăm pacienții pe specialitate
+            if (_specialitateId > 0)
             {
-                if (!Specialitati.Contains(name))
-                {
-                    Specialitati.Add(name);
-                }
+                pacients = await _app.Pacienti.GetByMedicSpecialitateAsync(_specialitateId);
+            }
+            else
+            {
+                pacients = await _app.Pacienti.GetAllAsync();
             }
 
-            var pacients = await _app.Pacienti.GetAllAsync();
             var items = await Task.WhenAll(pacients.Select(async pacient =>
             {
                 var allergies = await _app.Pacienti.GetAlergiiAsync(pacient.Id);
@@ -141,11 +123,6 @@ public class PatientsViewModel : BaseViewModel
             query = query.Where(item =>
                 item.DisplayName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
                 item.Email.Contains(term, StringComparison.OrdinalIgnoreCase));
-        }
-
-        if (!string.Equals(SelectedSpecialitate, "Toți", StringComparison.OrdinalIgnoreCase))
-        {
-            query = query.Where(item => string.Equals(item.Specialty, SelectedSpecialitate, StringComparison.OrdinalIgnoreCase));
         }
 
         FilteredPacients.Clear();

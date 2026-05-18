@@ -45,7 +45,7 @@ public class AdminMainViewModel : BaseViewModel
             "AdminDashboard" => new AdminDashboardView { DataContext = new AdminDashboardViewModel(_app) },
             "AdminUsers" => new UsersManagementView { DataContext = new UsersViewModel(_app) },
             "AdminDoctors" => new DoctorsVerificationView { DataContext = new DoctorsVerificationViewModel(_app) },
-            "AdminFinancial" => new FinancialView(),
+            "AdminFinancial" => new FinancialView { DataContext = new FinancialViewModel(_app) },
             "AdminLogs" => new AuditLogsView { DataContext = new AuditLogsViewModel(_app) },
             "AdminSettings" => new GlobalSettingsView { DataContext = new GlobalSettingsViewModel(_app) },
             _ => CurrentView

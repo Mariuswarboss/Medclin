@@ -76,6 +76,31 @@ public class DatabaseContext
         return ExecuteScalarAsync(sql, parameters);
     }
 
+    public async Task<int> ExecuteInsertAsync(
+        string sql,
+        Dictionary<string, object>? parameters = null)
+    {
+        try
+        {
+            await using var conexiune = ConnectionFactory.GetConnection();
+            await conexiune.OpenAsync();
+
+            if (!sql.TrimEnd().EndsWith("LAST_INSERT_ID();"))
+            {
+                sql = sql.TrimEnd(';') + "; SELECT LAST_INSERT_ID();";
+            }
+
+            await using var command = BuildCommand(conexiune, sql, parameters);
+            var result = await command.ExecuteScalarAsync();
+            return Convert.ToInt32(result);
+        }
+        catch (Exception ex)
+        {
+            await LogErrorAsync("ExecuteInsertAsync", sql, ex);
+            throw;
+        }
+    }
+
     private static MySqlCommand BuildCommand(
         MySqlConnection conexiune,
         string sql,

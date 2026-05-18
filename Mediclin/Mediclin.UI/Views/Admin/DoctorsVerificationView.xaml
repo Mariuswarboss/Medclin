@@ -1,40 +1,50 @@
 <UserControl x:Class="Mediclin.UI.Views.Admin.DoctorsVerificationView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel Margin="24">
-        <TextBlock Text="Verificare medici" Style="{StaticResource HeadingText}" />
+    <DockPanel Margin="24">
+        <TextBlock DockPanel.Dock="Top" Text="Verificare medici" Style="{StaticResource HeadingText}" />
         <TabControl Margin="0,16,0,0">
             <TabItem Header="În așteptare">
-                <ItemsControl ItemsSource="{Binding DoctorApprovals}" Margin="16">
-                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Style="{StaticResource CardBorder}" Width="330" Margin="0,0,12,12">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Name}" Style="{StaticResource SectionTitleText}" />
-                                    <TextBlock Text="{Binding Specialty}" Style="{StaticResource MutedText}" />
-                                    <TextBlock Text="{Binding Checklist}" TextWrapping="Wrap" Margin="0,8,0,0" />
-                                    <TextBlock Text="{Binding StatusLabel}" Foreground="{StaticResource PrimaryGreenBrush}" Margin="0,8,0,0" />
-                                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                                        <Button Content="Aprobă" Style="{StaticResource PrimaryButton}" Command="{Binding DataContext.ApproveDoctorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,0,8,0" />
-                                        <Button Content="Respinge" Style="{StaticResource DangerButton}" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,8,0,0">
+                    <ItemsControl ItemsSource="{Binding InAsteptare}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource CardBorder}" Width="340" Margin="0,0,14,14" Padding="16">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding NumeCompletCuTitlu}" Style="{StaticResource SectionTitleText}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding SpecialitateNume}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
+                                        <TextBlock Text="{Binding CodMedic}" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,8,0,0" />
+                                        <TextBlock Text="Profil nou — verificați documentele și aprobați sau respingeți." TextWrapping="Wrap" Margin="0,10,0,0" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                            <Button Content="Aprobă" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" Padding="14,8"
+                                                    Command="{Binding DataContext.AprobaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}" />
+                                            <Button Content="Respinge" Style="{StaticResource DangerButton}" Padding="14,8"
+                                                    Command="{Binding DataContext.RespingeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}" />
+                                        </StackPanel>
                                     </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="Verificați">
-                <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding DoctorApprovals}" Margin="16">
+                <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding Verificati}" Margin="0,8,0,0" AutoGenerateColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Medic" Binding="{Binding Name}" Width="*" />
-                        <DataGridTextColumn Header="Specialitate" Binding="{Binding Specialty}" Width="180" />
-                        <DataGridTextColumn Header="Status" Binding="{Binding StatusLabel}" Width="160" />
+                        <DataGridTextColumn Header="Medic" Binding="{Binding NumeCompletCuTitlu}" Width="2*" />
+                        <DataGridTextColumn Header="Specialitate" Binding="{Binding SpecialitateNume}" Width="*" />
+                        <DataGridTextColumn Header="Cod" Binding="{Binding CodMedic}" Width="120" />
+                        <DataGridTextColumn Header="Durată consultație" Binding="{Binding DurataText}" Width="130" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
         </TabControl>
-        <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource MutedText}" />
-    </StackPanel>
+    </DockPanel>
 </UserControl>

@@ -30,11 +30,15 @@ public class EMRViewModel : BaseViewModel
     private string _greutate = string.Empty;
     private string _inaltime = string.Empty;
     private bool _isSaving;
+    private bool _isTrimiting;
     private bool _showSaveToast;
     private bool _isSaveToastSuccess;
     private string _saveToastMessage = string.Empty;
     private string _saveToastIcon = "✓";
     private bool _isLoading;
+    private string _searchQuery = string.Empty;
+    private bool _isSearching;
+    private bool _isSearchPanelVisible;
 
     public EMRViewModel(ApplicationServices app, Utilizator utilizator, Pacient? pacient, int medicId = 0)
     {
@@ -58,9 +62,16 @@ public class EMRViewModel : BaseViewModel
         };
 
         SaveConsultatieCommand = new AsyncRelayCommand(async _ => await SaveAsync(), _ => CurrentPacient is not null && _medicId > 0 && !IsSaving);
+        SaveDraftCommand = new AsyncRelayCommand(async _ => await SaveDraftAsync(), _ => CurrentPacient is not null && _medicId > 0 && !IsSaving && !IsTrimiting);
+        TrimiteRezultatCommand = new AsyncRelayCommand(async _ => await TrimiteRezultatAsync(), _ => CurrentPacient is not null && _medicId > 0 && !IsSaving && !IsTrimiting);
         EmiteRetetaCommand = new AsyncRelayCommand(async _ => await EmiteAsync(), _ => CurrentPacient is not null && CurrentConsultatie is not null && CurrentConsultatie.Id > 0 && !IsSaving);
         LoadPatientCommand = new AsyncRelayCommand(async _ => await ReloadAsync());
+        StartConsultatieNouaCommand = new AsyncRelayCommand(async _ => await StartNouaAsync(), _ => CurrentPacient is not null && _medicId > 0 && !IsSaving);
+        SearchCommand = new AsyncRelayCommand(async _ => await ExecuteSearchAsync());
+        SelectPatientCommand = new AsyncRelayCommand(async p => { if (p is Pacient pac) await SelectPatientAsync(pac); });
 
+        SearchResults = new ObservableCollection<Pacient>();
+        IsSearchPanelVisible = CurrentPacient is null;
         _ = InitializeAsync();
     }
 
@@ -172,6 +183,16 @@ public class EMRViewModel : BaseViewModel
         set => SetProperty(ref _isSaving, value);
     }
 
+    public bool IsTrimiting
+    {
+        get => _isTrimiting;
+        set
+        {
+            if (SetProperty(ref _isTrimiting, value))
+                CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
     public bool ShowSaveToast
     {
         get => _showSaveToast;
@@ -201,6 +222,32 @@ public class EMRViewModel : BaseViewModel
         get => _isLoading;
         set => SetProperty(ref _isLoading, value);
     }
+
+    public string SearchQuery
+    {
+        get => _searchQuery;
+        set
+        {
+            if (SetProperty(ref _searchQuery, value) && value.Length >= 2)
+                _ = ExecuteSearchAsync();
+            else if (value.Length < 2)
+                SearchResults.Clear();
+        }
+    }
+
+    public bool IsSearching
+    {
+        get => _isSearching;
+        set => SetProperty(ref _isSearching, value);
+    }
+
+    public bool IsSearchPanelVisible
+    {
+        get => _isSearchPanelVisible;
+        set => SetProperty(ref _isSearchPanelVisible, value);
+    }
+
+    public ObservableCollection<Pacient> SearchResults { get; }
 
     public bool HasPatientSelected => CurrentPacient is not null;
     public string CurrentPatientInitials => string.Concat((CurrentPacient?.NumeComplet ?? "P").Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(part => part[0])).ToUpperInvariant();
@@ -234,8 +281,70 @@ public class EMRViewModel : BaseViewModel
     }
 
     public ICommand SaveConsultatieCommand { get; }
+    public ICommand SaveDraftCommand { get; }
+    public ICommand TrimiteRezultatCommand { get; }
     public ICommand EmiteRetetaCommand { get; }
     public ICommand LoadPatientCommand { get; }
+    public ICommand StartConsultatieNouaCommand { get; }
+    public ICommand SearchCommand { get; }
+    public ICommand SelectPatientCommand { get; }
+
+    // ── Search ──────────────────────────────────────────────────
+    private async Task ExecuteSearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_searchQuery) || _searchQuery.Length < 2)
+        {
+            SearchResults.Clear();
+            return;
+        }
+
+        try
+        {
+            IsSearching = true;
+            var results = await _app.Pacienti.SearchByNameAsync(_searchQuery);
+            SearchResults.Clear();
+            foreach (var p in results)
+                SearchResults.Add(p);
+        }
+        catch
+        {
+            SearchResults.Clear();
+        }
+        finally
+        {
+            IsSearching = false;
+        }
+    }
+
+    private async Task SelectPatientAsync(Pacient pacient)
+    {
+        CurrentPacient = pacient;
+        IsSearchPanelVisible = false;
+        SearchQuery = string.Empty;
+        SearchResults.Clear();
+
+        // Reset form fields
+        Simptome = string.Empty;
+        DiagnosticCod = string.Empty;
+        DiagnosticText = string.Empty;
+        Recomandari = string.Empty;
+        NotePrvate = string.Empty;
+        Tensiune = string.Empty;
+        Puls = string.Empty;
+        Temperatura = string.Empty;
+        Greutate = string.Empty;
+        Inaltime = string.Empty;
+        SelectedDiagnosisOption = null;
+        CurrentConsultatie = null;
+
+        OnPropertyChanged(nameof(HasPatientSelected));
+        OnPropertyChanged(nameof(CurrentPatientInitials));
+        OnPropertyChanged(nameof(CurrentPatientMeta));
+        OnPropertyChanged(nameof(CanStartNew));
+        CommandManager.InvalidateRequerySuggested();
+
+        await ReloadAsync();
+    }
 
     private async Task InitializeAsync()
     {
@@ -294,8 +403,11 @@ public class EMRViewModel : BaseViewModel
             }
             else
             {
+                // Fără programare azi - afişăm ultima consultație din istoric (read-only)
                 CurrentConsultatie = IstoricConsltatii.FirstOrDefault();
             }
+
+            OnPropertyChanged(nameof(CanStartNew));
 
             if (CurrentConsultatie is not null)
             {
@@ -328,9 +440,11 @@ public class EMRViewModel : BaseViewModel
         SelectedDiagnosisOption = DiagnosisOptions.FirstOrDefault(option => option.Code == consultatie.DiagnosticCod);
     }
 
-    private async Task SaveAsync()
+    public bool CanStartNew => CurrentPacient is not null && _medicId > 0;
+
+    private async Task StartNouaAsync()
     {
-        if (CurrentPacient is null || CurrentConsultatie is null)
+        if (CurrentPacient is null || _medicId <= 0)
         {
             return;
         }
@@ -338,30 +452,55 @@ public class EMRViewModel : BaseViewModel
         try
         {
             IsSaving = true;
-            CurrentConsultatie.Simptome = Simptome;
-            CurrentConsultatie.DiagnosticCod = DiagnosticCod;
-            CurrentConsultatie.DiagnosticText = DiagnosticText;
-            CurrentConsultatie.Recomandari = Recomandari;
-            CurrentConsultatie.NotePrivate = NotePrvate;
-            CurrentConsultatie.TensiuneArteriala = string.IsNullOrWhiteSpace(Tensiune) ? null : Tensiune;
-            CurrentConsultatie.Puls = int.TryParse(Puls, out var pulse) ? pulse : null;
-            CurrentConsultatie.Temperatura = decimal.TryParse(Temperatura, NumberStyles.Any, CultureInfo.InvariantCulture, out var temperature) ? temperature : null;
-            CurrentConsultatie.Greutate = decimal.TryParse(Greutate, NumberStyles.Any, CultureInfo.InvariantCulture, out var weight) ? weight : null;
-            CurrentConsultatie.Inaltime = decimal.TryParse(Inaltime, NumberStyles.Any, CultureInfo.InvariantCulture, out var height) ? height : null;
+            CurrentConsultatie = await _app.Consultatii.StartConsultatieFaraProgramareAsync(CurrentPacient.Id, _medicId);
+            // Resetam campurile pentru o noua consultatie
+            Simptome = string.Empty;
+            DiagnosticCod = string.Empty;
+            DiagnosticText = string.Empty;
+            Recomandari = string.Empty;
+            NotePrvate = string.Empty;
+            Tensiune = string.Empty;
+            Puls = string.Empty;
+            Temperatura = string.Empty;
+            Greutate = string.Empty;
+            Inaltime = string.Empty;
+            SelectedDiagnosisOption = null;
+            OnPropertyChanged(nameof(CanStartNew));
+            CommandManager.InvalidateRequerySuggested();
+            await ShowToastAsync(true, "Consultație nouă inițiată!");
+        }
+        catch (Exception ex)
+        {
+            await ShowToastAsync(false, $"Eroare: {ex.Message}");
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
 
-            var (ok, error) = await _app.Consultatii.SaveConsultatieAsync(CurrentConsultatie);
+    private async Task SaveAsync()
+    {
+        if (CurrentPacient is null || CurrentConsultatie is null) return;
+
+        try
+        {
+            IsSaving = true;
+            BuildConsultatieFromFields(CurrentConsultatie);
+
+            var (ok, error) = await _app.Consultatii.SaveDraftAsync(CurrentConsultatie);
             if (!ok)
             {
-                await ShowToastAsync(false, $"Save Failed: {error}");
+                await ShowToastAsync(false, $"Eroare: {error}");
                 return;
             }
 
-            await ShowToastAsync(true, "Record Saved Successfully");
+            await ShowToastAsync(true, "Fișă salvată cu succes");
             await ReloadAsync();
         }
         catch (Exception ex)
         {
-            await ShowToastAsync(false, $"Save Failed: {ex.Message}");
+            await ShowToastAsync(false, $"Eroare la salvare: {ex.Message}");
             await _app.JurnalRepo.LogAsync("SAVE_DOCTOR_EMR_ERROR", "DoctorEMR", ex.Message, "Eroare", _utilizator.Id);
         }
         finally
@@ -369,6 +508,99 @@ public class EMRViewModel : BaseViewModel
             IsSaving = false;
             CommandManager.InvalidateRequerySuggested();
         }
+    }
+
+    private async Task SaveDraftAsync()
+    {
+        if (CurrentPacient is null) return;
+
+        try
+        {
+            IsSaving = true;
+
+            // Dacă nu există consultație activă, creăm una nouă
+            if (CurrentConsultatie is null || CurrentConsultatie.Id <= 0)
+            {
+                CurrentConsultatie = await _app.Consultatii.StartConsultatieFaraProgramareAsync(
+                    CurrentPacient.Id, _medicId);
+            }
+
+            BuildConsultatieFromFields(CurrentConsultatie);
+
+            var (ok, error) = await _app.Consultatii.SaveDraftAsync(CurrentConsultatie);
+            if (!ok)
+            {
+                await ShowToastAsync(false, $"Eroare: {error}");
+                return;
+            }
+
+            await ShowToastAsync(true, "Draft salvat ✓");
+        }
+        catch (Exception ex)
+        {
+            await ShowToastAsync(false, $"Eroare la salvare draft: {ex.Message}");
+        }
+        finally
+        {
+            IsSaving = false;
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    private async Task TrimiteRezultatAsync()
+    {
+        if (CurrentPacient is null) return;
+
+        try
+        {
+            IsTrimiting = true;
+
+            if (CurrentConsultatie is null || CurrentConsultatie.Id <= 0)
+            {
+                CurrentConsultatie = await _app.Consultatii.StartConsultatieFaraProgramareAsync(
+                    CurrentPacient.Id, _medicId);
+            }
+
+            BuildConsultatieFromFields(CurrentConsultatie);
+
+            var (ok, error) = await _app.Consultatii.TrimiteRezultatAsync(
+                CurrentConsultatie,
+                CurrentPacient.UtilizatorId,
+                _app.NotificariRepo);
+
+            if (!ok)
+            {
+                await ShowToastAsync(false, $"Eroare la trimitere: {error}");
+                return;
+            }
+
+            await ShowToastAsync(true, "Fișa a fost trimisă pacientului ✓");
+            await ReloadAsync();
+        }
+        catch (Exception ex)
+        {
+            await ShowToastAsync(false, $"Eroare: {ex.Message}");
+        }
+        finally
+        {
+            IsTrimiting = false;
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    /// <summary>Copiază valorile din câmpuri în obiectul Consultatie.</summary>
+    private void BuildConsultatieFromFields(Consultatie c)
+    {
+        c.Simptome           = Simptome;
+        c.DiagnosticCod      = DiagnosticCod;
+        c.DiagnosticText     = DiagnosticText;
+        c.Recomandari        = Recomandari;
+        c.NotePrivate        = NotePrvate;
+        c.TensiuneArteriala  = string.IsNullOrWhiteSpace(Tensiune) ? null : Tensiune;
+        c.Puls               = int.TryParse(Puls, out var p)    ? p    : null;
+        c.Temperatura        = decimal.TryParse(Temperatura, NumberStyles.Any, CultureInfo.InvariantCulture, out var t) ? t : null;
+        c.Greutate           = decimal.TryParse(Greutate,    NumberStyles.Any, CultureInfo.InvariantCulture, out var g) ? g : null;
+        c.Inaltime           = decimal.TryParse(Inaltime,    NumberStyles.Any, CultureInfo.InvariantCulture, out var h) ? h : null;
     }
 
     private async Task EmiteAsync()

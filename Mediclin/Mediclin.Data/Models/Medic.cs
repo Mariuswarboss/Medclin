@@ -33,7 +33,7 @@ public class Medic
     public string? SpecialitateNume { get; set; }
     public string NumeComplet => $"{Prenume} {Nume}".Trim();
     public string NumeCompletCuTitlu => $"{Titlu} {Prenume} {Nume}".Trim();
-    public string Initiale => $"{(string.IsNullOrWhiteSpace(Prenume) ? string.Empty : Prenume[0])}{(string.IsNullOrWhiteSpace(Nume) ? string.Empty : Nume[0])}";
+    public string Initiale => $"{(string.IsNullOrWhiteSpace(Prenume) ? ' ' : Prenume[0])}{(string.IsNullOrWhiteSpace(Nume) ? ' ' : Nume[0])}".ToUpper().Trim();
     public string TarifText => TarifConsultatie > 0 ? $"{TarifConsultatie:N0} MDL" : "Gratuit";
     public string DurataText => $"{DurataConsultatie} min";
 }

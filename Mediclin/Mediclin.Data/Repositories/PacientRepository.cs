@@ -122,6 +122,48 @@ public class PacientRepository : IRepository<Pacient>
         }
     }
 
+    /// <summary>
+    /// Returns patients who have had a programare or consultatie with doctors of the given specialty.
+    /// Used to restrict each doctor's patient list to their specialty.
+    /// </summary>
+    public async Task<List<Pacient>> GetByMedicSpecialitateAsync(int specialitateId)
+    {
+        try
+        {
+            const string sql = """
+                SELECT DISTINCT p.*, u.prenume, u.nume, u.email, u.telefon,
+                       (SELECT s2.nume
+                        FROM consultatii c2
+                        INNER JOIN medici m2 ON m2.id = c2.medic_id
+                        INNER JOIN specialitati s2 ON s2.id = m2.specialitate_id
+                        WHERE c2.pacient_id = p.id
+                        ORDER BY c2.data_consultatie DESC
+                        LIMIT 1) AS specialitate_nume,
+                       (SELECT MAX(c3.data_consultatie) FROM consultatii c3 WHERE c3.pacient_id = p.id) AS ultima_vizita
+                FROM pacienti p
+                INNER JOIN utilizatori u ON u.id = p.utilizator_id
+                WHERE u.activ = 1
+                  AND p.id IN (
+                      SELECT DISTINCT pr.pacient_id
+                      FROM programari pr
+                      INNER JOIN medici m ON m.id = pr.medic_id
+                      WHERE m.specialitate_id = @sid
+                      UNION
+                      SELECT DISTINCT c.pacient_id
+                      FROM consultatii c
+                      INNER JOIN medici m ON m.id = c.medic_id
+                      WHERE m.specialitate_id = @sid
+                  )
+                ORDER BY u.nume, u.prenume
+                """;
+            return (await _db.QueryAsync(sql, new Dictionary<string, object> { ["@sid"] = specialitateId })).Select(MapJoined).ToList();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Lista pacienților pe specialitate nu a putut fi încărcată.", ex);
+        }
+    }
+
     public async Task<int> CreateAsync(Pacient pacient)
     {
         try

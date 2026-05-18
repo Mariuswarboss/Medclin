@@ -137,6 +137,23 @@
                         </StackPanel>
                     </Button>
 
+                    <Button Command="{Binding NavigateToMesajeCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource ActiveSidebarButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveNav}" Value="Mesaje">
+                                        <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}" />
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryGreenDarkBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="" FontFamily="Segoe Fluent Icons" Margin="0,0,12,0"/>
+                            <TextBlock Text="Mesaje pacienți"/>
+                        </StackPanel>
+                    </Button>
+
                     <Button Command="{Binding NavigateToSetariCommand}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource ActiveSidebarButton}">

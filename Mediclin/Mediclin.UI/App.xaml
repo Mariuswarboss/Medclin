@@ -20,6 +20,9 @@
             <conv:AnalyzeStatusToColorConverter x:Key="AnalyzeStatusToColorConverter" />
             <conv:AgeFromBirthConverter x:Key="AgeFromBirthConverter" />
             <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <conv:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+            <conv:ZeroToInverseVisibilityConverter x:Key="ZeroToInverseVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -13,6 +13,8 @@ public class GlobalSettingsViewModel : BaseViewModel
     private int _maxLogin = 5;
     private bool _twoFa;
     private string _apiKey = string.Empty;
+    private string _sectiune = "General";
+    private string _mesaj = string.Empty;
 
     public GlobalSettingsViewModel(ApplicationServices app)
     {
@@ -21,6 +23,14 @@ public class GlobalSettingsViewModel : BaseViewModel
         SalveazaSecuritateCommand = new RelayCommand(_ => _ = SalveazaSecuritateAsync());
         RegenereazaApiCommand = new RelayCommand(_ => _ = RegenereazaApiAsync());
         CopiazaApiCommand = new RelayCommand(_ => System.Windows.Clipboard.SetText(ApiKey));
+        SchimbaSectiuneCommand = new RelayCommand(p =>
+        {
+            if (p is string s)
+            {
+                Sectiune = s;
+                Mesaj = string.Empty;
+            }
+        });
         _ = IncarcaAsync();
     }
 
@@ -60,10 +70,23 @@ public class GlobalSettingsViewModel : BaseViewModel
         set => SetProperty(ref _apiKey, value);
     }
 
+    public string Sectiune
+    {
+        get => _sectiune;
+        set => SetProperty(ref _sectiune, value);
+    }
+
+    public string Mesaj
+    {
+        get => _mesaj;
+        set => SetProperty(ref _mesaj, value);
+    }
+
     public ICommand SalveazaGeneralCommand { get; }
     public ICommand SalveazaSecuritateCommand { get; }
     public ICommand RegenereazaApiCommand { get; }
     public ICommand CopiazaApiCommand { get; }
+    public ICommand SchimbaSectiuneCommand { get; }
 
     private async Task IncarcaAsync()
     {
@@ -83,6 +106,7 @@ public class GlobalSettingsViewModel : BaseViewModel
     {
         await _app.Setari.SetValoareAsync("clinic_name", ClinicName);
         await _app.Setari.SetValoareAsync("clinic_phone", ClinicPhone);
+        Mesaj = "Setările generale au fost salvate.";
     }
 
     private async Task SalveazaSecuritateAsync()
@@ -90,6 +114,7 @@ public class GlobalSettingsViewModel : BaseViewModel
         await _app.Setari.SetValoareAsync("session_timeout_min", TimeoutMinute.ToString());
         await _app.Setari.SetValoareAsync("max_login_attempts", MaxLogin.ToString());
         await _app.Setari.SetValoareAsync("two_fa_required", TwoFa ? "1" : "0");
+        Mesaj = "Setările de securitate au fost salvate.";
     }
 
     private async Task RegenereazaApiAsync()

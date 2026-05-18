@@ -2,27 +2,110 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid Margin="24">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="180" /><ColumnDefinition /></Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
         <StackPanel>
-            <Button Content="General" Style="{StaticResource SidebarMenuItem}" />
-            <Button Content="Securitate" Style="{StaticResource SidebarMenuItem}" />
-            <Button Content="API" Style="{StaticResource SidebarMenuItem}" />
+            <Button Content="General" Style="{StaticResource SidebarMenuItem}" Command="{Binding SchimbaSectiuneCommand}" CommandParameter="General" />
+            <Button Content="Securitate" Style="{StaticResource SidebarMenuItem}" Command="{Binding SchimbaSectiuneCommand}" CommandParameter="Securitate" />
+            <Button Content="API" Style="{StaticResource SidebarMenuItem}" Command="{Binding SchimbaSectiuneCommand}" CommandParameter="API" />
         </StackPanel>
-        <Border Grid.Column="1" Style="{StaticResource CardBorder}">
+
+        <!-- General Section -->
+        <Border Grid.Column="1">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource CardBorder}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Sectiune}" Value="General">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
             <StackPanel>
-                <TextBlock Text="Setări globale" Style="{StaticResource HeadingText}" />
-                <TextBox Style="{StaticResource RoundedTextBox}" Text="Nume clinică: MediClin" Margin="0,14,0,8" />
+                <TextBlock Text="Setări globale - General" Style="{StaticResource HeadingText}" />
+                
+                <TextBlock Text="Nume clinică" Style="{StaticResource FieldLabel}" Margin="0,14,0,0"/>
+                <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding ClinicName, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,8" />
+                
+                <TextBlock Text="Telefon clinică" Style="{StaticResource FieldLabel}"/>
+                <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding ClinicPhone, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,16" />
+
                 <TextBlock Text="Culoare primară" Style="{StaticResource LabelText}" />
-                <StackPanel Orientation="Horizontal" Margin="0,8">
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,16">
                     <Rectangle Fill="{StaticResource PrimaryGreenBrush}" Width="28" Height="28" Margin="0,0,8,0" />
                     <Rectangle Fill="{StaticResource AccentGreenBrush}" Width="28" Height="28" Margin="0,0,8,0" />
                     <Rectangle Fill="{StaticResource BlueInfoBrush}" Width="28" Height="28" />
                 </StackPanel>
-                <CheckBox Content="Autentificare în doi pași obligatorie" />
-                <TextBlock Text="Timeout sesiune" Style="{StaticResource LabelText}" Margin="0,12,0,0" />
-                <Slider Minimum="15" Maximum="180" Value="60" Width="260" HorizontalAlignment="Left" />
-                <Button Content="Salvează" Style="{StaticResource PrimaryButton}" Command="{Binding ExportCommand}" CommandParameter="setari" HorizontalAlignment="Left" Margin="0,14,0,0" />
-                <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource MutedText}" Margin="0,12,0,0" />
+
+                <Button Content="Salvează" Style="{StaticResource PrimaryButton}" Command="{Binding SalveazaGeneralCommand}" HorizontalAlignment="Left" />
+                
+                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+            </StackPanel>
+        </Border>
+
+        <!-- Securitate Section -->
+        <Border Grid.Column="1">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource CardBorder}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Sectiune}" Value="Securitate">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel>
+                <TextBlock Text="Setări globale - Securitate" Style="{StaticResource HeadingText}" />
+                
+                <CheckBox Content="Autentificare în doi pași obligatorie" IsChecked="{Binding TwoFa}" Margin="0,14,0,12" />
+                
+                <TextBlock Text="Timeout sesiune (minute)" Style="{StaticResource LabelText}" />
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,12">
+                    <Slider Minimum="15" Maximum="180" Value="{Binding TimeoutMinute}" Width="260" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding TimeoutMinute}" Margin="12,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                </StackPanel>
+
+                <TextBlock Text="Încercări maxime de autentificare eșuate" Style="{StaticResource LabelText}" />
+                <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding MaxLogin, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left" Margin="0,8,0,16" />
+
+                <Button Content="Salvează" Style="{StaticResource PrimaryButton}" Command="{Binding SalveazaSecuritateCommand}" HorizontalAlignment="Left" />
+                
+                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+            </StackPanel>
+        </Border>
+
+        <!-- API Section -->
+        <Border Grid.Column="1">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource CardBorder}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Sectiune}" Value="API">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel>
+                <TextBlock Text="Setări globale - API" Style="{StaticResource HeadingText}" />
+                
+                <TextBlock Text="Cheie API curentă" Style="{StaticResource FieldLabel}" Margin="0,14,0,0"/>
+                <Grid Margin="0,4,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Style="{StaticResource RoundedTextBox}" Text="{Binding ApiKey, Mode=OneWay}" IsReadOnly="True" Margin="0,0,8,0" />
+                    <Button Grid.Column="1" Content="Copiază" Style="{StaticResource SecondaryButton}" Command="{Binding CopiazaApiCommand}" />
+                </Grid>
+
+                <Button Content="Regenerează cheie API" Style="{StaticResource PrimaryButton}" Background="#C0392B" BorderBrush="#C0392B" Command="{Binding RegenereazaApiCommand}" HorizontalAlignment="Left" />
+                
+                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
             </StackPanel>
         </Border>
     </Grid>

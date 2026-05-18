@@ -22,6 +22,7 @@ public class AccountSettingsViewModel : BaseViewModel
     private string _parolaNoua = string.Empty;
     private string _parolaConfirm = string.Empty;
     private string _mesaj = string.Empty;
+    private string _avatarUrl = string.Empty;
 
     public AccountSettingsViewModel(ApplicationServices app, Utilizator utilizator)
     {
@@ -31,9 +32,18 @@ public class AccountSettingsViewModel : BaseViewModel
         _nume = utilizator.Nume;
         _telefon = utilizator.Telefon ?? string.Empty;
         _email = utilizator.Email;
+        _avatarUrl = utilizator.AvatarUrl ?? string.Empty;
         SalveazaProfilCommand = new RelayCommand(_ => _ = SalveazaProfilAsync());
         SchimbaParolaCommand = new RelayCommand(_ => _ = SchimbaParolaAsync());
         SalveazaNotificariCommand = new RelayCommand(_ => _ = SalveazaNotificariAsync());
+        SchimbaSectiuneCommand = new RelayCommand(p =>
+        {
+            if (p is string s)
+            {
+                Sectiune = s;
+                Mesaj = string.Empty;
+            }
+        });
         _ = IncarcaOrasAsync();
     }
 
@@ -103,9 +113,16 @@ public class AccountSettingsViewModel : BaseViewModel
         set => SetProperty(ref _mesaj, value);
     }
 
+    public string AvatarUrl
+    {
+        get => _avatarUrl;
+        set => SetProperty(ref _avatarUrl, value);
+    }
+
     public ICommand SalveazaProfilCommand { get; }
     public ICommand SchimbaParolaCommand { get; }
     public ICommand SalveazaNotificariCommand { get; }
+    public ICommand SchimbaSectiuneCommand { get; }
 
     private async Task IncarcaOrasAsync()
     {
@@ -138,6 +155,7 @@ public class AccountSettingsViewModel : BaseViewModel
             u.Nume = Nume;
             u.Telefon = string.IsNullOrWhiteSpace(Telefon) ? null : Telefon;
             u.Email = Email;
+            u.AvatarUrl = string.IsNullOrWhiteSpace(AvatarUrl) ? null : AvatarUrl;
             await _app.Utilizatori.UpdateAsync(u);
 
             var p = await _app.Pacienti.GetByUtilizatorIdAsync(_utilizator.Id);

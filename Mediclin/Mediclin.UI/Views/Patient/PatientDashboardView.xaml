@@ -50,22 +50,53 @@
 
                     <TextBlock Text="Filtrează după specialitate:" Style="{StaticResource FieldLabel}"/>
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,6,0,12">
-                        <ItemsControl ItemsSource="{Binding Specialitati}">
-                            <ItemsControl.ItemsPanel>
+                        <ListBox ItemsSource="{Binding Specialitati}"
+                                 SelectedItem="{Binding SelectedSpecialitate, Mode=TwoWay}"
+                                 BorderThickness="0" Background="Transparent">
+                            <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"/>
+                                    <StackPanel Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="14,8" />
+                                    <Setter Property="Margin" Value="0,0,8,0" />
+                                    <Setter Property="Background" Value="White" />
+                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                                    <Setter Property="BorderBrush" Value="{StaticResource BorderBrushNeutral}" />
+                                    <Setter Property="BorderThickness" Value="1" />
+                                    <Setter Property="Cursor" Value="Hand" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="18">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}" />
+                                            <Setter Property="Foreground" Value="{StaticResource PrimaryGreenDarkBrush}" />
+                                            <Setter Property="BorderBrush" Value="{StaticResource AccentGreenBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F8FAFC" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Content="{Binding Nume, TargetNullValue='', FallbackValue=''}"
-                                            Style="{StaticResource SecondaryButton}"
-                                            Margin="0,0,6,0"
-                                            Command="{Binding DataContext.FilterDoctorsBySpecialtyCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}"/>
+                                    <TextBlock Text="{Binding Nume}" />
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </ScrollViewer>
 
                     <TextBlock Text="Selectează medicul:" Style="{StaticResource FieldLabel}"/>
@@ -143,7 +174,7 @@
                                 <Button Margin="4"
                                         Width="72"
                                         Height="34"
-                                        Content="{Binding StringFormat={}{0:HH:mm}}"
+                                        Content="{Binding HourText}"
                                         Style="{StaticResource SecondaryButton}"
                                         Command="{Binding DataContext.SelectSlotCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding}"/>

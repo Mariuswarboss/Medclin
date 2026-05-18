@@ -153,7 +153,8 @@ public class ConsultatieRepository : IRepository<Consultatie>
     private static Dictionary<string, object> Params(Consultatie c) => new()
     {
         ["@id"] = c.Id,
-        ["@programare_id"] = c.ProgramareId,
+        // Salvăm NULL când nu există o programare atașată (consultație directă)
+        ["@programare_id"] = c.ProgramareId > 0 ? (object)c.ProgramareId : DBNull.Value,
         ["@pacient_id"] = c.PacientId,
         ["@medic_id"] = c.MedicId,
         ["@data_consultatie"] = c.DataConsultatie == default ? DateTime.Now : c.DataConsultatie,
@@ -180,7 +181,8 @@ public class ConsultatieRepository : IRepository<Consultatie>
     private static Consultatie MapPlain(Dictionary<string, object> row) => new()
     {
         Id = Convert.ToInt32(row["id"]),
-        ProgramareId = Convert.ToInt32(row["programare_id"]),
+        // programare_id poate fi NULL pentru consultații directe (fără programare)
+        ProgramareId = row["programare_id"] == DBNull.Value ? 0 : Convert.ToInt32(row["programare_id"]),
         PacientId = Convert.ToInt32(row["pacient_id"]),
         MedicId = Convert.ToInt32(row["medic_id"]),
         DataConsultatie = Convert.ToDateTime(row["data_consultatie"]),

@@ -19,6 +19,7 @@ public class DoctorMainViewModel : BaseViewModel
     private object? _currentView;
     private Medic? _medic;
     private int _medicId;
+    private int _specialitateId;
     private bool _isLoading;
     private string _errorMessage = string.Empty;
     private int _pacientiCount;
@@ -37,6 +38,7 @@ public class DoctorMainViewModel : BaseViewModel
         NavigateToProgramariCommand = new AsyncRelayCommand(async _ => await NavigateProgramariAsync());
         NavigateToEmrCommand = new RelayCommand(_ => NavigateEmr());
         NavigateToRapoarteCommand = new AsyncRelayCommand(async _ => await NavigateRapoarteAsync());
+        NavigateToMesajeCommand = new RelayCommand(_ => NavigateMesaje());
         NavigateToSetariCommand = new RelayCommand(_ => NavigateSetari());
         LogoutCommand = new RelayCommand(_ => Logout());
 
@@ -93,6 +95,7 @@ public class DoctorMainViewModel : BaseViewModel
     public ICommand NavigateToProgramariCommand { get; }
     public ICommand NavigateToEmrCommand { get; }
     public ICommand NavigateToRapoarteCommand { get; }
+    public ICommand NavigateToMesajeCommand { get; }
     public ICommand NavigateToSetariCommand { get; }
     public ICommand LogoutCommand { get; }
 
@@ -171,6 +174,7 @@ public class DoctorMainViewModel : BaseViewModel
         {
             _medic = await _app.Medici.GetByUtilizatorIdAsync(_utilizator.Id);
             _medicId = _medic?.Id ?? 0;
+            _specialitateId = _medic?.SpecialitateId ?? 0;
         }
 
         var vm = new DashboardViewModel(_app, _utilizator, _medicId);
@@ -181,7 +185,7 @@ public class DoctorMainViewModel : BaseViewModel
     private void NavigatePacienti()
     {
         ActiveNav = "Pacienti";
-        var vm = new PatientsViewModel(_app, OpenEmrCuPacient);
+        var vm = new PatientsViewModel(_app, OpenEmrCuPacient, _medicId, _specialitateId);
         var view = new PatientsView { DataContext = vm };
         NavigateTo(view);
     }
@@ -189,15 +193,33 @@ public class DoctorMainViewModel : BaseViewModel
     private async Task NavigateProgramariAsync()
     {
         ActiveNav = "Programari";
-        if (_medicId <= 0)
+        try
         {
-            _medic = await _app.Medici.GetByUtilizatorIdAsync(_utilizator.Id);
-            _medicId = _medic?.Id ?? 0;
-        }
+            if (_medicId <= 0)
+            {
+                _medic = await _app.Medici.GetByUtilizatorIdAsync(_utilizator.Id);
+                _medicId = _medic?.Id ?? 0;
+            }
 
-        var vm = new AppointmentsViewModel(_app, _utilizator, _medicId, RefreshCountsPublicAsync);
-        var view = new AppointmentsView { DataContext = vm };
-        NavigateTo(view);
+            var vm = new AppointmentsViewModel(
+                _medicId,
+                _utilizator.Id,
+                _utilizator.NumeComplet);
+
+            await vm.LoadAsync();
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var view = new AppointmentsView();
+                view.DataContext = vm;
+                NavigateTo(view);
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"[NAV ERROR] Programari: {ex}");
+        }
     }
 
     private void NavigateEmr()
@@ -230,10 +252,17 @@ public class DoctorMainViewModel : BaseViewModel
         NavigateTo(view);
     }
 
+    private void NavigateMesaje()
+    {
+        ActiveNav = "Mesaje";
+        var view = new MessagesView { DataContext = new Mediclin.UI.ViewModels.Patient.MessagesViewModel(_app, _utilizator, true) };
+        NavigateTo(view);
+    }
+
     private void NavigateSetari()
     {
         ActiveNav = "Setari";
-        var view = new SettingsView { DataContext = new SettingsViewModel(_utilizator) };
+        var view = new SettingsView { DataContext = new SettingsViewModel(_app, _utilizator) };
         NavigateTo(view);
     }
 
