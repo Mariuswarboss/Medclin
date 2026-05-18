@@ -274,4 +274,27 @@ public class RetetaRepository : IRepository<Reteta>
         Status = row["status"].ToString() ?? string.Empty,
         Observatii = row["observatii"] == DBNull.Value ? null : row["observatii"].ToString()
     };
+
+    private static object ToDbText(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? (object)DBNull.Value : value.Trim();
+    }
+
+    private static string RequiredText(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? "-" : value.Trim();
+    }
+
+    private static string NormalizeForma(string? forma)
+    {
+        if (string.IsNullOrWhiteSpace(forma))
+        {
+            return "Comprimat";
+        }
+
+        var trimmed = forma.Trim();
+        return FormePermise.Contains(trimmed)
+            ? FormePermise.First(x => x.Equals(trimmed, StringComparison.OrdinalIgnoreCase))
+            : "Alt";
+    }
 }

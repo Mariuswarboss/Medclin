@@ -23,7 +23,10 @@
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="Formă" Style="{StaticResource FieldLabel}" />
-                        <TextBox Text="{Binding Forma}" Style="{StaticResource RoundedTextBox}" Margin="0,4,0,0" />
+                        <ComboBox ItemsSource="{Binding FormaOptions}"
+                                  SelectedItem="{Binding Forma, UpdateSourceTrigger=PropertyChanged}"
+                                  Style="{StaticResource RoundedComboBox}"
+                                  Margin="0,4,0,0" />
                     </StackPanel>
                 </UniformGrid>
                 <UniformGrid Columns="3" Margin="0,10,0,0">
@@ -55,7 +58,7 @@
 
                 <TextBlock Text="Linii rețetă" Style="{StaticResource SectionTitleText}" Margin="0,20,0,8" />
                 <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding Medicamente}"
-                          AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200">
+                          AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Medicament" Binding="{Binding Denumire}" Width="*" />
                         <DataGridTextColumn Header="Cant." Binding="{Binding Cantitate}" Width="60" />

@@ -29,6 +29,7 @@ public class RetetaService
         int consultatieId, int pacientId, int medicId,
         List<Medicament> medicamente, string observatii)
     {
+        var retetaId = 0;
         try
         {
             if (medicamente is null || medicamente.Count == 0)
@@ -48,7 +49,7 @@ public class RetetaService
                 Observatii = string.IsNullOrWhiteSpace(observatii) ? null : observatii
             };
 
-            var retetaId = await _retete.CreateAsync(reteta);
+            retetaId = await _retete.CreateAsync(reteta);
             foreach (var m in medicamente)
             {
                 m.RetetaId = retetaId;
@@ -71,6 +72,18 @@ public class RetetaService
         }
         catch (Exception ex)
         {
+            if (retetaId > 0)
+            {
+                try
+                {
+                    await _retete.DeleteAsync(retetaId);
+                }
+                catch
+                {
+                    // Daca stergerea compensatorie esueaza, pastram eroarea initiala.
+                }
+            }
+
             await _jurnal.WriteAsync(_utilizatorCurentId(), "EmiteRetetaAsync", "Retete", ex.Message, "127.0.0.1", "Error");
             return (false, ex.Message, 0);
         }

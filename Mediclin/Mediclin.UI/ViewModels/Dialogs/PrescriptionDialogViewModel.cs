@@ -11,7 +11,7 @@ public class PrescriptionDialogViewModel : BaseViewModel
     private readonly Window _window;
     private string _denumire = string.Empty;
     private string _concentratie = string.Empty;
-    private string _forma = string.Empty;
+    private string _forma = "Comprimat";
     private string _cantitate = "1";
     private string _dozaj = string.Empty;
     private string _frecventa = string.Empty;
@@ -23,17 +23,34 @@ public class PrescriptionDialogViewModel : BaseViewModel
     {
         _window = window;
         Medicamente = new ObservableCollection<Medicament>();
+        FormaOptions = new ObservableCollection<string>
+        {
+            "Comprimat",
+            "Capsula",
+            "Sirop",
+            "Injectie",
+            "Crema",
+            "Picaturi",
+            "Alt"
+        };
         AddMedicamentCommand = new RelayCommand(_ => AddMedicament(), _ => !string.IsNullOrWhiteSpace(Denumire));
         EmitCommand = new RelayCommand(_ => Emit(), _ => Medicamente.Count > 0);
         CancelCommand = new RelayCommand(_ => { _window.DialogResult = false; _window.Close(); });
     }
 
     public ObservableCollection<Medicament> Medicamente { get; }
+    public ObservableCollection<string> FormaOptions { get; }
 
     public string Denumire
     {
         get => _denumire;
-        set => SetProperty(ref _denumire, value);
+        set
+        {
+            if (SetProperty(ref _denumire, value))
+            {
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
     }
 
     public string Concentratie
@@ -94,16 +111,24 @@ public class PrescriptionDialogViewModel : BaseViewModel
         {
             RetetaId = 0,
             Denumire = Denumire.Trim(),
-            Concentratie = string.IsNullOrWhiteSpace(Concentratie) ? null : Concentratie,
-            Forma = string.IsNullOrWhiteSpace(Forma) ? null : Forma,
+            Concentratie = string.IsNullOrWhiteSpace(Concentratie) ? null : Concentratie.Trim(),
+            Forma = string.IsNullOrWhiteSpace(Forma) ? "Comprimat" : Forma.Trim(),
             Cantitate = int.TryParse(Cantitate, out var c) ? c : 1,
-            Dozaj = string.IsNullOrWhiteSpace(Dozaj) ? null : Dozaj,
-            Frecventa = string.IsNullOrWhiteSpace(Frecventa) ? null : Frecventa,
+            Dozaj = string.IsNullOrWhiteSpace(Dozaj) ? "-" : Dozaj.Trim(),
+            Frecventa = string.IsNullOrWhiteSpace(Frecventa) ? "-" : Frecventa.Trim(),
             DurataZile = int.TryParse(DurataZile, out var d) ? d : null,
             Instructiuni = string.IsNullOrWhiteSpace(_instructiuni) ? null : _instructiuni.Trim()
         };
         Medicamente.Add(m);
         Denumire = string.Empty;
+        Concentratie = string.Empty;
+        Forma = "Comprimat";
+        Cantitate = "1";
+        Dozaj = string.Empty;
+        Frecventa = string.Empty;
+        DurataZile = "7";
+        Instructiuni = string.Empty;
+        CommandManager.InvalidateRequerySuggested();
     }
 
     private void Emit()
