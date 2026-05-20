@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
         <StackPanel>
-            <Border Background="#E8F4EF" CornerRadius="12" Padding="16" BorderBrush="#B8DCC8" BorderThickness="1">
+            <Border Background="{DynamicResource PrimaryLightBrush}" CornerRadius="12" Padding="16" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="Prezentare generală" Style="{StaticResource HeadingText}" Margin="0,0,0,6" />
-                    <TextBlock Text="{Binding SanatateSistem}" TextWrapping="Wrap" Foreground="{StaticResource TextPrimaryBrush}" FontSize="14" />
+                    <TextBlock Text="{Binding SanatateSistem}" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14" />
                 </StackPanel>
             </Border>
 
@@ -20,9 +20,9 @@
                     <DataTemplate>
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,12,12" Padding="16">
                             <StackPanel>
-                                <TextBlock Text="{Binding Valoare}" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenDarkBrush}" />
-                                <TextBlock Text="{Binding Titlu}" FontWeight="SemiBold" Margin="0,8,0,4" Foreground="{StaticResource TextPrimaryBrush}" />
-                                <TextBlock Text="{Binding Subtitlu}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Valoare}" FontSize="28" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryGreenDarkBrush}" />
+                                <TextBlock Text="{Binding Titlu}" FontWeight="SemiBold" Margin="0,8,0,4" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                <TextBlock Text="{Binding Subtitlu}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" />
                             </StackPanel>
                         </Border>
                     </DataTemplate>
@@ -37,13 +37,13 @@
 
                 <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="0,0,16,0" Padding="0">
                     <DockPanel LastChildFill="True">
-                        <Border DockPanel.Dock="Top" Padding="16,14" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="#FAFCFD">
+                        <Border DockPanel.Dock="Top" Padding="16,14" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="{DynamicResource SurfaceRaisedBrush}">
                             <TextBlock Text="Activitate recentă (jurnal)" Style="{StaticResource SectionTitleText}" Margin="0" />
                         </Border>
                         <ItemsControl ItemsSource="{Binding JournalLines}" Margin="8,8,8,12">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Padding="12,10" Margin="0,0,0,8" Background="White" CornerRadius="10" BorderBrush="#E5E9EF" BorderThickness="1">
+                                    <Border Padding="12,10" Margin="0,0,0,8" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="10" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="110" />
@@ -54,13 +54,13 @@
                                                 <Border CornerRadius="6" Padding="6,2" Margin="0,6,0,0" HorizontalAlignment="Left">
                                                     <Border.Style>
                                                         <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="#E3F2FD" />
+                                                            <Setter Property="Background" Value="{DynamicResource BlueInfoBgBrush}" />
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding Severitate}" Value="Eroare">
-                                                                    <Setter Property="Background" Value="#FFEBEE" />
+                                                                    <Setter Property="Background" Value="{DynamicResource ErrorBgBrush}" />
                                                                 </DataTrigger>
                                                                 <DataTrigger Binding="{Binding Severitate}" Value="Avertisment">
-                                                                    <Setter Property="Background" Value="#FFF8E1" />
+                                                                    <Setter Property="Background" Value="{DynamicResource WarningBgBrush}" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -70,11 +70,11 @@
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" Margin="12,0,0,0">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Utilizator}" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
-                                                    <TextBlock Text=" · " FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" />
-                                                    <TextBlock Text="{Binding Modul}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                                    <TextBlock Text="{Binding Utilizator}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                                    <TextBlock Text=" · " FontSize="12" Foreground="{DynamicResource TextTertiaryBrush}" />
+                                                    <TextBlock Text="{Binding Modul}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
                                                 </StackPanel>
-                                                <TextBlock Text="{Binding Actiune}" Margin="0,6,0,0" TextWrapping="Wrap" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                <TextBlock Text="{Binding Actiune}" Margin="0,6,0,0" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
@@ -87,7 +87,7 @@
                 <Border Grid.Column="1" Style="{StaticResource CardBorder}" Padding="16">
                     <StackPanel>
                         <TextBlock Text="Rezumat rapid" Style="{StaticResource SectionTitleText}" Margin="0,0,0,12" />
-                        <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" LineHeight="22">
+                        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" LineHeight="22">
                             <Run Text="Utilizați „Utilizatori” pentru activare / dezactivare conturi." />
                             <LineBreak />
                             <Run Text="În „Medici” aprobați profilurile noi; specialitatea este setată la înregistrare." />

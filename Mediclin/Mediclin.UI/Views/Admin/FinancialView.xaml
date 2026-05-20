@@ -8,19 +8,19 @@
         <UniformGrid DockPanel.Dock="Top" Columns="3" Margin="0,0,0,20">
             <Border Style="{StaticResource CardBorder}" Margin="0,0,12,0" Padding="16">
                 <StackPanel>
-                    <TextBlock Text="Venit estimat (lună)" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
-                    <TextBlock Text="{Binding VenitLunarText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" Foreground="{StaticResource PrimaryGreenDarkBrush}" />
+                    <TextBlock Text="Venit estimat (lună)" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding VenitLunarText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" Foreground="{DynamicResource PrimaryGreenDarkBrush}" />
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource CardBorder}" Margin="0,0,12,0" Padding="16">
                 <StackPanel>
-                    <TextBlock Text="Consultații în perioadă" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="Consultații în perioadă" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
                     <TextBlock Text="{Binding ConsultatiiText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" />
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource CardBorder}" Padding="16">
                 <StackPanel>
-                    <TextBlock Text="Tarif mediu estimat" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="Tarif mediu estimat" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
                     <TextBlock Text="{Binding TarifMediuText}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" />
                 </StackPanel>
             </Border>
@@ -28,7 +28,7 @@
 
         <Border Style="{StaticResource CardBorder}" Padding="0">
             <DockPanel LastChildFill="True">
-                <Border DockPanel.Dock="Top" Padding="16,12" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="#FAFCFD">
+                <Border DockPanel.Dock="Top" Padding="16,12" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="{DynamicResource SurfaceRaisedBrush}">
                     <TextBlock Text="Consultații pe zi (luna curentă)" Style="{StaticResource SectionTitleText}" Margin="0" />
                 </Border>
                 <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding Zilnic}" AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="420">

@@ -16,6 +16,7 @@ public class AdminMainViewModel : BaseViewModel
     private readonly IAuthService _auth;
     private readonly ApplicationServices _app;
     private object? _currentView;
+    private string _activeNav = "Dashboard";
 
     public AdminMainViewModel(Utilizator utilizator, IAuthService auth, ApplicationServices app)
     {
@@ -34,12 +35,29 @@ public class AdminMainViewModel : BaseViewModel
         set => SetProperty(ref _currentView, value);
     }
 
+    public string ActiveNav
+    {
+        get => _activeNav;
+        set => SetProperty(ref _activeNav, value);
+    }
+
     public ICommand NavigateCommand { get; }
     public ICommand LogoutCommand { get; }
     public Action? CloseAction { get; set; }
 
     private void Navigate(string section)
     {
+        ActiveNav = section switch
+        {
+            "AdminDashboard" => "Dashboard",
+            "AdminUsers" => "Users",
+            "AdminDoctors" => "Doctors",
+            "AdminFinancial" => "Financial",
+            "AdminLogs" => "Logs",
+            "AdminSettings" => "Settings",
+            _ => ActiveNav
+        };
+
         CurrentView = section switch
         {
             "AdminDashboard" => new AdminDashboardView { DataContext = new AdminDashboardViewModel(_app) },

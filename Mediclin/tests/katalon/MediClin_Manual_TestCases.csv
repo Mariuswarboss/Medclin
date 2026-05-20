@@ -1,0 +1,11 @@
+ID,Functionalitate,Date introduse,Rezultat asteptat,Rezultat obtinut,Concluzie
+TC-01,Login pacient,"Email si parola valide","Se deschide dashboard-ul pacientului","Dashboard pacient afisat","Admis"
+TC-02,Login cu date gresite,"Email/parola invalide","Aplicatia afiseaza mesaj de eroare","Autentificarea este refuzata","Admis"
+TC-03,Navigare pacient,"Click pe toate paginile din meniu","Fiecare pagina se deschide fara blocare","Paginile sunt accesibile","Admis"
+TC-04,Selectare consultatie din istoric,"Click pe o consultatie existenta","Campurile fisei se completeaza automat","Datele consultatiei apar in boxuri","Admis"
+TC-05,Reinnoire reteta,"Selectare reteta si solicitare reinnoire","Medicul de familie vede cererea","Cererea apare la medic","Admis"
+TC-06,Login medic,"Cont medic valid","Se deschide workspace-ul medicului","Workspace medic afisat","Admis"
+TC-07,Cautare pacient,"Text introdus in campul de cautare","Lista se filtreaza dupa pacient","Pacientul cautat ramane vizibil","Admis"
+TC-08,Adaugare alergie,"Denumire alergie si salvare","Alergia apare in lista pacientului","Alergia este memorata","Admis"
+TC-09,Transmitere rezultate analize,"Valori laborator completate de medic","Pacientul vede rezultatele la Analize","Rezultatele sunt afisate la pacient","Admis"
+TC-10,Pagina financiara,"Accesare Financiar","Se afiseaza estimarile financiare","Datele financiare sunt vizibile","Admis"

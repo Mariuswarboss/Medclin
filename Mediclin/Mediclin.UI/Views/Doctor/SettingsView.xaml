@@ -39,10 +39,15 @@
                     
                     <TextBlock Text="Tarif consultație (MDL)" Style="{StaticResource FieldLabel}"/>
                     <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding TarifConsultatie, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,16"/>
+                                        <TextBlock Text="Aspect" Style="{StaticResource SectionTitleText}" Margin="0,12,0,8"/>
+                    <UniformGrid Columns="2" Margin="0,0,0,16" HorizontalAlignment="Left">
+                        <Button Content="Albă" Style="{StaticResource SecondaryButton}" Command="{Binding SchimbaTemaCuloareCommand}" CommandParameter="Light" Margin="0,0,8,0" />
+                        <Button Content="Neagră" Style="{StaticResource SecondaryButton}" Command="{Binding SchimbaTemaCuloareCommand}" CommandParameter="Dark" />
+                    </UniformGrid>
+                    <TextBlock Text="{Binding ThemeStatusText}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,16" />
+                                        <Button Content="Salvează modificările" Style="{StaticResource PrimaryButton}" Command="{Binding SalveazaCommand}" HorizontalAlignment="Left"/>
                     
-                    <Button Content="Salvează modificările" Style="{StaticResource PrimaryButton}" Command="{Binding SalveazaCommand}" HorizontalAlignment="Left"/>
-                    
-                    <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
                 </StackPanel>
             </Border>
         </StackPanel>

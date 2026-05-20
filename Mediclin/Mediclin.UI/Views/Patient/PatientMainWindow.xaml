@@ -1,46 +1,210 @@
 <Window x:Class="Mediclin.UI.Views.Patient.PatientMainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MediClin - Pacient" MinHeight="700" MinWidth="1200" Height="760" Width="1240" WindowStartupLocation="CenterScreen" Background="{StaticResource BackgroundSecondaryBrush}">
-    <Grid>
+        Title="MediClin - Patient"
+        Icon="/Assets/logo-mediclin.png"
+        MinWidth="1120"
+        MinHeight="720"
+        Height="820"
+        Width="1380"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Window.Resources>
+        <Style x:Key="ModuleDockButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+            <Setter Property="Height" Value="66" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="Padding" Value="16,0" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="18">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Style="{StaticResource TopbarStyle}">
-            <DockPanel LastChildFill="True" Margin="22,0">
-                <TextBlock Text="♥ MediClin" Foreground="White" FontSize="23" FontWeight="SemiBold" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="0,0,18,0" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <Button Content="Acasă" Style="{StaticResource TopNavButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientDashboard" />
-                    <Button Content="Programările mele" Style="{StaticResource TopNavButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientAppointments" />
-                    <Button Content="Fișa mea" Style="{StaticResource TopNavButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientEmr" />
-                    <Button Content="Mesaje" Style="{StaticResource TopNavButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientMessages" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
-                    <Path Data="{StaticResource BellIcon}" Stroke="White" StrokeThickness="1.8" Width="18" Height="18" Margin="0,0,14,0" />
-                    <TextBlock Text="{Binding NumeComplet}" Foreground="White" VerticalAlignment="Center" Margin="0,0,14,0" />
-                    <Button Content="Deconectare" Style="{StaticResource SecondaryButton}" Height="32" Command="{Binding LogoutCommand}" />
-                </StackPanel>
-            </DockPanel>
+
+        <Border Style="{StaticResource CardBorder}"
+                Padding="16,12"
+                Margin="0,0,0,18"
+                Background="{DynamicResource SurfaceRaisedBrush}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid MaxWidth="520" HorizontalAlignment="Left">
+                        <Border Height="42"
+                                MinWidth="360"
+                                Background="{DynamicResource InputBackgroundBrush}"
+                                BorderBrush="{DynamicResource BorderBrushNeutral}"
+                                BorderThickness="1"
+                                CornerRadius="18">
+                            <TextBox x:Name="PatientSearchBox"
+                                     Text="{Binding GlobalSearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Padding="16,10"
+                                     Foreground="{DynamicResource TextPrimaryBrush}"
+                                     CaretBrush="{DynamicResource TextPrimaryBrush}"
+                                     ToolTip="Search doctors, appointments, prescriptions, analyses, and messages" />
+                        </Border>
+                        <TextBlock Text="Search MediClin"
+                                   Foreground="{DynamicResource TextTertiaryBrush}"
+                                   Margin="16,0,0,0"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=PatientSearchBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <Popup DataContext="{Binding DataContext, ElementName=PatientSearchBox}"
+                               PlacementTarget="{Binding ElementName=PatientSearchBox}"
+                               Placement="Bottom"
+                               AllowsTransparency="True"
+                               IsOpen="{Binding IsKeyboardFocusWithin, ElementName=PatientSearchBox, Mode=OneWay}"
+                               StaysOpen="False">
+                            <Border Width="{Binding ActualWidth, ElementName=PatientSearchBox}"
+                                    Style="{StaticResource GlassToolTipBorder}"
+                                    Margin="0,8,0,0"
+                                    Visibility="{Binding GlobalSearchResults.Count, Converter={StaticResource ZeroToInverseVisibilityConverter}}">
+                                <ItemsControl ItemsSource="{Binding GlobalSearchResults}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </Popup>
+                    </Grid>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding ToggleThemeCommand}" MinWidth="76" Padding="12,0" Margin="0,0,8,0">
+                            <TextBlock Text="{Binding ThemeButtonText}" />
+                        </Button>
+                        <Button Style="{StaticResource IconButton}" ToolTip="Notifications" Margin="0,0,8,0"
+                                Command="{Binding OpenNotificationsCommand}">
+                            <Grid>
+                                <TextBlock Text="N" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Border Background="{DynamicResource ErrorRedBrush}"
+                                        CornerRadius="9"
+                                        MinWidth="18"
+                                        Height="18"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Margin="18,-8,-8,0"
+                                        Visibility="{Binding NotificationCount, Converter={StaticResource CountToBadgeVisibilityConverter}}">
+                                    <TextBlock Text="{Binding NotificationBadgeText}" Foreground="White" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </Grid>
+                        </Button>
+                        <Border Width="42" Height="42" CornerRadius="21" Background="{DynamicResource PrimaryLightBrush}" Margin="0,0,10,0">
+                            <TextBlock Text="{Binding Initiale}" Foreground="{DynamicResource PrimaryGreenDarkBrush}" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                            <TextBlock Text="{Binding NumeComplet}" FontWeight="SemiBold" />
+                            <TextBlock Text="Patient" Style="{StaticResource MutedText}" />
+                        </StackPanel>
+                        <Button Content="Logout" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" MinWidth="78" Padding="12,0" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Width="230" Margin="0,0,14,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="/Assets/logo-mediclin.png" Width="44" Height="44" Stretch="Uniform" Margin="0,0,10,0" />
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="MediClin" FontSize="22" FontWeight="SemiBold" />
+                                <TextBlock Text="Care. Connect. Cure." Style="{StaticResource MutedText}" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Text="Auto logout after inactivity" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="11" Margin="0,12,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+                        <UniformGrid Rows="1" Columns="7">
+                            <Button Style="{StaticResource ModuleDockButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientDashboard">
+                                <StackPanel>
+                                    <TextBlock Text="Dashboard" FontWeight="SemiBold" />
+                                    <TextBlock Text="Care overview" Style="{StaticResource MutedText}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource ModuleDockButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientAppointments">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding ProgramariMenuText}" FontWeight="SemiBold" />
+                                    <TextBlock Text="Visits and booking" Style="{StaticResource MutedText}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource ModuleDockButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientEmr">
+                                <StackPanel>
+                                    <TextBlock Text="Medical record" FontWeight="SemiBold" />
+                                    <TextBlock Text="Timeline and history" Style="{StaticResource MutedText}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource ModuleDockButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientPrescriptions">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding ReteteMenuText}" FontWeight="SemiBold" />
+                                    <TextBlock Text="Treatment plan" Style="{StaticResource MutedText}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource ModuleDockButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientLabs">
+                                <StackPanel>
+                                    <TextBlock Text="Lab results" FontWeight="SemiBold" />
+                                    <TextBlock Text="Analyses and PDFs" Style="{StaticResource MutedText}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource ModuleDockButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientMessages">
+                                <StackPanel>
+                                    <TextBlock Text="Messages" FontWeight="SemiBold" />
+                                    <TextBlock Text="Doctor chat" Style="{StaticResource MutedText}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource ModuleDockButton}" Command="{Binding NavigateCommand}" CommandParameter="PatientSettings">
+                                <StackPanel>
+                                    <TextBlock Text="Settings" FontWeight="SemiBold" />
+                                    <TextBlock Text="Profile and appearance" Style="{StaticResource MutedText}" />
+                                </StackPanel>
+                            </Button>
+                        </UniformGrid>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
         </Border>
+
         <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Border Background="White" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,1,0">
-                <StackPanel Margin="0,20">
-                    <TextBlock Text="PACIENT" Style="{StaticResource LabelText}" Margin="24,0,0,10" />
-                    <Button Content="Tablou de bord" Style="{StaticResource SidebarMenuItem}" Command="{Binding NavigateCommand}" CommandParameter="PatientDashboard" />
-                    <Button Content="Programările mele  2" Style="{StaticResource SidebarMenuItem}" Command="{Binding NavigateCommand}" CommandParameter="PatientAppointments" />
-                    <Button Content="Fișă medicală" Style="{StaticResource SidebarMenuItem}" Command="{Binding NavigateCommand}" CommandParameter="PatientEmr" />
-                    <Button Content="Rețete active  3" Style="{StaticResource SidebarMenuItem}" Command="{Binding NavigateCommand}" CommandParameter="PatientPrescriptions" />
-                    <Button Content="Rezultate analize" Style="{StaticResource SidebarMenuItem}" Command="{Binding NavigateCommand}" CommandParameter="PatientLabs" />
-                    <Button Content="Mesaje medic" Style="{StaticResource SidebarMenuItem}" Command="{Binding NavigateCommand}" CommandParameter="PatientMessages" />
-                    <Button Content="Setări cont" Style="{StaticResource SidebarMenuItem}" Command="{Binding NavigateCommand}" CommandParameter="PatientSettings" />
-                </StackPanel>
-            </Border>
-            <ContentControl Grid.Column="1" Content="{Binding CurrentView}" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Margin="2,0,2,18">
+                <TextBlock Text="{Binding SectionTitle}" Style="{StaticResource HeadingText}" />
+                <TextBlock Text="{Binding NumeComplet}" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,6,0,0" />
+            </StackPanel>
+
+            <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
         </Grid>
     </Grid>
 </Window>

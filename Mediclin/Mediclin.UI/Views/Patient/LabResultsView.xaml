@@ -2,24 +2,84 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Margin="24">
-        <DockPanel LastChildFill="False">
+
+        <!-- Header -->
+        <DockPanel LastChildFill="False" Margin="0,0,0,16">
             <TextBlock Text="Rezultate analize" Style="{StaticResource HeadingText}" />
-            <Button DockPanel.Dock="Right" Content="Descarcă PDF" Style="{StaticResource SecondaryButton}" Command="{Binding ExportCommand}" CommandParameter="analize" />
+            <Button DockPanel.Dock="Right" Content="Descarcă PDF"
+                    Style="{StaticResource SecondaryButton}"
+                    Command="{Binding ExportCommand}" CommandParameter="analize" />
         </DockPanel>
-        <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding LabResults}" Height="280" Margin="0,16">
+
+        <!-- Tabel rezultate -->
+        <DataGrid Style="{StaticResource DataGridStyle}"
+                  ItemsSource="{Binding Rezultate}"
+                  Height="260" Margin="0,0,0,16"
+                  IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Test" Binding="{Binding TestName}" Width="*" />
-                <DataGridTextColumn Header="Rezultat" Binding="{Binding Value}" Width="120" />
-                <DataGridTextColumn Header="Unitate" Binding="{Binding Unit}" Width="100" />
-                <DataGridTextColumn Header="Interval normal" Binding="{Binding NormalRange}" Width="160" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120" />
+                <DataGridTextColumn Header="Data recoltare"
+                                    Binding="{Binding DataRecoltare, StringFormat=dd.MM.yyyy}"
+                                    Width="130" />
+                <DataGridTextColumn Header="Laborator"
+                                    Binding="{Binding Laborator}"
+                                    Width="*" />
+                <DataGridTextColumn Header="Nr. teste"
+                                    Binding="{Binding NrValori}"
+                                    Width="90" />
+                <DataGridTextColumn Header="Anormale"
+                                    Binding="{Binding Anormale}"
+                                    Width="90" />
             </DataGrid.Columns>
         </DataGrid>
-        <Border Style="{StaticResource CardBorder}">
+
+        <!-- Interpretare medicală -->
+        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,20">
             <StackPanel>
                 <TextBlock Text="Interpretare medicală" Style="{StaticResource SectionTitleText}" />
-                <TextBlock Text="Valorile sunt monitorizate de medic. Rezultatele ridicate sau critice sunt marcate pentru discuție la următoarea consultație." TextWrapping="Wrap" Margin="0,8,0,0" />
+                <TextBlock Text="Valorile sunt monitorizate de medic. Rezultatele ridicate sau critice sunt marcate pentru discuție la următoarea consultație."
+                           TextWrapping="Wrap" Margin="0,8,0,0" />
             </StackPanel>
         </Border>
+
+        <!-- Zona de ștergere -->
+        <Border Style="{StaticResource CardBorder}">
+            <StackPanel>
+                <TextBlock Text="Șterge rezultate analize" Style="{StaticResource SectionTitleText}" />
+                <TextBlock Text="Selectează data limită. Toate rezultatele recoltate până la această dată (inclusiv) vor fi șterse definitiv."
+                           TextWrapping="Wrap" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,6,0,14" />
+
+                <DockPanel LastChildFill="False">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                        <TextBlock Text="Până la data:" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <DatePicker SelectedDate="{Binding DataLimita, Mode=TwoWay}"
+                                    DisplayDateEnd="{x:Static sys:DateTime.Today}"
+                                    Width="160"
+                                    xmlns:sys="clr-namespace:System;assembly=mscorlib" />
+                    </StackPanel>
+
+                    <Button DockPanel.Dock="Right"
+                            Content="🗑  Șterge rezultatele"
+                            Command="{Binding DeleteUntilCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource DangerButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </DockPanel>
+
+                <!-- Mesaj status -->
+                <TextBlock Text="{Binding StatusMesaj}"
+                           Margin="0,10,0,0"
+                           FontStyle="Italic"
+                           Foreground="{DynamicResource ErrorRedBrush}"
+                           Visibility="{Binding StatusMesaj, Converter={StaticResource NullToVisibilityConverter}}" />
+            </StackPanel>
+        </Border>
+
     </StackPanel>
 </UserControl>

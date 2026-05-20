@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Mediclin.Data.Models;
 using Mediclin.UI.Services;
@@ -34,6 +36,7 @@ public class MyEMRViewModel : BaseViewModel
         RequestEMRFromDoctorCommand = new AsyncRelayCommand(async _ => await RequestEMRFromDoctorAsync(), _ => !IsRequestingEMR);
         DownloadPDFCommand = new RelayCommand(_ => RequestEMRMessage = "Exportul PDF va fi disponibil dupa actualizarea fisei medicale.");
         AssignMedicCommand = new AsyncRelayCommand(async _ => await AssignMedicAsync(), _ => SelectedMedicToAssign is not null && !IsAssigningMedic);
+        SelectConsultatieCommand = new RelayCommand(p => SelectConsultatie(p as ConsultatieDisplay));
         _ = LoadAsync();
     }
 
@@ -82,8 +85,23 @@ public class MyEMRViewModel : BaseViewModel
         get => _latestConsultatie;
         private set
         {
+            if (_latestConsultatie == value)
+            {
+                return;
+            }
+
+            if (_latestConsultatie is not null)
+            {
+                _latestConsultatie.IsSelected = false;
+            }
+
             if (SetProperty(ref _latestConsultatie, value))
             {
+                if (_latestConsultatie is not null)
+                {
+                    _latestConsultatie.IsSelected = true;
+                }
+
                 OnPropertyChanged(nameof(HasConsultatie));
             }
         }
@@ -113,6 +131,7 @@ public class MyEMRViewModel : BaseViewModel
     public ICommand RequestEMRFromDoctorCommand { get; }
     public ICommand DownloadPDFCommand { get; }
     public ICommand AssignMedicCommand { get; }
+    public ICommand SelectConsultatieCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -180,6 +199,14 @@ public class MyEMRViewModel : BaseViewModel
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    private void SelectConsultatie(ConsultatieDisplay? consultatie)
+    {
+        if (consultatie != null)
+        {
+            LatestConsultatie = consultatie;
         }
     }
 
@@ -253,17 +280,19 @@ public class MyEMRViewModel : BaseViewModel
     }
 }
 
-public class ConsultatieDisplay
+public class ConsultatieDisplay : INotifyPropertyChanged
 {
+    private bool _isSelected;
+
     public ConsultatieDisplay(Consultatie consultatie)
     {
         DataText = consultatie.DataConsultatie.ToString("dd.MM.yyyy HH:mm");
         MedicNume = consultatie.MedicNume ?? "Medic";
         MedicSubtitlu = string.IsNullOrWhiteSpace(consultatie.Specialitate) ? MedicNume : $"{MedicNume} · {consultatie.Specialitate}";
-        Simptome = consultatie.Simptome ?? string.Empty;
+        Simptome = string.IsNullOrWhiteSpace(consultatie.Simptome) ? "Nu sunt simptome transmise." : consultatie.Simptome!;
         DiagnosticCod = consultatie.DiagnosticCod ?? string.Empty;
         Diagnostic = string.IsNullOrWhiteSpace(consultatie.DiagnosticText) ? "Fara diagnostic completat" : consultatie.DiagnosticText!;
-        Recomandari = consultatie.Recomandari ?? string.Empty;
+        Recomandari = string.IsNullOrWhiteSpace(consultatie.Recomandari) ? "Nu sunt recomandari transmise." : consultatie.Recomandari!;
         Tensiune = string.IsNullOrWhiteSpace(consultatie.TensiuneArteriala) ? "-" : consultatie.TensiuneArteriala!;
         Puls = consultatie.Puls?.ToString(CultureInfo.InvariantCulture) ?? "-";
         Temperatura = consultatie.Temperatura?.ToString("0.##", CultureInfo.InvariantCulture) ?? "-";
@@ -283,6 +312,28 @@ public class ConsultatieDisplay
     public string Temperatura { get; }
     public string Greutate { get; }
     public string Inaltime { get; }
+
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected == value)
+            {
+                return;
+            }
+
+            _isSelected = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
     public string DiagnosticCuCod => string.IsNullOrWhiteSpace(DiagnosticCod) ? Diagnostic : $"{DiagnosticCod} · {Diagnostic}";
 }
 

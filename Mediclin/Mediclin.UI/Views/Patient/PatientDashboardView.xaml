@@ -1,55 +1,31 @@
 <UserControl x:Class="Mediclin.UI.Views.Patient.PatientDashboardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ScrollViewer>
-        <StackPanel Margin="24,20,24,24">
-            <Grid Margin="0,0,0,20">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root">
+    <ScrollViewer Padding="0,0,0,18" VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <Grid Margin="0,0,0,24">
                 <StackPanel>
-                    <TextBlock Text="{Binding WelcomeText}" FontSize="22" FontWeight="SemiBold" Foreground="#1A1A18"/>
-                    <TextBlock Text="{Binding TodayDate}" FontSize="13" Foreground="#888780" Margin="0,4,0,0"/>
+                    <TextBlock Text="{Binding WelcomeText}" FontSize="30" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="{Binding TodayDate}" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,8,0,0"/>
                 </StackPanel>
                 <Button HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Content="+ Programare nouă"
+                        Content="+ Programare noua"
                         Command="{Binding OpenBookingCommand}"
                         Style="{StaticResource PrimaryButton}"
-                        Height="40"
+                        Height="44"
                         Padding="20,0"/>
             </Grid>
 
-            <UniformGrid Columns="3" Margin="0,0,0,20">
-                <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
-                    <StackPanel>
-                        <TextBlock Text="URMĂTOAREA VIZITĂ" Style="{StaticResource CardTitle}"/>
-                        <TextBlock Text="{Binding NextAppointmentText, TargetNullValue='', FallbackValue=''}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="#0F6E56"
-                                   TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource CardBorder}" Margin="4,0">
-                    <StackPanel>
-                        <TextBlock Text="REȚETE ACTIVE" Style="{StaticResource CardTitle}"/>
-                        <TextBlock Text="{Binding ActivePrescriptions}" FontSize="28" FontWeight="SemiBold" Foreground="#1A1A18"/>
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource CardBorder}" Margin="8,0,0,0">
-                    <StackPanel>
-                        <TextBlock Text="ANALIZE NOI" Style="{StaticResource CardTitle}"/>
-                        <TextBlock Text="{Binding NewLabResults}" FontSize="28" FontWeight="SemiBold" Foreground="#1A1A18"/>
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
-
             <Border Visibility="{Binding IsBookingPanelOpen, Converter={StaticResource BoolToVisibilityConverter}}"
                     Style="{StaticResource CardBorder}"
-                    Margin="0,0,0,20">
+                    Margin="0,0,0,22">
                 <StackPanel>
-                    <TextBlock Text="PROGRAMARE NOUĂ" Style="{StaticResource CardTitle}"/>
+                    <TextBlock Text="PROGRAMARE NOUA" Style="{StaticResource CardTitle}"/>
 
-                    <TextBlock Text="Filtrează după specialitate:" Style="{StaticResource FieldLabel}"/>
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,6,0,12">
+                    <TextBlock Text="Filtreaza dupa specialitate" Style="{StaticResource FieldLabel}"/>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0,6,0,14">
                         <ListBox ItemsSource="{Binding Specialitati}"
                                  SelectedItem="{Binding SelectedSpecialitate, Mode=TwoWay}"
                                  BorderThickness="0" Background="Transparent">
@@ -63,7 +39,7 @@
                                     <Setter Property="Padding" Value="14,8" />
                                     <Setter Property="Margin" Value="0,0,8,0" />
                                     <Setter Property="Background" Value="White" />
-                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
                                     <Setter Property="BorderBrush" Value="{StaticResource BorderBrushNeutral}" />
                                     <Setter Property="BorderThickness" Value="1" />
                                     <Setter Property="Cursor" Value="Hand" />
@@ -81,12 +57,9 @@
                                     </Setter>
                                     <Style.Triggers>
                                         <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}" />
-                                            <Setter Property="Foreground" Value="{StaticResource PrimaryGreenDarkBrush}" />
-                                            <Setter Property="BorderBrush" Value="{StaticResource AccentGreenBrush}" />
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#F8FAFC" />
+                                            <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryGreenDarkBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AccentGreenBrush}" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
@@ -99,123 +72,120 @@
                         </ListBox>
                     </ScrollViewer>
 
-                    <TextBlock Text="Selectează medicul:" Style="{StaticResource FieldLabel}"/>
-                    <ListView ItemsSource="{Binding AvailableDoctors}"
-                              SelectedItem="{Binding SelectedMedic}"
-                              BorderThickness="0"
-                              Background="Transparent"
-                              MaxHeight="220"
-                              Margin="0,6,0,12">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Border Padding="10,8" CornerRadius="8" Margin="0,2">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#F5F5F3"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="48"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="22" Background="#E1F5EE">
-                                            <TextBlock Foreground="#085041"
-                                                       FontWeight="SemiBold"
-                                                       FontSize="14"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center"
-                                                       Text="{Binding Initiale, TargetNullValue='', FallbackValue=''}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.3*" />
+                            <ColumnDefinition Width="18" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Selecteaza medicul" Style="{StaticResource FieldLabel}"/>
+                            <ListView ItemsSource="{Binding AvailableDoctors}"
+                                      SelectedItem="{Binding SelectedMedic}"
+                                      BorderThickness="0"
+                                      Background="Transparent"
+                                      MaxHeight="220"
+                                      Margin="0,6,0,12">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="12" Margin="0,0,0,8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="52"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Width="44" Height="44" CornerRadius="22" Background="{DynamicResource PrimaryLightBrush}">
+                                                    <TextBlock Foreground="{DynamicResource PrimaryGreenDarkBrush}"
+                                                               FontWeight="SemiBold"
+                                                               FontSize="14"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               Text="{Binding Initiale}"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                                    <TextBlock FontWeight="SemiBold" Text="{Binding NumeCompletCuTitlu}"/>
+                                                    <TextBlock Foreground="{DynamicResource TextTertiaryBrush}" FontSize="12" Text="{Binding SpecialitateNume}"/>
+                                                    <TextBlock Foreground="{DynamicResource PrimaryGreenDarkBrush}" FontSize="11" Text="{Binding DurataText}" Margin="0,3,0,0"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="2"
+                                                        Content="Alege"
+                                                        Style="{StaticResource SecondaryButton}"
+                                                        Padding="12,0"
+                                                        Height="34"
+                                                        VerticalAlignment="Center"
+                                                        Command="{Binding DataContext.SelectDoctorCommand, ElementName=Root}"
+                                                        CommandParameter="{Binding}"/>
+                                            </Grid>
                                         </Border>
-                                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
-                                            <TextBlock FontWeight="SemiBold" FontSize="14" Text="{Binding NumeCompletCuTitlu, TargetNullValue='', FallbackValue=''}"/>
-                                            <TextBlock FontSize="12" Foreground="#888780" Text="{Binding SpecialitateNume, TargetNullValue='', FallbackValue=''}"/>
-                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                                <TextBlock FontSize="11" Foreground="#0F6E56" Text="{Binding TarifText, TargetNullValue='', FallbackValue=''}"/>
-                                                <TextBlock FontSize="11" Foreground="#888780" Text=" · "/>
-                                                <TextBlock FontSize="11" Foreground="#888780" Text="{Binding DurataText, TargetNullValue='', FallbackValue=''}"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                        <Button Grid.Column="2"
-                                                Content="Selectează"
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Data" Style="{StaticResource FieldLabel}"/>
+                            <DatePicker SelectedDate="{Binding SelectedDate}" Margin="0,6,0,12" Height="38"/>
+
+                            <TextBlock Text="Ore disponibile" Style="{StaticResource FieldLabel}"/>
+                            <ProgressBar IsIndeterminate="True"
+                                         Height="3"
+                                         Margin="0,6"
+                                         Visibility="{Binding IsSlotsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <ItemsControl ItemsSource="{Binding AvailableSlots}" Margin="0,4,0,12">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Margin="0,0,8,8"
+                                                Width="74"
+                                                Height="34"
+                                                Content="{Binding HourText}"
                                                 Style="{StaticResource SecondaryButton}"
-                                                Padding="12,6"
-                                                VerticalAlignment="Center"
-                                                Command="{Binding DataContext.SelectDoctorCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                Command="{Binding DataContext.SelectSlotCommand, ElementName=Root}"
                                                 CommandParameter="{Binding}"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
-                    <TextBlock Text="Selectează data:" Style="{StaticResource FieldLabel}"/>
-                    <DatePicker SelectedDate="{Binding SelectedDate}" Margin="0,6,0,12" Height="38"/>
+                            <TextBlock Text="Tip consultatie" Style="{StaticResource FieldLabel}"/>
+                            <ComboBox ItemsSource="{Binding TipuriConsultatie}"
+                                      SelectedItem="{Binding SelectedTip}"
+                                      Style="{StaticResource RoundedComboBox}"
+                                      Margin="0,6,0,12"/>
 
-                    <TextBlock Text="Ore disponibile:" Style="{StaticResource FieldLabel}"/>
-                    <ProgressBar IsIndeterminate="True"
-                                 Height="3"
-                                 Margin="0,4"
-                                 Visibility="{Binding IsSlotsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <ItemsControl ItemsSource="{Binding AvailableSlots}" Margin="0,4,0,8">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Margin="4"
-                                        Width="72"
-                                        Height="34"
-                                        Content="{Binding HourText}"
-                                        Style="{StaticResource SecondaryButton}"
-                                        Command="{Binding DataContext.SelectSlotCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                        CommandParameter="{Binding}"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                            <TextBlock Text="Motiv vizita" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Text="{Binding MotivVizita, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="72"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     Style="{StaticResource RoundedTextBox}"
+                                     Margin="0,6,0,12"/>
+                        </StackPanel>
+                    </Grid>
 
-                    <TextBlock Text="Tip consultație:" Style="{StaticResource FieldLabel}" Margin="0,12,0,0"/>
-                    <ComboBox ItemsSource="{Binding TipuriConsultatie}"
-                              SelectedItem="{Binding SelectedTip}"
-                              Style="{StaticResource RoundedComboBox}"
-                              Margin="0,4,0,12"/>
-
-                    <TextBlock Text="Motiv vizită:" Style="{StaticResource FieldLabel}"/>
-                    <TextBox Text="{Binding MotivVizita, UpdateSourceTrigger=PropertyChanged}"
-                             Height="60"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             Style="{StaticResource RoundedTextBox}"
-                             Margin="0,4,0,12"/>
-
-                    <TextBlock Text="{Binding BookingError, TargetNullValue='', FallbackValue=''}"
-                               Foreground="#C0392B"
-                               FontSize="12"
+                    <TextBlock Text="{Binding BookingError}"
+                               Foreground="{DynamicResource ErrorRedBrush}"
                                Margin="0,0,0,8"
                                TextWrapping="Wrap"
                                Visibility="{Binding BookingError, Converter={StaticResource NullToVisibilityConverter}}"/>
-                    <TextBlock Text="{Binding BookingSuccess, TargetNullValue='', FallbackValue=''}"
-                               Foreground="#27AE60"
-                               FontSize="12"
+                    <TextBlock Text="{Binding BookingSuccess}"
+                               Foreground="{DynamicResource PrimaryGreenBrush}"
                                Margin="0,0,0,8"
                                Visibility="{Binding BookingSuccess, Converter={StaticResource NullToVisibilityConverter}}"/>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Anulează"
+                        <Button Content="Renunta"
                                 Style="{StaticResource SecondaryButton}"
                                 Command="{Binding CancelBookingCommand}"
                                 Margin="0,0,8,0"
                                 Height="40"
                                 Padding="20,0"/>
-                        <Button Content="Confirmă programarea"
+                        <Button Content="Confirma programarea"
                                 Style="{StaticResource PrimaryButton}"
                                 Command="{Binding ConfirmBookingCommand}"
                                 Height="40"
@@ -224,53 +194,125 @@
                 </StackPanel>
             </Border>
 
-            <Border Style="{StaticResource CardBorder}" Margin="0">
-                <StackPanel>
-                    <TextBlock Text="PROGRAMĂRILE URMĂTOARE" Style="{StaticResource CardTitle}"/>
-                    <ItemsControl ItemsSource="{Binding UpcomingAppointments}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Padding="12,10" Margin="0,4" CornerRadius="8" Background="#F5F5F3">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="52"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Background="#E1F5EE" CornerRadius="8" Padding="4">
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="{Binding DataOra, StringFormat=dd}"
-                                                           FontSize="20"
-                                                           FontWeight="Bold"
-                                                           Foreground="#085041"
-                                                           TextAlignment="Center"/>
-                                                <TextBlock Text="{Binding DataOra, StringFormat=MMM}"
-                                                           FontSize="10"
-                                                           Foreground="#0F6E56"
-                                                           TextAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                        <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding MedicNume, TargetNullValue='', FallbackValue=''}" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding SpecialitateNume, TargetNullValue='', FallbackValue=''}" FontSize="12" Foreground="#888780"/>
-                                            <TextBlock Text="{Binding DataOra, StringFormat=HH:mm}" FontSize="11" Foreground="#0F6E56"/>
-                                        </StackPanel>
-                                        <Border Grid.Column="2"
-                                                CornerRadius="20"
-                                                Padding="10,4"
-                                                Background="{Binding Status, Converter={StaticResource StatusToColorConverter}}">
-                                            <TextBlock Text="{Binding Status, TargetNullValue='', FallbackValue=''}"
-                                                       FontSize="11"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="White"/>
-                                        </Border>
-                                    </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.05*" />
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="1.1*" />
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <Border Style="{StaticResource CardBorder}">
+                        <StackPanel>
+                            <TextBlock Text="CARE PULSE" Style="{StaticResource CardTitle}" />
+                            <TextBlock Text="{Binding ActivePrescriptions}" FontSize="54" FontWeight="SemiBold" />
+                            <TextBlock Text="Retete active in cont" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,18" />
+
+                            <Grid Margin="0,0,0,18">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14" Margin="0,0,8,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Analize noi" Style="{StaticResource CardTitle}" Margin="0,0,0,8" />
+                                        <TextBlock Text="{Binding NewLabResults}" FontSize="26" FontWeight="SemiBold" />
+                                    </StackPanel>
                                 </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                <Border Grid.Column="1" Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14" Margin="8,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Urmatoarea vizita" Style="{StaticResource CardTitle}" Margin="0,0,0,8" />
+                                        <TextBlock Text="{Binding NextAppointmentDays}" FontSize="26" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Border Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="16">
+                                <StackPanel>
+                                    <TextBlock Text="Next appointment" Style="{StaticResource CardTitle}" />
+                                    <TextBlock Text="{Binding NextAppointmentText}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-            </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource CardBorder}">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="MEDICAL TIMELINE" Style="{StaticResource CardTitle}" />
+                                <TextBlock Text="Programarile urmatoare" Foreground="{DynamicResource TextSecondaryBrush}" />
+                            </StackPanel>
+                            <Border Grid.Column="1" Background="{DynamicResource SurfaceRaisedBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="12,8">
+                                <TextBlock Text="{Binding UpcomingAppointments.Count, StringFormat={}{0} active}" />
+                            </Border>
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding UpcomingAppointments}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="20" Padding="16" Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="58" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="52" Height="52" CornerRadius="18" Background="{DynamicResource PrimaryLightBrush}">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding DataOra, StringFormat=dd}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryGreenDarkBrush}" TextAlignment="Center"/>
+                                                    <TextBlock Text="{Binding DataOra, StringFormat=MMM}" FontSize="10" Foreground="{DynamicResource PrimaryGreenBrush}" TextAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding MedicNume}" FontSize="15" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding SpecialitateNume}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding DataOra, StringFormat=HH:mm}" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,8,0,0"/>
+                                            </StackPanel>
+                                            <Border Grid.Column="2" Background="{DynamicResource BlueInfoBgBrush}" CornerRadius="16" Padding="10,6" VerticalAlignment="Top">
+                                                <TextBlock Text="{Binding Status}" Foreground="{DynamicResource BlueInfoBrush}" FontWeight="SemiBold" FontSize="11"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Column="4">
+                    <Border Style="{StaticResource CardBorder}">
+                        <StackPanel>
+                            <TextBlock Text="QUICK ACTIONS" Style="{StaticResource CardTitle}" />
+                            <Button Content="Programare noua"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding OpenBookingCommand}"
+                                    Margin="0,0,0,10"/>
+                            <Border Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14">
+                                <StackPanel>
+                                    <TextBlock Text="Retete active" Style="{StaticResource CardTitle}" />
+                                    <TextBlock Text="{Binding ActivePrescriptions}" FontSize="28" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource CardBorder}" Margin="0,18,0,0">
+                        <StackPanel>
+                            <TextBlock Text="TODAY" Style="{StaticResource CardTitle}" />
+                            <TextBlock Text="{Binding TodayDate}" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                            <TextBlock Text="Datele sunt actualizate din contul medical." Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

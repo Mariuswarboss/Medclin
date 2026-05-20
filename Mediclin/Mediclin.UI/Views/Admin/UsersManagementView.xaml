@@ -30,10 +30,10 @@
                             <Border CornerRadius="8" Padding="10,4" HorizontalAlignment="Center">
                                 <Border.Style>
                                     <Style TargetType="Border">
-                                        <Setter Property="Background" Value="#E8F5E9" />
+                                        <Setter Property="Background" Value="{DynamicResource SuccessBgBrush}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Activ}" Value="False">
-                                                <Setter Property="Background" Value="#FFEBEE" />
+                                                <Setter Property="Background" Value="{DynamicResource ErrorBgBrush}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -42,11 +42,11 @@
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Text" Value="Activ" />
-                                            <Setter Property="Foreground" Value="#1B5E20" />
+                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryGreenDarkBrush}" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Activ}" Value="False">
                                                     <Setter Property="Text" Value="Inactiv" />
-                                                    <Setter Property="Foreground" Value="#B71C1C" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource ErrorRedBrush}" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>

@@ -10,23 +10,25 @@
         <!-- Lista conversații -->
         <Border Grid.Column="0" Style="{StaticResource CardBorder}" Padding="0" Margin="0,0,16,0">
             <DockPanel LastChildFill="True">
-                <Border DockPanel.Dock="Top" Padding="18,14" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="#FAFCFD">
+                <Border DockPanel.Dock="Top" Padding="18,14" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="{DynamicResource BackgroundSecondaryBrush}">
                     <TextBlock Text="Conversații" Style="{StaticResource SectionTitleText}" Margin="0" />
                 </Border>
 
-                <Border DockPanel.Dock="Bottom" Padding="12" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,1,0,0" Background="#F8FAFB">
+                <Border DockPanel.Dock="Bottom" Padding="12" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="0,1,0,0" Background="{DynamicResource BackgroundSecondaryBrush}">
                     <StackPanel>
-                        <TextBlock Text="Conversație nouă" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{StaticResource TextSecondaryBrush}" />
+                        <TextBlock Text="Conversație nouă" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource TextSecondaryBrush}" />
                         <StackPanel Visibility="{Binding EsteMedic, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                             <ComboBox ItemsSource="{Binding MediciPentruNou}"
                                       SelectedItem="{Binding MedicNou, Mode=TwoWay}"
                                       DisplayMemberPath="NumeCompletCuTitlu"
+                                      Style="{StaticResource RoundedComboBox}"
                                       Height="40" Margin="0,0,0,8" />
                         </StackPanel>
                         <StackPanel Visibility="{Binding EsteMedic, Converter={StaticResource BoolToVisibilityConverter}}">
                             <ComboBox ItemsSource="{Binding PacientiPentruNou}"
                                       SelectedItem="{Binding PacientNou, Mode=TwoWay}"
                                       DisplayMemberPath="NumeComplet"
+                                      Style="{StaticResource RoundedComboBox}"
                                       Height="40" Margin="0,0,0,8" />
                         </StackPanel>
                         <Button Content="Deschide conversația" Style="{StaticResource PrimaryButton}"
@@ -48,34 +50,34 @@
                             <Setter Property="Background" Value="Transparent" />
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#E8F4EF" />
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}" />
                                 </Trigger>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#F0F7F4" />
+                                    <Setter Property="Background" Value="{DynamicResource SidebarHoverBrush}" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border Padding="14,12" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1">
+                            <Border Padding="14,12" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="0,0,0,1">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="44" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <Border Width="40" Height="40" CornerRadius="20" Background="{StaticResource PrimaryGreenBrush}" Margin="0,0,10,0">
+                                    <Border Width="40" Height="40" CornerRadius="20" Background="{DynamicResource PrimaryGreenBrush}" Margin="0,0,10,0">
                                         <TextBlock Text="{Binding InitialePartener}" FontWeight="SemiBold" Foreground="White"
                                                    FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding NumePartener}" FontWeight="SemiBold" FontSize="14" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Text="{Binding UltimMesajScurt}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
-                                        <TextBlock Text="{Binding UltimMesajLa, StringFormat=dd.MM · HH:mm}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"
+                                        <TextBlock Text="{Binding NumePartener}" FontWeight="SemiBold" FontSize="14" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                        <TextBlock Text="{Binding UltimMesajScurt}" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                                        <TextBlock Text="{Binding UltimMesajLa, StringFormat=dd.MM · HH:mm}" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"
                                                    Visibility="{Binding UltimMesajLa, Converter={StaticResource NullToVisibilityConverter}}" />
                                     </StackPanel>
-                                    <Border Grid.Column="2" CornerRadius="10" Background="{StaticResource PrimaryGreenDarkBrush}" Padding="6,2"
+                                    <Border Grid.Column="2" CornerRadius="10" Background="{DynamicResource PrimaryGreenDarkBrush}" Padding="6,2"
                                             VerticalAlignment="Center" Visibility="{Binding Necitite, Converter={StaticResource CountToBadgeVisibilityConverter}}">
                                         <TextBlock Text="{Binding Necitite}" Foreground="White" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" />
                                     </Border>
@@ -91,7 +93,7 @@
         <Border Grid.Column="1" Style="{StaticResource CardBorder}" Padding="0">
             <Grid>
                 <TextBlock Text="Selectați o conversație din stânga sau deschideți una nouă."
-                           Foreground="{StaticResource TextTertiaryBrush}"
+                           Foreground="{DynamicResource TextTertiaryBrush}"
                            FontSize="15"
                            TextWrapping="Wrap"
                            TextAlignment="Center"
@@ -101,20 +103,20 @@
                            Visibility="{Binding HasConversation, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
 
                 <DockPanel Visibility="{Binding HasConversation, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <Border DockPanel.Dock="Top" Padding="18,14" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="#FAFCFD">
+                    <Border DockPanel.Dock="Top" Padding="18,14" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="0,0,0,1" Background="{DynamicResource BackgroundSecondaryBrush}">
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="40" Height="40" CornerRadius="20" Background="{StaticResource PrimaryGreenBrush}" Margin="0,0,12,0">
+                            <Border Width="40" Height="40" CornerRadius="20" Background="{DynamicResource PrimaryGreenBrush}" Margin="0,0,12,0">
                                 <TextBlock Text="{Binding Selectata.InitialePartener}" FontWeight="SemiBold" Foreground="White"
                                            FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Selectata.NumePartener}" Style="{StaticResource SectionTitleText}" Margin="0" />
-                                <TextBlock Text="Mesager securizat MediClin" Foreground="{StaticResource TextTertiaryBrush}" FontSize="12" Margin="0,2,0,0" />
+                                <TextBlock Text="{Binding Selectata.NumePartener}" Style="{DynamicResource SectionTitleText}" Margin="0" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                <TextBlock Text="Mesager securizat MediClin" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="12" Margin="0,2,0,0" />
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
-                    <Border DockPanel.Dock="Bottom" Padding="14" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="0,1,0,0" Background="#FAFCFD">
+                    <Border DockPanel.Dock="Bottom" Padding="14" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="0,1,0,0" Background="{DynamicResource BackgroundSecondaryBrush}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -132,30 +134,30 @@
                         </Grid>
                     </Border>
 
-                    <ScrollViewer Padding="16" Background="#EEF1F5" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Padding="16" Background="{DynamicResource BackgroundPrimaryBrush}" VerticalScrollBarVisibility="Auto">
                         <ItemsControl ItemsSource="{Binding ChatItems}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Margin="0,0,0,10">
                                         <!-- Partener -->
-                                        <Border Padding="12,10" CornerRadius="4,16,16,16" Background="White"
-                                                BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1"
+                                        <Border Padding="12,10" CornerRadius="4,16,16,16" Background="{DynamicResource CardBackgroundBrush}"
+                                                BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1"
                                                 MaxWidth="520" HorizontalAlignment="Left"
                                                 Visibility="{Binding IsMine, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                             <StackPanel>
-                                                <TextBlock Text="{Binding SenderLabel}" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,0,0,4"
+                                                <TextBlock Text="{Binding SenderLabel}" FontSize="11" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,0,0,4"
                                                            Visibility="{Binding SenderLabel, Converter={StaticResource NullToVisibilityConverter}}" />
-                                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" />
-                                                <TextBlock Text="{Binding TimeLabel}" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,6,0,0" HorizontalAlignment="Right" />
+                                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <TextBlock Text="{Binding TimeLabel}" FontSize="11" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,6,0,0" HorizontalAlignment="Right" />
                                             </StackPanel>
                                         </Border>
                                         <!-- Eu -->
-                                        <Border Padding="12,10" CornerRadius="16,4,16,16" Background="{StaticResource PrimaryGreenBrush}"
+                                        <Border Padding="12,10" CornerRadius="16,4,16,16" Background="{DynamicResource PrimaryGreenBrush}"
                                                 MaxWidth="520" HorizontalAlignment="Right"
                                                 Visibility="{Binding IsMine, Converter={StaticResource BoolToVisibilityConverter}}">
                                             <StackPanel>
                                                 <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="14" Foreground="White" />
-                                                <TextBlock Text="{Binding TimeLabel}" FontSize="11" Foreground="#C8EDE3" Margin="0,6,0,0" HorizontalAlignment="Right" />
+                                                <TextBlock Text="{Binding TimeLabel}" FontSize="11" Foreground="{DynamicResource PrimaryGreenLightBrush}" Margin="0,6,0,0" HorizontalAlignment="Right" />
                                             </StackPanel>
                                         </Border>
                                     </Grid>

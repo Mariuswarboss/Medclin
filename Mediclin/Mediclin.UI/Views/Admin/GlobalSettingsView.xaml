@@ -34,15 +34,23 @@
                 <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding ClinicPhone, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,16" />
 
                 <TextBlock Text="Culoare primară" Style="{StaticResource LabelText}" />
-                <StackPanel Orientation="Horizontal" Margin="0,8,0,16">
-                    <Rectangle Fill="{StaticResource PrimaryGreenBrush}" Width="28" Height="28" Margin="0,0,8,0" />
-                    <Rectangle Fill="{StaticResource AccentGreenBrush}" Width="28" Height="28" Margin="0,0,8,0" />
-                    <Rectangle Fill="{StaticResource BlueInfoBrush}" Width="28" Height="28" />
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,10">
+                    <Button Width="36" Height="36" MinWidth="36" Padding="0" Margin="0,0,8,0" Background="#0F6E56" BorderBrush="#0F6E56" Command="{Binding SchimbaCuloarePrimaraCommand}" CommandParameter="#0F6E56" />
+                    <Button Width="36" Height="36" MinWidth="36" Padding="0" Margin="0,0,8,0" Background="#1D9E75" BorderBrush="#1D9E75" Command="{Binding SchimbaCuloarePrimaraCommand}" CommandParameter="#1D9E75" />
+                    <Button Width="36" Height="36" MinWidth="36" Padding="0" Background="#4A7BDA" BorderBrush="#4A7BDA" Command="{Binding SchimbaCuloarePrimaraCommand}" CommandParameter="#4A7BDA" />
                 </StackPanel>
+                <TextBox Style="{StaticResource RoundedTextBox}" Width="140" HorizontalAlignment="Left" Text="{Binding PrimaryColor, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,16" />
+
+                <TextBlock Text="Tema aplicației" Style="{StaticResource FieldLabel}" Margin="0,0,0,0" />
+                <UniformGrid Columns="2" Margin="0,8,0,16" HorizontalAlignment="Left">
+                    <Button Content="Albă" Style="{StaticResource SecondaryButton}" Command="{Binding SchimbaTemaCuloareCommand}" CommandParameter="Light" Margin="0,0,8,0" />
+                    <Button Content="Neagră" Style="{StaticResource SecondaryButton}" Command="{Binding SchimbaTemaCuloareCommand}" CommandParameter="Dark" />
+                </UniformGrid>
+                <TextBlock Text="{Binding ThemeStatusText}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,16" />
 
                 <Button Content="Salvează" Style="{StaticResource PrimaryButton}" Command="{Binding SalveazaGeneralCommand}" HorizontalAlignment="Left" />
                 
-                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
             </StackPanel>
         </Border>
 
@@ -74,7 +82,7 @@
 
                 <Button Content="Salvează" Style="{StaticResource PrimaryButton}" Command="{Binding SalveazaSecuritateCommand}" HorizontalAlignment="Left" />
                 
-                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
             </StackPanel>
         </Border>
 
@@ -103,9 +111,9 @@
                     <Button Grid.Column="1" Content="Copiază" Style="{StaticResource SecondaryButton}" Command="{Binding CopiazaApiCommand}" />
                 </Grid>
 
-                <Button Content="Regenerează cheie API" Style="{StaticResource PrimaryButton}" Background="#C0392B" BorderBrush="#C0392B" Command="{Binding RegenereazaApiCommand}" HorizontalAlignment="Left" />
+                <Button Content="Regenereaza cheie API" Style="{StaticResource DangerButton}" Command="{Binding RegenereazaApiCommand}" HorizontalAlignment="Left" />
                 
-                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
             </StackPanel>
         </Border>
     </Grid>

@@ -18,6 +18,7 @@ public class SettingsViewModel : BaseViewModel
     private string _telefon = string.Empty;
     private string _email = string.Empty;
     private string _avatarUrl = string.Empty;
+    private bool _isDarkTheme;
 
     public SettingsViewModel(ApplicationServices app, Utilizator utilizator)
     {
@@ -25,6 +26,8 @@ public class SettingsViewModel : BaseViewModel
         _utilizator = utilizator;
         Mesaj = $"Profil: {utilizator.NumeComplet} ({utilizator.Email})";
         SalveazaCommand = new RelayCommand(_ => _ = SalveazaAsync());
+        SchimbaTemaCuloareCommand = new RelayCommand(p => SetTheme(p));
+        _isDarkTheme = ThemeService.IsDark;
         _ = IncarcaAsync();
     }
 
@@ -76,7 +79,40 @@ public class SettingsViewModel : BaseViewModel
         set => SetProperty(ref _avatarUrl, value);
     }
 
+    public bool IsDarkTheme
+    {
+        get => _isDarkTheme;
+        set
+        {
+            if (SetProperty(ref _isDarkTheme, value))
+            {
+                ThemeService.Apply(value);
+                OnPropertyChanged(nameof(ThemeStatusText));
+            }
+        }
+    }
+
+    public string ThemeStatusText => IsDarkTheme ? "Temă activă: Neagră" : "Temă activă: Albă";
+
     public ICommand SalveazaCommand { get; }
+    public ICommand SchimbaTemaCuloareCommand { get; }
+
+    private void SetTheme(object? parameter)
+    {
+        if (parameter is string tema)
+        {
+            if (string.Equals(tema, "Dark", StringComparison.OrdinalIgnoreCase))
+                IsDarkTheme = true;
+            else if (string.Equals(tema, "Light", StringComparison.OrdinalIgnoreCase))
+                IsDarkTheme = false;
+            else
+                IsDarkTheme = !IsDarkTheme;
+        }
+        else
+        {
+            IsDarkTheme = !IsDarkTheme;
+        }
+    }
 
     private async Task IncarcaAsync()
     {

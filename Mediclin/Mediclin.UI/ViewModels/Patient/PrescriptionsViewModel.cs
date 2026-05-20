@@ -7,13 +7,17 @@ namespace Mediclin.UI.ViewModels.Patient;
 
 public class PrescriptionsViewModel : BaseViewModel
 {
+    private readonly ApplicationServices _app;
+    private readonly Utilizator _utilizator;
     private string _statusMessage = string.Empty;
     private bool _isLoading;
 
     public PrescriptionsViewModel(ApplicationServices app, Utilizator utilizator)
     {
+        _app = app;
+        _utilizator = utilizator;
         RefreshCommand = new AsyncRelayCommand(async _ => await LoadAsync(app, utilizator));
-        RequestRenewalCommand = new RelayCommand(_ => StatusMessage = "Solicitarea de reinnoire a fost pregatita. Contacteaza medicul din Mesaje pentru confirmare.");
+        RequestRenewalCommand = new AsyncRelayCommand(async p => await RequestRenewalAsync(p as RetetaDisplay));
         _ = LoadAsync(app, utilizator);
     }
 
@@ -68,6 +72,51 @@ public class PrescriptionsViewModel : BaseViewModel
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    private async Task RequestRenewalAsync(RetetaDisplay? reteta)
+    {
+        if (reteta is null)
+        {
+            StatusMessage = "Alege o reteta pentru reinnoire.";
+            return;
+        }
+
+        try
+        {
+            var pacient = await _app.Pacienti.GetByUtilizatorIdAsync(_utilizator.Id);
+            if (pacient is null)
+            {
+                StatusMessage = "Nu s-a gasit profilul de pacient.";
+                return;
+            }
+
+            if (!pacient.MedicDeFamilieId.HasValue)
+            {
+                StatusMessage = "Alege mai intai medicul de familie din fisa medicala.";
+                return;
+            }
+
+            var medic = await _app.Medici.GetByIdAsync(pacient.MedicDeFamilieId.Value);
+            if (medic?.UtilizatorId is null)
+            {
+                StatusMessage = "Medicul de familie nu are cont valid pentru notificare.";
+                return;
+            }
+
+            await _app.NotificariRepo.CreateAsync(
+                medic.UtilizatorId,
+                "Solicitare reinnoire reteta",
+                $"{pacient.NumeComplet} solicita reinnoirea retetei: {reteta.MedicamenteText}.",
+                "Reteta",
+                $"/retete/{reteta.Id}/reinnoire");
+
+            StatusMessage = $"Solicitarea de reinnoire a fost trimisa catre {medic.NumeCompletCuTitlu}.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Solicitarea nu a putut fi trimisa: {ex.Message}";
         }
     }
 }

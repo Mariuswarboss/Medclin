@@ -148,3 +148,6 @@ D:\medclin\Mediclin\Mediclin.UI\obj\Debug\net8.0-windows\refint\Mediclin.UI.dll
 D:\medclin\Mediclin\Mediclin.UI\obj\Debug\net8.0-windows\Mediclin.UI.pdb
 D:\medclin\Mediclin\Mediclin.UI\obj\Debug\net8.0-windows\Mediclin.UI.genruntimeconfig.cache
 D:\medclin\Mediclin\Mediclin.UI\obj\Debug\net8.0-windows\ref\Mediclin.UI.dll
+D:\medclin\Mediclin\Mediclin.UI\obj\Debug\net8.0-windows\Resources\Colors.Dark.baml
+D:\medclin\Mediclin\Mediclin.UI\obj\Debug\net8.0-windows\Views\Shared\NotificationsView.baml
+D:\medclin\Mediclin\Mediclin.UI\obj\Debug\net8.0-windows\Views\Shared\NotificationsView.g.cs

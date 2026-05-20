@@ -29,6 +29,15 @@ public class EMRViewModel : BaseViewModel
     private string _temperatura = string.Empty;
     private string _greutate = string.Empty;
     private string _inaltime = string.Empty;
+    private string _alergieSubstanta = string.Empty;
+    private string _alergieSeveritate = "Medie";
+    private string _alergieObservatii = string.Empty;
+    private string _analizaLaborator = "MediClin Lab";
+    private string _analizaTest = string.Empty;
+    private string _analizaValoare = string.Empty;
+    private string _analizaUnitate = string.Empty;
+    private string _analizaStatus = "Normal";
+    private string _analizaInterpretare = string.Empty;
     private bool _isSaving;
     private bool _isTrimiting;
     private bool _showSaveToast;
@@ -69,6 +78,9 @@ public class EMRViewModel : BaseViewModel
         StartConsultatieNouaCommand = new AsyncRelayCommand(async _ => await StartNouaAsync(), _ => CurrentPacient is not null && _medicId > 0 && !IsSaving);
         SearchCommand = new AsyncRelayCommand(async _ => await ExecuteSearchAsync());
         SelectPatientCommand = new AsyncRelayCommand(async p => { if (p is Pacient pac) await SelectPatientAsync(pac); });
+        OpenSearchCommand = new RelayCommand(_ => IsSearchPanelVisible = true);
+        AddAlergieCommand = new AsyncRelayCommand(async _ => await AddAlergieAsync(), _ => CurrentPacient is not null && !string.IsNullOrWhiteSpace(AlergieSubstanta));
+        TrimiteAnalizaCommand = new AsyncRelayCommand(async _ => await TrimiteAnalizaAsync(), _ => CurrentPacient is not null && !string.IsNullOrWhiteSpace(AnalizaTest) && !string.IsNullOrWhiteSpace(AnalizaValoare));
 
         SearchResults = new ObservableCollection<Pacient>();
         IsSearchPanelVisible = CurrentPacient is null;
@@ -175,6 +187,72 @@ public class EMRViewModel : BaseViewModel
     {
         get => _inaltime;
         set => SetProperty(ref _inaltime, value);
+    }
+
+    public string AlergieSubstanta
+    {
+        get => _alergieSubstanta;
+        set
+        {
+            if (SetProperty(ref _alergieSubstanta, value))
+                CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public string AlergieSeveritate
+    {
+        get => _alergieSeveritate;
+        set => SetProperty(ref _alergieSeveritate, value);
+    }
+
+    public string AlergieObservatii
+    {
+        get => _alergieObservatii;
+        set => SetProperty(ref _alergieObservatii, value);
+    }
+
+    public string AnalizaLaborator
+    {
+        get => _analizaLaborator;
+        set => SetProperty(ref _analizaLaborator, value);
+    }
+
+    public string AnalizaTest
+    {
+        get => _analizaTest;
+        set
+        {
+            if (SetProperty(ref _analizaTest, value))
+                CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public string AnalizaValoare
+    {
+        get => _analizaValoare;
+        set
+        {
+            if (SetProperty(ref _analizaValoare, value))
+                CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public string AnalizaUnitate
+    {
+        get => _analizaUnitate;
+        set => SetProperty(ref _analizaUnitate, value);
+    }
+
+    public string AnalizaStatus
+    {
+        get => _analizaStatus;
+        set => SetProperty(ref _analizaStatus, value);
+    }
+
+    public string AnalizaInterpretare
+    {
+        get => _analizaInterpretare;
+        set => SetProperty(ref _analizaInterpretare, value);
     }
 
     public bool IsSaving
@@ -288,6 +366,9 @@ public class EMRViewModel : BaseViewModel
     public ICommand StartConsultatieNouaCommand { get; }
     public ICommand SearchCommand { get; }
     public ICommand SelectPatientCommand { get; }
+    public ICommand OpenSearchCommand { get; }
+    public ICommand AddAlergieCommand { get; }
+    public ICommand TrimiteAnalizaCommand { get; }
 
     // ── Search ──────────────────────────────────────────────────
     private async Task ExecuteSearchAsync()
@@ -633,6 +714,83 @@ public class EMRViewModel : BaseViewModel
 
             await ShowToastAsync(true, "Rețeta a fost emisă");
             await ReloadAsync();
+        }
+    }
+
+    private async Task AddAlergieAsync()
+    {
+        if (CurrentPacient is null || string.IsNullOrWhiteSpace(AlergieSubstanta))
+        {
+            return;
+        }
+
+        try
+        {
+            var alergie = new Alergie
+            {
+                PacientId = CurrentPacient.Id,
+                Substanta = AlergieSubstanta.Trim(),
+                Severitate = string.IsNullOrWhiteSpace(AlergieSeveritate) ? "Medie" : AlergieSeveritate.Trim(),
+                Observatii = string.IsNullOrWhiteSpace(AlergieObservatii) ? null : AlergieObservatii.Trim()
+            };
+
+            await _app.Pacienti.AddAlergieAsync(alergie);
+            Alergii.Add(alergie);
+            AlergieSubstanta = string.Empty;
+            AlergieObservatii = string.Empty;
+            await ShowToastAsync(true, "Alergia a fost adaugata.");
+        }
+        catch (Exception ex)
+        {
+            await ShowToastAsync(false, $"Alergia nu a putut fi adaugata: {ex.Message}");
+        }
+    }
+
+    private async Task TrimiteAnalizaAsync()
+    {
+        if (CurrentPacient is null || string.IsNullOrWhiteSpace(AnalizaTest) || string.IsNullOrWhiteSpace(AnalizaValoare))
+        {
+            return;
+        }
+
+        try
+        {
+            var rezultat = new RezultatAnaliza
+            {
+                PacientId = CurrentPacient.Id,
+                ConsultatieId = CurrentConsultatie?.Id > 0 ? CurrentConsultatie.Id : null,
+                DataRecoltare = DateTime.Today,
+                DataRezultat = DateTime.Today,
+                Laborator = string.IsNullOrWhiteSpace(AnalizaLaborator) ? "MediClin Lab" : AnalizaLaborator.Trim(),
+                Interpretare = string.IsNullOrWhiteSpace(AnalizaInterpretare) ? null : AnalizaInterpretare.Trim()
+            };
+
+            var rezultatId = await _app.AnalizeRepo.CreateAsync(rezultat);
+            await _app.AnalizeRepo.AddValoareAsync(new ValoareAnaliza
+            {
+                RezultatId = rezultatId,
+                TestNume = AnalizaTest.Trim(),
+                Valoare = AnalizaValoare.Trim(),
+                Unitate = string.IsNullOrWhiteSpace(AnalizaUnitate) ? null : AnalizaUnitate.Trim(),
+                Status = string.IsNullOrWhiteSpace(AnalizaStatus) ? "Normal" : AnalizaStatus.Trim()
+            });
+
+            await _app.NotificariRepo.CreateAsync(
+                CurrentPacient.UtilizatorId,
+                "Rezultat analiza disponibil",
+                $"Dr. {_utilizator.NumeComplet} a transmis rezultatul pentru {AnalizaTest.Trim()}.",
+                "Analiza",
+                "/analize");
+
+            AnalizaTest = string.Empty;
+            AnalizaValoare = string.Empty;
+            AnalizaUnitate = string.Empty;
+            AnalizaInterpretare = string.Empty;
+            await ShowToastAsync(true, "Rezultatul analizei a fost transmis pacientului.");
+        }
+        catch (Exception ex)
+        {
+            await ShowToastAsync(false, $"Analiza nu a putut fi trimisa: {ex.Message}");
         }
     }
 

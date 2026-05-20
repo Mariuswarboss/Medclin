@@ -71,6 +71,39 @@ public class NotificareRepository
         }
     }
 
+    public async Task<List<Notificare>> GetByUtilizatorAsync(int utilizatorId, int limit = 100)
+    {
+        try
+        {
+            const string sql = """
+                SELECT id, utilizator_id, titlu, mesaj, tip, citita, link, creat_la
+                FROM notificari
+                WHERE utilizator_id=@uid
+                ORDER BY citita ASC, creat_la DESC
+                LIMIT @lim
+                """;
+            var rows = await _db.QueryAsync(sql, new Dictionary<string, object> { ["@uid"] = utilizatorId, ["@lim"] = limit });
+            return rows.Select(Map).ToList();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Nu s-au putut incarca notificarile.", ex);
+        }
+    }
+
+    public async Task MarkReadAsync(int notificareId, int utilizatorId)
+    {
+        try
+        {
+            const string sql = "UPDATE notificari SET citita=1 WHERE id=@id AND utilizator_id=@uid";
+            await _db.ExecuteAsync(sql, new Dictionary<string, object> { ["@id"] = notificareId, ["@uid"] = utilizatorId });
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Notificarea nu a putut fi marcata ca citita.", ex);
+        }
+    }
+
     public async Task MarkAllReadAsync(int utilizatorId)
     {
         try

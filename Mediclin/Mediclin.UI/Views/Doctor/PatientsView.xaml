@@ -17,7 +17,7 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel>
                         <TextBlock Text="Patient Analytics" Style="{StaticResource HeadingText}" />
-                        <TextBlock Text="Alegeți pacientul pentru context clinic rapid sau creați o fișă nouă." Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                        <TextBlock Text="Alegeți pacientul pentru context clinic rapid sau creați o fișă nouă." Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <TextBox Style="{StaticResource RoundedTextBox}" Width="260" Margin="0,0,14,0"
@@ -38,9 +38,9 @@
                             <Button Content="{Binding}" Margin="0,0,8,8" Command="{Binding DataContext.SelectSpecialitateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
                                 <Button.Style>
                                     <Style TargetType="Button">
-                                        <Setter Property="Background" Value="#F8FAFC" />
-                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-                                        <Setter Property="BorderBrush" Value="#E6EAF0" />
+                                        <Setter Property="Background" Value="{DynamicResource BackgroundSecondaryBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushNeutral}" />
                                         <Setter Property="BorderThickness" Value="1" />
                                         <Setter Property="Padding" Value="16,6" />
                                         <Setter Property="Cursor" Value="Hand" />
@@ -52,8 +52,8 @@
                                                     </Border>
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}" />
-                                                            <Setter Property="Foreground" Value="{StaticResource PrimaryGreenDarkBrush}" />
+                                                            <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryGreenDarkBrush}" />
                                                         </Trigger>
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>
@@ -75,12 +75,12 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="8,0">
-                                    <Border Width="36" Height="36" CornerRadius="18" Background="#EAF4F0" Margin="0,0,12,0">
-                                        <TextBlock Text="{Binding Initials}" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenDarkBrush}" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Border Width="36" Height="36" CornerRadius="18" Background="{DynamicResource PrimaryLightBrush}" Margin="0,0,12,0">
+                                        <TextBlock Text="{Binding Initials}" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryGreenDarkBrush}" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding Email}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{Binding Email}" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -91,7 +91,7 @@
                             <DataTemplate>
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock Text="{Binding Specialty}" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding AgeText}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{Binding AgeText}" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="11" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

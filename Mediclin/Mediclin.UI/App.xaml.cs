@@ -32,6 +32,9 @@ public partial class App : Application
 
         Services = new ApplicationServices();
 
+        // Aplică tema (Light/Dark) salvată de utilizator
+        ThemeService.ApplySaved();
+
         await EnsureProgramMediciAsync();
 
         var authService = new AuthService(Services.Utilizatori);

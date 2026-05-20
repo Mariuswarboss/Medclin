@@ -1,11 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Windows;
+using System.IO;
+using System.Text;
 using System.Windows.Input;
 using Mediclin.Business.DTOs;
 using Mediclin.Data.Models;
 using Mediclin.UI.Services;
+using Microsoft.Win32;
 
 namespace Mediclin.UI.ViewModels.Doctor;
 
@@ -21,6 +22,8 @@ public class ReportsViewModel : BaseViewModel
     private int _cardNeprezentate;
     private int _cardConsultatiiDirecte;
     private decimal _cardVenit;
+    private DateTime _periodStart = DateTime.Today;
+    private DateTime _periodEnd = DateTime.Today.AddDays(1).AddTicks(-1);
 
     public ReportsViewModel(ApplicationServices app, int medicId)
     {
@@ -30,16 +33,8 @@ public class ReportsViewModel : BaseViewModel
         ChartBars = new ObservableCollection<RaportBarItem>();
         RecentProgramari = new ObservableCollection<Programare>();
         LoadRaportCommand = new RelayCommand(_ => _ = LoadAsync());
-        ExportPdfCommand = new RelayCommand(_ =>
-        {
-            MessageBox.Show("Export PDF va fi disponibil în curând.", "MediClin");
-            StatusMessage = "Export PDF planificat.";
-        });
-        ExportCsvCommand = new RelayCommand(_ =>
-        {
-            MessageBox.Show("Export CSV va fi disponibil în curând.", "MediClin");
-            StatusMessage = "Export CSV planificat.";
-        });
+        ExportPdfCommand = new AsyncRelayCommand(_ => ExportPdfAsync());
+        ExportCsvCommand = new AsyncRelayCommand(_ => ExportCsvAsync());
         _ = LoadAsync();
     }
 
@@ -137,12 +132,12 @@ public class ReportsViewModel : BaseViewModel
                     break;
             }
 
+            _periodStart = from;
+            _periodEnd = to;
             CardTotal = CurrentRaport.TotalProgramari > 0 ? CurrentRaport.TotalProgramari : CurrentRaport.TotalConsultatii;
             CardFinalizate = CurrentRaport.ProgramariFinalizate > 0 ? CurrentRaport.ProgramariFinalizate : CurrentRaport.TotalConsultatii;
             CardNeprezentate = CurrentRaport.ProgramariNeprezentate;
             CardVenit = CurrentRaport.VenitEstimat;
-
-            // Numărăm consultațiile fără programare (directe) din totalul de consultații
             CardConsultatiiDirecte = Math.Max(0, CurrentRaport.TotalConsultatii - CurrentRaport.ProgramariFinalizate);
 
             BuildChart();
@@ -155,6 +150,125 @@ public class ReportsViewModel : BaseViewModel
             ChartBars.Clear();
             StatusMessage = ex.Message;
         }
+    }
+
+    private async Task ExportPdfAsync()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Salveaza raportul financiar",
+            Filter = "PDF (*.pdf)|*.pdf",
+            FileName = $"MediClin_Raport_Financiar_{SelectedPeriod}_{DateTime.Now:yyyyMMdd_HHmm}.pdf",
+            AddExtension = true,
+            DefaultExt = ".pdf"
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        try
+        {
+            await SimplePdfExportService.SaveTextPdfAsync(dialog.FileName, BuildExportLines());
+            StatusMessage = $"PDF salvat: {dialog.FileName}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Export PDF esuat: {ex.Message}";
+        }
+    }
+
+    private async Task ExportCsvAsync()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Salveaza raportul CSV",
+            Filter = "CSV (*.csv)|*.csv",
+            FileName = $"MediClin_Raport_Financiar_{SelectedPeriod}_{DateTime.Now:yyyyMMdd_HHmm}.csv",
+            AddExtension = true,
+            DefaultExt = ".csv"
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        try
+        {
+            await File.WriteAllTextAsync(dialog.FileName, BuildCsv(), new UTF8Encoding(true));
+            StatusMessage = $"CSV salvat: {dialog.FileName}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Export CSV esuat: {ex.Message}";
+        }
+    }
+
+    private List<string> BuildExportLines()
+    {
+        var lines = new List<string>
+        {
+            "MediClin - Raport financiar medic",
+            $"Perioada: {SelectedPeriod} ({_periodStart:dd.MM.yyyy} - {_periodEnd:dd.MM.yyyy})",
+            $"Generat la: {DateTime.Now:dd.MM.yyyy HH:mm}",
+            string.Empty,
+            $"Total programari: {CardTotal}",
+            $"Programari finalizate: {CardFinalizate}",
+            $"Fise salvate direct: {CardConsultatiiDirecte}",
+            $"Venit estimat: {CardVenit:N2} lei",
+            $"Neprezentari: {CardNeprezentate}",
+            $"Rata neprezentare: {CurrentRaport.RataNeprezentare:N2}%",
+            string.Empty,
+            "Activitate pe zile:"
+        };
+
+        foreach (var item in ChartBars)
+        {
+            lines.Add($"- {item.Label}: {item.Count} consultatii");
+        }
+
+        lines.Add(string.Empty);
+        lines.Add("Programari recente:");
+        foreach (var programare in RecentProgramari)
+        {
+            SimplePdfExportService.AddWrapped(
+                lines,
+                $"- {programare.DataOra:dd.MM.yyyy HH:mm} | {programare.PacientNume ?? "Pacient"} | {programare.Tip} | {programare.Status}");
+        }
+
+        return lines;
+    }
+
+    private string BuildCsv()
+    {
+        var csv = new StringBuilder();
+        csv.AppendLine("Sectiune,Indicator,Valoare");
+        csv.AppendLine($"Raport,Perioada,{EscapeCsv(SelectedPeriod)}");
+        csv.AppendLine($"Raport,Start,{_periodStart:yyyy-MM-dd}");
+        csv.AppendLine($"Raport,Sfarsit,{_periodEnd:yyyy-MM-dd}");
+        csv.AppendLine($"Metrici,Total programari,{CardTotal}");
+        csv.AppendLine($"Metrici,Programari finalizate,{CardFinalizate}");
+        csv.AppendLine($"Metrici,Fise salvate direct,{CardConsultatiiDirecte}");
+        csv.AppendLine($"Metrici,Venit estimat,{CardVenit.ToString(CultureInfo.InvariantCulture)}");
+        csv.AppendLine($"Metrici,Neprezentari,{CardNeprezentate}");
+        csv.AppendLine($"Metrici,Rata neprezentare,{CurrentRaport.RataNeprezentare.ToString(CultureInfo.InvariantCulture)}");
+        csv.AppendLine();
+        csv.AppendLine("Data,Pacient,Tip,Status,Durata minute,Motiv");
+
+        foreach (var programare in RecentProgramari)
+        {
+            csv.AppendLine(string.Join(',',
+                programare.DataOra.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture),
+                EscapeCsv(programare.PacientNume ?? "Pacient"),
+                EscapeCsv(programare.Tip),
+                EscapeCsv(programare.Status),
+                programare.DurataMin,
+                EscapeCsv(programare.MotivVizita ?? string.Empty)));
+        }
+
+        return csv.ToString();
     }
 
     private void BuildChart()
@@ -201,5 +315,10 @@ public class ReportsViewModel : BaseViewModel
         {
             RecentProgramari.Add(p);
         }
+    }
+
+    private static string EscapeCsv(string value)
+    {
+        return $"\"{value.Replace("\"", "\"\"")}\"";
     }
 }

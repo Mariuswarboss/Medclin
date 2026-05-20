@@ -1,4 +1,17 @@
 <Project>
+  <PropertyGroup>
+    <TargetPlatformIdentifier Condition="'$(TargetPlatformIdentifier)' == ''">Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion Condition="'$(TargetPlatformVersion)' == ''">7.0</TargetPlatformVersion>
+    <TargetPlatformMoniker Condition="'$(TargetPlatformMoniker)' == ''">Windows,Version=7.0</TargetPlatformMoniker>
+    <TargetPlatformSdkPath Condition="'$(TargetPlatformSdkPath)' == ''">C:\Program Files (x86)\Windows Kits\10\</TargetPlatformSdkPath>
+    <TargetPlatformDisplayName Condition="'$(TargetPlatformDisplayName)' == ''">Windows SDK</TargetPlatformDisplayName>
+    <RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources>
+    <NuGetAudit>false</NuGetAudit>
+    <RestoreProjectStyle Condition="'$(MSBuildProjectName)' == 'Mediclin.UI' Or '$(MSBuildProjectName)' == 'Mediclin.Business' Or '$(MSBuildProjectName)' == 'Mediclin.Data'">None</RestoreProjectStyle>
+    <RestoreSources Condition="'$(MSBuildProjectName)' == 'Mediclin.UI' Or '$(MSBuildProjectName)' == 'Mediclin.Business' Or '$(MSBuildProjectName)' == 'Mediclin.Data'"></RestoreSources>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**\obj*\**</DefaultItemExcludes>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="Google.Protobuf">
       <HintPath>$(MSBuildThisFileDirectory)libs\Google.Protobuf.dll</HintPath>

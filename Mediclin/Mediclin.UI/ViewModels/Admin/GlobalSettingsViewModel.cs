@@ -15,6 +15,8 @@ public class GlobalSettingsViewModel : BaseViewModel
     private string _apiKey = string.Empty;
     private string _sectiune = "General";
     private string _mesaj = string.Empty;
+    private bool _isDarkTheme;
+    private string _primaryColor = ThemeService.PrimaryColor;
 
     public GlobalSettingsViewModel(ApplicationServices app)
     {
@@ -23,6 +25,8 @@ public class GlobalSettingsViewModel : BaseViewModel
         SalveazaSecuritateCommand = new RelayCommand(_ => _ = SalveazaSecuritateAsync());
         RegenereazaApiCommand = new RelayCommand(_ => _ = RegenereazaApiAsync());
         CopiazaApiCommand = new RelayCommand(_ => System.Windows.Clipboard.SetText(ApiKey));
+        SchimbaTemaCuloareCommand = new RelayCommand(p => SetTheme(p));
+        SchimbaCuloarePrimaraCommand = new RelayCommand(p => SetPrimaryColor(p?.ToString()));
         SchimbaSectiuneCommand = new RelayCommand(p =>
         {
             if (p is string s)
@@ -31,6 +35,7 @@ public class GlobalSettingsViewModel : BaseViewModel
                 Mesaj = string.Empty;
             }
         });
+        _isDarkTheme = ThemeService.IsDark;
         _ = IncarcaAsync();
     }
 
@@ -70,6 +75,27 @@ public class GlobalSettingsViewModel : BaseViewModel
         set => SetProperty(ref _apiKey, value);
     }
 
+    public bool IsDarkTheme
+    {
+        get => _isDarkTheme;
+        set
+        {
+            if (SetProperty(ref _isDarkTheme, value))
+            {
+                ThemeService.Apply(value);
+                OnPropertyChanged(nameof(ThemeStatusText));
+            }
+        }
+    }
+
+    public string ThemeStatusText => IsDarkTheme ? "Temă activă: Neagră" : "Temă activă: Albă";
+
+    public string PrimaryColor
+    {
+        get => _primaryColor;
+        set => SetProperty(ref _primaryColor, value);
+    }
+
     public string Sectiune
     {
         get => _sectiune;
@@ -87,6 +113,37 @@ public class GlobalSettingsViewModel : BaseViewModel
     public ICommand RegenereazaApiCommand { get; }
     public ICommand CopiazaApiCommand { get; }
     public ICommand SchimbaSectiuneCommand { get; }
+    public ICommand SchimbaTemaCuloareCommand { get; }
+    public ICommand SchimbaCuloarePrimaraCommand { get; }
+
+    private void SetTheme(object? parameter)
+    {
+        if (parameter is string tema)
+        {
+            if (string.Equals(tema, "Dark", StringComparison.OrdinalIgnoreCase))
+                IsDarkTheme = true;
+            else if (string.Equals(tema, "Light", StringComparison.OrdinalIgnoreCase))
+                IsDarkTheme = false;
+            else
+                IsDarkTheme = !IsDarkTheme;
+        }
+        else
+        {
+            IsDarkTheme = !IsDarkTheme;
+        }
+    }
+
+    private void SetPrimaryColor(string? color)
+    {
+        if (string.IsNullOrWhiteSpace(color))
+        {
+            return;
+        }
+
+        PrimaryColor = color;
+        ThemeService.ApplyPrimaryColor(color);
+        Mesaj = $"Culoarea primara a fost schimbata la {color}.";
+    }
 
     private async Task IncarcaAsync()
     {
@@ -94,6 +151,8 @@ public class GlobalSettingsViewModel : BaseViewModel
         {
             ClinicName = await _app.Setari.GetValoareAsync("clinic_name") ?? ClinicName;
             ClinicPhone = await _app.Setari.GetValoareAsync("clinic_phone") ?? string.Empty;
+            PrimaryColor = await _app.Setari.GetValoareAsync("primary_color") ?? PrimaryColor;
+            ThemeService.ApplyPrimaryColor(PrimaryColor);
             ApiKey = await _app.Setari.GetValoareAsync("api_key") ?? string.Empty;
         }
         catch
@@ -106,6 +165,8 @@ public class GlobalSettingsViewModel : BaseViewModel
     {
         await _app.Setari.SetValoareAsync("clinic_name", ClinicName);
         await _app.Setari.SetValoareAsync("clinic_phone", ClinicPhone);
+        await _app.Setari.SetValoareAsync("primary_color", PrimaryColor);
+        ThemeService.ApplyPrimaryColor(PrimaryColor);
         Mesaj = "Setările generale au fost salvate.";
     }
 

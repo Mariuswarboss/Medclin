@@ -23,6 +23,7 @@ public class AccountSettingsViewModel : BaseViewModel
     private string _parolaConfirm = string.Empty;
     private string _mesaj = string.Empty;
     private string _avatarUrl = string.Empty;
+    private bool _isDarkTheme;
 
     public AccountSettingsViewModel(ApplicationServices app, Utilizator utilizator)
     {
@@ -44,6 +45,26 @@ public class AccountSettingsViewModel : BaseViewModel
                 Mesaj = string.Empty;
             }
         });
+        SchimbaTemaCuloareCommand = new RelayCommand(p =>
+        {
+            if (p is string tema)
+            {
+                if (string.Equals(tema, "Dark", StringComparison.OrdinalIgnoreCase))
+                    ThemeService.Apply(true);
+                else if (string.Equals(tema, "Light", StringComparison.OrdinalIgnoreCase))
+                    ThemeService.Apply(false);
+                else
+                    ThemeService.Toggle();
+            }
+            else
+            {
+                ThemeService.Toggle();
+            }
+
+            _isDarkTheme = ThemeService.IsDark;
+            OnPropertyChanged(nameof(IsDarkTheme));
+        });
+        _isDarkTheme = ThemeService.IsDark;
         _ = IncarcaOrasAsync();
     }
 
@@ -119,10 +140,23 @@ public class AccountSettingsViewModel : BaseViewModel
         set => SetProperty(ref _avatarUrl, value);
     }
 
+    public bool IsDarkTheme
+    {
+        get => _isDarkTheme;
+        set
+        {
+            if (_isDarkTheme == value) return;
+            _isDarkTheme = value;
+            ThemeService.Apply(value);
+            OnPropertyChanged();
+        }
+    }
+
     public ICommand SalveazaProfilCommand { get; }
     public ICommand SchimbaParolaCommand { get; }
     public ICommand SalveazaNotificariCommand { get; }
     public ICommand SchimbaSectiuneCommand { get; }
+    public ICommand SchimbaTemaCuloareCommand { get; }
 
     private async Task IncarcaOrasAsync()
     {

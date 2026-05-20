@@ -1,0 +1,6 @@
+D:\medclin\Mediclin\Mediclin.Data\obj-verify\Debug\net8.0-windows\Mediclin.Data.csproj.AssemblyReference.cache
+D:\medclin\Mediclin\Mediclin.Data\obj-verify\Debug\net8.0-windows\Mediclin.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\medclin\Mediclin\Mediclin.Data\obj-verify\Debug\net8.0-windows\Mediclin.Data.AssemblyInfoInputs.cache
+D:\medclin\Mediclin\Mediclin.Data\obj-verify\Debug\net8.0-windows\Mediclin.Data.AssemblyInfo.cs
+D:\medclin\Mediclin\Mediclin.Data\obj-verify\Debug\net8.0-windows\Mediclin.Data.csproj.CoreCompileInputs.cache
+D:\medclin\Mediclin\Mediclin.Data\obj-verify\Debug\net8.0-windows\Mediclin.Data.sourcelink.json

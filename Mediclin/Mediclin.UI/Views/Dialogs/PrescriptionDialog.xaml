@@ -2,13 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Emitere rețetă" Width="520" MinHeight="560" SizeToContent="Height"
-        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="White">
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="{DynamicResource BackgroundPrimaryBrush}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Background="#0F6E56">
+        <Border Grid.Row="0" Background="{DynamicResource PrimaryGreenBrush}">
             <TextBlock Text="Emitere rețetă" Foreground="White" VerticalAlignment="Center" Margin="16,0" FontWeight="SemiBold" />
         </Border>
         <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">

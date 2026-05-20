@@ -18,8 +18,8 @@
                                     <StackPanel>
                                         <TextBlock Text="{Binding NumeCompletCuTitlu}" Style="{StaticResource SectionTitleText}" TextTrimming="CharacterEllipsis" />
                                         <TextBlock Text="{Binding SpecialitateNume}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
-                                        <TextBlock Text="{Binding CodMedic}" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,8,0,0" />
-                                        <TextBlock Text="Profil nou — verificați documentele și aprobați sau respingeți." TextWrapping="Wrap" Margin="0,10,0,0" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                                        <TextBlock Text="{Binding CodMedic}" FontSize="12" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,8,0,0" />
+                                        <TextBlock Text="Profil nou — verificați documentele și aprobați sau respingeți." TextWrapping="Wrap" Margin="0,10,0,0" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
                                         <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
                                             <Button Content="Aprobă" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" Padding="14,8"
                                                     Command="{Binding DataContext.AprobaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"

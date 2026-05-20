@@ -9,9 +9,10 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel>
-            <Button Content="Profil" Style="{StaticResource SidebarMenuItem}" Command="{Binding SchimbaSectiuneCommand}" CommandParameter="Profil" />
+            <Button Content="Profil"     Style="{StaticResource SidebarMenuItem}" Command="{Binding SchimbaSectiuneCommand}" CommandParameter="Profil" />
             <Button Content="Securitate" Style="{StaticResource SidebarMenuItem}" Command="{Binding SchimbaSectiuneCommand}" CommandParameter="Securitate" />
             <Button Content="Notificări" Style="{StaticResource SidebarMenuItem}" Command="{Binding SchimbaSectiuneCommand}" CommandParameter="Notificari" />
+            <Button Content="Aspect"     Style="{StaticResource SidebarMenuItem}" Command="{Binding SchimbaSectiuneCommand}" CommandParameter="Aspect" />
         </StackPanel>
 
         <!-- Profil Section -->
@@ -62,7 +63,7 @@
 
                     <Button Content="Salvează modificările" Style="{StaticResource PrimaryButton}" Command="{Binding SalveazaProfilCommand}" HorizontalAlignment="Left" />
                     
-                    <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
                 </StackPanel>
             </ScrollViewer>
         </Border>
@@ -93,7 +94,7 @@
 
                 <Button Content="Schimbă parola" Style="{StaticResource PrimaryButton}" Command="{Binding SchimbaParolaCommand}" HorizontalAlignment="Left" />
                 
-                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
             </StackPanel>
         </Border>
 
@@ -116,7 +117,143 @@
                 
                 <Button Content="Salvează preferințele" Style="{StaticResource PrimaryButton}" Command="{Binding SalveazaNotificariCommand}" HorizontalAlignment="Left" />
                 
-                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+                <TextBlock Text="{Binding Mesaj}" Margin="0,12,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
+            </StackPanel>
+        </Border>
+
+        <!-- Aspect Section -->
+        <Border Grid.Column="1">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource CardBorder}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Sectiune}" Value="Aspect">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel>
+                <TextBlock Text="Setări cont - Aspect" Style="{StaticResource HeadingText}" />
+                <TextBlock Text="Alege cum arată aplicația. Schimbarea se aplică imediat, fără restart."
+                           TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,20" />
+
+                <!-- Carduri temă -->
+                <UniformGrid Columns="2" Margin="0,0,0,20">
+
+                    <!-- Card Luminos -->
+                    <Border Margin="0,0,8,0" CornerRadius="12" Padding="20"
+                            BorderThickness="2" Cursor="Hand">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="#FFFFFF" />
+                                <Setter Property="BorderBrush" Value="#E6EAF0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDarkTheme}" Value="False">
+                                        <Setter Property="BorderBrush" Value="#0F6E56" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding SchimbaTemaCuloareCommand}"
+                                          CommandParameter="Light" />
+                        </Border.InputBindings>
+                        <StackPanel>
+                            <!-- Preview luminos -->
+                            <Border CornerRadius="6" Background="#F5F7FA" Height="60" Margin="0,0,0,12">
+                                <StackPanel VerticalAlignment="Center" Margin="10,0">
+                                    <Border Background="#0F6E56" CornerRadius="3" Height="8" Width="60"
+                                            HorizontalAlignment="Left" Margin="0,0,0,6"/>
+                                    <Border Background="#E6EAF0" CornerRadius="3" Height="6" Width="100"
+                                            HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                                    <Border Background="#E6EAF0" CornerRadius="3" Height="6" Width="80"
+                                            HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="16" Height="16" Margin="0,0,8,0">
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse">
+                                            <Setter Property="Fill" Value="#E6EAF0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsDarkTheme}" Value="False">
+                                                    <Setter Property="Fill" Value="#0F6E56" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Text="☀  Luminos" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Card Întunecat -->
+                    <Border Margin="8,0,0,0" CornerRadius="12" Padding="20"
+                            BorderThickness="2" Cursor="Hand">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="#1A2435" />
+                                <Setter Property="BorderBrush" Value="#2A3547" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
+                                        <Setter Property="BorderBrush" Value="#1DBD8A" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding SchimbaTemaCuloareCommand}"
+                                          CommandParameter="Dark" />
+                        </Border.InputBindings>
+                        <StackPanel>
+                            <!-- Preview întunecat -->
+                            <Border CornerRadius="6" Background="#111827" Height="60" Margin="0,0,0,12">
+                                <StackPanel VerticalAlignment="Center" Margin="10,0">
+                                    <Border Background="#1DBD8A" CornerRadius="3" Height="8" Width="60"
+                                            HorizontalAlignment="Left" Margin="0,0,0,6"/>
+                                    <Border Background="#2A3547" CornerRadius="3" Height="6" Width="100"
+                                            HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                                    <Border Background="#2A3547" CornerRadius="3" Height="6" Width="80"
+                                            HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="16" Height="16" Margin="0,0,8,0">
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse">
+                                            <Setter Property="Fill" Value="#2A3547" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
+                                                    <Setter Property="Fill" Value="#1DBD8A" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Text="🌙  Întunecat" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                </UniformGrid>
+
+                <TextBlock Margin="0,4,0,0" FontStyle="Italic"
+                           Foreground="{DynamicResource TextSecondaryBrush}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="Temă activă: ☀ Luminos" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
+                                    <Setter Property="Text" Value="Temă activă: 🌙 Întunecat" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
             </StackPanel>
         </Border>
     </Grid>

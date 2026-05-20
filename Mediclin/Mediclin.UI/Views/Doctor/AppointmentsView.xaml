@@ -25,25 +25,25 @@
           <TextBlock Text="{Binding MonthYear}"
                      HorizontalAlignment="Center" VerticalAlignment="Center"
                      FontSize="15" FontWeight="SemiBold"
-                     Foreground="{StaticResource TextPrimaryBrush}"/>
+                     Foreground="{DynamicResource TextPrimaryBrush}"/>
         </DockPanel>
 
         <!-- Day labels -->
         <UniformGrid Columns="7" Margin="0,0,0,8">
           <TextBlock Text="Lu" TextAlignment="Center" FontSize="11"
-                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                     FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
           <TextBlock Text="Ma" TextAlignment="Center" FontSize="11"
-                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                     FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
           <TextBlock Text="Mi" TextAlignment="Center" FontSize="11"
-                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                     FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
           <TextBlock Text="Jo" TextAlignment="Center" FontSize="11"
-                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                     FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
           <TextBlock Text="Vi" TextAlignment="Center" FontSize="11"
-                     FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                     FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
           <TextBlock Text="S&#226;" TextAlignment="Center" FontSize="11"
-                     FontWeight="SemiBold" Foreground="#AAAAAA"/>
+                     FontWeight="SemiBold" Foreground="{DynamicResource TextTertiaryBrush}"/>
           <TextBlock Text="Du" TextAlignment="Center" FontSize="11"
-                     FontWeight="SemiBold" Foreground="#AAAAAA"/>
+                     FontWeight="SemiBold" Foreground="{DynamicResource TextTertiaryBrush}"/>
         </UniformGrid>
 
         <!-- Calendar grid -->
@@ -62,7 +62,7 @@
                 <Button.Style>
                   <Style TargetType="Button">
                     <Setter Property="Background"      Value="Transparent"/>
-                    <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+                    <Setter Property="Foreground"      Value="{DynamicResource TextPrimaryBrush}"/>
                     <Setter Property="BorderThickness" Value="0"/>
                     <Setter Property="FontSize"        Value="13"/>
                     <Setter Property="Template">
@@ -75,14 +75,14 @@
                                                 VerticalAlignment="Center"/>
                               <Ellipse x:Name="Dot" Width="4" Height="4"
                                        Margin="0,2,0,0" HorizontalAlignment="Center"
-                                       Fill="{StaticResource AccentGreenBrush}"
+                                       Fill="{DynamicResource AccentGreenBrush}"
                                        Visibility="Collapsed"/>
                             </StackPanel>
                           </Border>
                           <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                               <Setter TargetName="Bd" Property="Background"
-                                      Value="{StaticResource BackgroundSecondaryBrush}"/>
+                                      Value="{DynamicResource BackgroundSecondaryBrush}"/>
                             </Trigger>
                           </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -90,18 +90,18 @@
                     </Setter>
                     <Style.Triggers>
                       <DataTrigger Binding="{Binding IsCurrentMonth}" Value="False">
-                        <Setter Property="Foreground" Value="#CCCCCC"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}"/>
                         <Setter Property="Opacity"    Value="0.4"/>
                       </DataTrigger>
                       <DataTrigger Binding="{Binding HasAppointments}" Value="True">
                         <Setter Property="FontWeight" Value="Bold"/>
                       </DataTrigger>
                       <DataTrigger Binding="{Binding IsToday}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource PrimaryGreenBrush}"/>
+                        <Setter Property="Background" Value="{DynamicResource PrimaryGreenBrush}"/>
                         <Setter Property="Foreground" Value="White"/>
                       </DataTrigger>
                       <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource PrimaryGreenDarkBrush}"/>
+                        <Setter Property="Background" Value="{DynamicResource PrimaryGreenDarkBrush}"/>
                         <Setter Property="Foreground" Value="White"/>
                         <Setter Property="FontWeight" Value="Bold"/>
                       </DataTrigger>
@@ -120,7 +120,7 @@
 
         <!-- Legend -->
         <StackPanel Orientation="Horizontal" Margin="0,16,0,0" HorizontalAlignment="Center">
-          <Ellipse Width="8" Height="8" Fill="{StaticResource AccentGreenBrush}"
+          <Ellipse Width="8" Height="8" Fill="{DynamicResource AccentGreenBrush}"
                    VerticalAlignment="Center" Margin="0,0,6,0"/>
           <TextBlock Text="Zile cu programări" Style="{StaticResource MutedText}" FontSize="11"/>
         </StackPanel>
@@ -151,12 +151,12 @@
 
         <!-- Error -->
         <Border DockPanel.Dock="Top"
-                Background="#FCEDEC" CornerRadius="12" Padding="14,10"
+                Background="{DynamicResource ErrorBgBrush}" CornerRadius="12" Padding="14,10"
                 Margin="0,0,0,12"
                 Visibility="{Binding Error,
                 Converter={StaticResource NullToVisibilityConverter}}">
           <TextBlock Text="{Binding Error}"
-                     Foreground="{StaticResource ErrorRedBrush}"
+                     Foreground="{DynamicResource ErrorRedBrush}"
                      FontSize="12" TextWrapping="Wrap"/>
         </Border>
 
@@ -181,7 +181,7 @@
             <ItemsControl.ItemTemplate>
               <DataTemplate>
                 <Border Margin="0,0,0,10" CornerRadius="14"
-                        Background="{StaticResource BackgroundSecondaryBrush}"
+                        Background="{DynamicResource BackgroundSecondaryBrush}"
                         BorderBrush="{StaticResource BorderBrushNeutral}"
                         BorderThickness="1" Padding="16,14">
                   <Grid>
@@ -193,11 +193,11 @@
 
                     <!-- Time badge -->
                     <Border Width="52" Height="52" CornerRadius="12"
-                            Background="{StaticResource PrimaryLightBrush}"
+                            Background="{DynamicResource PrimaryLightBrush}"
                             VerticalAlignment="Center">
                       <TextBlock Text="{Binding OraText}"
                                  FontSize="15" FontWeight="Bold"
-                                 Foreground="{StaticResource PrimaryGreenDarkBrush}"
+                                 Foreground="{DynamicResource PrimaryGreenDarkBrush}"
                                  HorizontalAlignment="Center"
                                  VerticalAlignment="Center"/>
                     </Border>
@@ -207,7 +207,7 @@
                                 VerticalAlignment="Center">
                       <TextBlock Text="{Binding PacientNume}"
                                  FontSize="14" FontWeight="SemiBold"
-                                 Foreground="{StaticResource TextPrimaryBrush}"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"
                                  Margin="0,0,0,3"/>
                       <TextBlock Text="{Binding Tip}"
                                  Style="{StaticResource MutedText}"
@@ -224,29 +224,29 @@
                             Padding="14,6" VerticalAlignment="Center">
                       <Border.Style>
                         <Style TargetType="Border">
-                          <Setter Property="Background" Value="#F0F3F6"/>
+                          <Setter Property="Background" Value="{DynamicResource NeutralPillBgBrush}"/>
                           <Style.Triggers>
                             <DataTrigger Binding="{Binding Status}" Value="Confirmata">
-                              <Setter Property="Background" Value="{StaticResource BlueInfoBgBrush}"/>
+                              <Setter Property="Background" Value="{DynamicResource BlueInfoBgBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="In_asteptare">
-                              <Setter Property="Background" Value="#FFF3E0"/>
+                              <Setter Property="Background" Value="{DynamicResource WarningBgBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="In_cabinet">
-                              <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}"/>
+                              <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Finalizata">
-                              <Setter Property="Background" Value="#EDF7F3"/>
+                              <Setter Property="Background" Value="{DynamicResource SuccessBgBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Anulata">
-                              <Setter Property="Background" Value="#FCEDEC"/>
+                              <Setter Property="Background" Value="{DynamicResource ErrorBgBrush}"/>
                             </DataTrigger>
                           </Style.Triggers>
                         </Style>
                       </Border.Style>
                       <TextBlock Text="{Binding Status}"
                                  FontSize="12" FontWeight="SemiBold"
-                                 Foreground="{StaticResource TextSecondaryBrush}"/>
+                                 Foreground="{DynamicResource TextSecondaryBrush}"/>
                     </Border>
                   </Grid>
                 </Border>

@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Threading.Tasks;
+using System.Text;
+using System.Windows.Markup;
 using Mediclin.Business.DTOs;
 using Mediclin.Business.Services;
 using Mediclin.UI.Services;
@@ -106,11 +108,7 @@ public class LoginViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            var details = ex.InnerException is null
-                ? ex.Message
-                : $"{ex.Message} | Inner: {ex.InnerException.GetType().Name}: {ex.InnerException.Message}";
-
-            ErrorMessage = $"Autentificarea a esuat: {ex.GetType().Name}: {details}";
+            ErrorMessage = $"Autentificarea a esuat: {BuildErrorDetails(ex)}";
         }
         finally
         {
@@ -134,5 +132,33 @@ public class LoginViewModel : BaseViewModel
                 }
             }
         });
+    }
+
+    private static string BuildErrorDetails(Exception ex)
+    {
+        var sb = new StringBuilder();
+        var current = ex;
+        var depth = 0;
+
+        while (current is not null && depth < 6)
+        {
+            if (depth > 0)
+            {
+                sb.Append(" | Inner: ");
+            }
+
+            sb.Append(current.GetType().Name);
+            if (current is XamlParseException xaml)
+            {
+                sb.Append($" line {xaml.LineNumber}, position {xaml.LinePosition}");
+            }
+
+            sb.Append(": ");
+            sb.Append(current.Message);
+            current = current.InnerException;
+            depth++;
+        }
+
+        return sb.ToString();
     }
 }

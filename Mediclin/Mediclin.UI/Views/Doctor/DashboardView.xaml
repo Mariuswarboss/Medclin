@@ -6,7 +6,7 @@
         <StackPanel>
             <StackPanel Margin="0,0,0,20">
                 <TextBlock Text="{Binding WelcomeText}" Style="{StaticResource HeadingText}" />
-                <TextBlock Text="{Binding TodayDateText}" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,6,0,0" />
+                <TextBlock Text="{Binding TodayDateText}" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,6,0,0" />
             </StackPanel>
 
             <Grid>
@@ -23,20 +23,20 @@
                         <StackPanel>
                             <TextBlock Text="LIVE CLINIC PULSE" Style="{StaticResource CardTitle}" />
                             <TextBlock Text="{Binding ActivePatientsNow}" FontSize="54" FontWeight="SemiBold" />
-                            <TextBlock Text="{Binding LivePulseCaption}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,18" />
+                            <TextBlock Text="{Binding LivePulseCaption}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,18" />
 
                             <Grid Margin="0,0,0,18">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Border Background="#F8FBFD" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14" Margin="0,0,8,0">
+                                <Border Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14" Margin="0,0,8,0">
                                     <StackPanel>
                                         <TextBlock Text="În cameră" Style="{StaticResource CardTitle}" Margin="0,0,0,8" />
                                         <TextBlock Text="{Binding InRoomCount}" FontSize="26" FontWeight="SemiBold" />
                                     </StackPanel>
                                 </Border>
-                                <Border Grid.Column="1" Background="#F8FBFD" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14" Margin="8,0,0,0">
+                                <Border Grid.Column="1" Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14" Margin="8,0,0,0">
                                     <StackPanel>
                                         <TextBlock Text="Așteptare" Style="{StaticResource CardTitle}" Margin="0,0,0,8" />
                                         <TextBlock Text="{Binding InAsteptareCount}" FontSize="26" FontWeight="SemiBold" />
@@ -44,11 +44,11 @@
                                 </Border>
                             </Grid>
 
-                            <Border Background="#F8FAFC" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="16">
+                            <Border Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="16">
                                 <StackPanel>
                                     <TextBlock Text="Staff availability" Style="{StaticResource CardTitle}" />
                                     <TextBlock Text="{Binding StaffAvailabilityText}" FontSize="20" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding ShiftSummary}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+                                    <TextBlock Text="{Binding ShiftSummary}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0"/>
                                 </StackPanel>
                             </Border>
                         </StackPanel>
@@ -60,23 +60,23 @@
                             <ItemsControl ItemsSource="{Binding WaitingPatients}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Background="#FBFCFE" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14" Margin="0,0,0,10">
+                                        <Border Background="{DynamicResource SurfaceRaisedBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14" Margin="0,0,0,10">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="46" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <Border Width="42" Height="42" CornerRadius="21" Background="#E8F3FF">
+                                                <Border Width="42" Height="42" CornerRadius="21" Background="{DynamicResource BlueInfoBgBrush}">
                                                     <TextBlock Text="{Binding PacientNume, Converter={StaticResource InitialsConverter}}"
                                                                FontWeight="SemiBold"
-                                                               Foreground="#3F6A9E"
+                                                               Foreground="{DynamicResource BlueInfoBrush}"
                                                                HorizontalAlignment="Center"
                                                                VerticalAlignment="Center"/>
                                                 </Border>
                                                 <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
                                                     <TextBlock Text="{Binding PacientNume}" FontWeight="SemiBold" />
-                                                    <TextBlock Text="{Binding MotivVizita}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding MotivVizita}" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="12" TextWrapping="Wrap"/>
                                                 </StackPanel>
                                                 <Button Grid.Column="2"
                                                         Content="Cheamă pacientul"
@@ -103,9 +103,9 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel>
                                 <TextBlock Text="MEDICAL TIMELINE" Style="{StaticResource CardTitle}" />
-                                <TextBlock Text="Consultații în desfășurare și următoarele intrări în circuit" Foreground="{StaticResource TextSecondaryBrush}" />
+                                <TextBlock Text="Consultații în desfășurare și următoarele intrări în circuit" Foreground="{DynamicResource TextSecondaryBrush}" />
                             </StackPanel>
-                            <Border Grid.Column="1" Background="#F7FBF9" BorderBrush="#E1F0EA" BorderThickness="1" CornerRadius="18" Padding="12,8">
+                            <Border Grid.Column="1" Background="{DynamicResource PrimaryLightBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="12,8">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="" FontFamily="Segoe Fluent Icons" Margin="0,0,8,0"/>
                                     <TextBlock Text="{Binding TotalAziCount, StringFormat={}{0} programări}" />
@@ -116,20 +116,20 @@
                         <ItemsControl ItemsSource="{Binding MedicalTimeline}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="#FCFDFE" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="20" Padding="16" Margin="0,0,0,12">
+                                    <Border Background="{DynamicResource SurfaceRaisedBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="20" Padding="16" Margin="0,0,0,12">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="58" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Width="52" Height="52" CornerRadius="26" Background="#EAF4F0">
-                                                <TextBlock Text="{Binding Initials}" FontWeight="SemiBold" FontSize="16" Foreground="{StaticResource PrimaryGreenDarkBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Width="52" Height="52" CornerRadius="26" Background="{DynamicResource PrimaryLightBrush}">
+                                                <TextBlock Text="{Binding Initials}" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource PrimaryGreenDarkBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding PatientName}" FontSize="15" FontWeight="SemiBold"/>
-                                                <TextBlock Text="{Binding SecondaryLine}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
-                                                <TextBlock Text="{Binding AppointmentTime}" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,8,0,0"/>
+                                                <TextBlock Text="{Binding SecondaryLine}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding AppointmentTime}" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,8,0,0"/>
                                             </StackPanel>
                                             <Border Grid.Column="2"
                                                     Background="{Binding StatusTone}"
@@ -165,13 +165,13 @@
                         <StackPanel>
                             <TextBlock Text="WEATHER / TIME" Style="{StaticResource CardTitle}" />
                             <TextBlock Text="{Binding CurrentTimeText}" FontSize="42" FontWeight="SemiBold"/>
-                            <TextBlock Text="{Binding CurrentDateText}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,14" TextWrapping="Wrap"/>
-                            <Border Background="#F8FAFC" BorderBrush="{StaticResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14">
+                            <TextBlock Text="{Binding CurrentDateText}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,14" TextWrapping="Wrap"/>
+                            <Border Background="{DynamicResource BackgroundSecondaryBrush}" BorderBrush="{DynamicResource BorderBrushNeutral}" BorderThickness="1" CornerRadius="18" Padding="14">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="" FontFamily="Segoe Fluent Icons" FontSize="18" Margin="0,0,10,0"/>
                                     <StackPanel>
                                         <TextBlock Text="Chișinău" FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding WeatherText}" Foreground="{StaticResource TextTertiaryBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding WeatherText}" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="12" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
@@ -181,7 +181,7 @@
                     <Border Style="{StaticResource CardBorder}" Margin="0,18,0,0">
                         <StackPanel>
                             <TextBlock Text="CLINIC NOTE" Style="{StaticResource CardTitle}" />
-                            <TextBlock Text="{Binding ClinicMessage}" TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBlock Text="{Binding ClinicMessage}" TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}" />
                         </StackPanel>
                     </Border>
                 </StackPanel>

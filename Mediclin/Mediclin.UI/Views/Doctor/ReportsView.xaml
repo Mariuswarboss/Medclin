@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Margin="24">
         <DockPanel LastChildFill="False">
-            <TextBlock Text="Rapoarte medic" Style="{StaticResource HeadingText}" />
+            <TextBlock Text="Financiar medic" Style="{StaticResource HeadingText}" />
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <Button Content="Export PDF" Style="{StaticResource SecondaryButton}"
                         Command="{Binding ExportPdfCommand}" Margin="0,0,8,0" />
@@ -32,7 +32,7 @@
             </Border>
             <Border Style="{StaticResource CardBorder}" Margin="0,0,8,0">
                 <StackPanel>
-                    <TextBlock Text="{Binding CardConsultatiiDirecte}" FontSize="26" FontWeight="SemiBold" Foreground="{StaticResource PrimaryGreenBrush}" />
+                    <TextBlock Text="{Binding CardConsultatiiDirecte}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryGreenBrush}" />
                     <TextBlock Text="Fișe salvate direct" Style="{StaticResource MutedText}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
@@ -40,7 +40,7 @@
                 <StackPanel>
                     <TextBlock FontSize="26" FontWeight="SemiBold"
                                Text="{Binding CardVenit, StringFormat='{}{0:N2} lei'}" />
-                    <TextBlock Text="Venit estimat" Style="{StaticResource MutedText}" />
+                    <TextBlock Text="Venit estimat pe perioada" Style="{StaticResource MutedText}" />
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource CardBorder}">
@@ -68,7 +68,7 @@
                                             Width="{Binding BarWidth}"
                                             Height="{Binding BarHeight}"
                                             CornerRadius="4"
-                                            Background="{StaticResource PrimaryGreenBrush}" />
+                                            Background="{DynamicResource PrimaryGreenBrush}" />
                                 </Grid>
                                 <TextBlock Text="{Binding Label}" HorizontalAlignment="Center" Margin="0,8,0,0"
                                            Style="{StaticResource MutedText}" FontSize="11" />

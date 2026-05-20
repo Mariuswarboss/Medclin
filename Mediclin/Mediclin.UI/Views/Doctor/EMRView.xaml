@@ -100,7 +100,7 @@
 
                 <!-- Results dropdown -->
                 <Border Margin="0,8,0,0" CornerRadius="12"
-                        Background="{StaticResource BackgroundSecondaryBrush}"
+                        Background="{DynamicResource BackgroundSecondaryBrush}"
                         Visibility="{Binding SearchResults.Count,
                         Converter={StaticResource ZeroToInverseVisibilityConverter}}">
                     <ItemsControl ItemsSource="{Binding SearchResults}" MaxHeight="260">
@@ -131,32 +131,32 @@
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Border Width="34" Height="34" CornerRadius="17"
-                                                            Background="{StaticResource PrimaryLightBrush}">
+                                                            Background="{DynamicResource PrimaryLightBrush}">
                                                         <TextBlock Text="{Binding Initiale}"
                                                                    FontSize="12" FontWeight="SemiBold"
-                                                                   Foreground="{StaticResource PrimaryGreenDarkBrush}"
+                                                                   Foreground="{DynamicResource PrimaryGreenDarkBrush}"
                                                                    HorizontalAlignment="Center"
                                                                    VerticalAlignment="Center"/>
                                                     </Border>
                                                     <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
                                                         <TextBlock Text="{Binding NumeComplet}"
                                                                    FontWeight="SemiBold" FontSize="13"
-                                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                         <TextBlock Text="{Binding Email}"
                                                                    FontSize="11"
-                                                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
                                                     </StackPanel>
                                                     <TextBlock Grid.Column="2"
                                                                Text="{Binding UltimaVizita, StringFormat={}{0:dd.MM.yyyy}}"
                                                                FontSize="11"
-                                                               Foreground="{StaticResource TextTertiaryBrush}"
+                                                               Foreground="{DynamicResource TextTertiaryBrush}"
                                                                VerticalAlignment="Center"/>
                                                 </Grid>
                                             </Border>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter TargetName="Row" Property="Background"
-                                                            Value="{StaticResource PrimaryLightBrush}"/>
+                                                            Value="{DynamicResource PrimaryLightBrush}"/>
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
@@ -206,10 +206,10 @@
                         Margin="0,0,12,0">
                     <Border.Style>
                         <Style TargetType="Border">
-                            <Setter Property="Background" Value="#FCEDEC" />
+                            <Setter Property="Background" Value="{DynamicResource ErrorBgBrush}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsSaveToastSuccess}" Value="True">
-                                    <Setter Property="Background" Value="#E7F4EF" />
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -220,10 +220,10 @@
                                FontWeight="Bold">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="{StaticResource ErrorRedBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource ErrorRedBrush}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsSaveToastSuccess}" Value="True">
-                                        <Setter Property="Foreground" Value="{StaticResource PrimaryGreenBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryGreenBrush}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -245,22 +245,22 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Border Width="64" Height="64" CornerRadius="32" Background="#EAF4F0">
+                        <Border Width="64" Height="64" CornerRadius="32" Background="{DynamicResource PrimaryLightBrush}">
                             <TextBlock Text="{Binding CurrentPatientInitials}"
                                        FontSize="20"
                                        FontWeight="SemiBold"
-                                       Foreground="{StaticResource PrimaryGreenDarkBrush}"
+                                       Foreground="{DynamicResource PrimaryGreenDarkBrush}"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                             <TextBlock Text="{Binding CurrentPacient.NumeComplet}" Style="{StaticResource HeadingText}" FontSize="26"/>
-                            <TextBlock Text="{Binding CurrentPatientMeta}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
+                            <TextBlock Text="{Binding CurrentPatientMeta}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,0"/>
                             <Button Content="Schimbă pacientul"
                                     Style="{StaticResource SecondaryButton}"
                                     Padding="0" BorderThickness="0"
                                     Background="Transparent"
-                                    Foreground="{StaticResource AccentGreenBrush}"
+                                    Foreground="{DynamicResource AccentGreenBrush}"
                                     FontSize="11" HorizontalAlignment="Left"
                                     Margin="0,6,0,0"
                                     Command="{Binding OpenSearchCommand}"
@@ -305,7 +305,7 @@
                             </StackPanel>
                             <TextBlock Text="Salvează datele sau trimite fișa direct pacientului."
                                        Width="340"
-                                       Foreground="{StaticResource TextTertiaryBrush}"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
                                        FontSize="11"
                                        TextAlignment="Right"
                                        Margin="0,8,0,0"
@@ -326,7 +326,7 @@
                             <StackPanel>
                                 <TextBlock Text="SYMPTOM ENTRY" Style="{StaticResource CardTitle}" />
                                 <TextBlock Text="Simptome și observații clinice introduse în cursul consultației."
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            Margin="0,0,0,14"/>
                                 <TextBox Style="{StaticResource RoundedTextBox}"
                                          Height="136"
@@ -376,12 +376,12 @@
                             <StackPanel>
                                 <TextBlock Text="PRESCRIPTION BUILDER" Style="{StaticResource CardTitle}" />
                                 <TextBlock Text="Lista activă și emiterea unei noi prescripții pentru pacient."
-                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
                                            Margin="0,0,0,14"/>
                                 <ItemsControl ItemsSource="{Binding RetetActive}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="#F8FAFC"
+                                            <Border Background="{DynamicResource BackgroundSecondaryBrush}"
                                                     BorderBrush="{StaticResource BorderBrushNeutral}"
                                                     BorderThickness="1"
                                                     CornerRadius="18"
@@ -394,10 +394,10 @@
                                                     </Grid.ColumnDefinitions>
                                                     <StackPanel>
                                                         <TextBlock Text="{Binding MedicNume}" FontWeight="SemiBold" />
-                                                        <TextBlock Text="{Binding DataEmitere, StringFormat=Emisă la {0:dd.MM.yyyy}}" Foreground="{StaticResource TextTertiaryBrush}" Margin="0,4,0,0"/>
+                                                        <TextBlock Text="{Binding DataEmitere, StringFormat=Emisă la {0:dd.MM.yyyy}}" Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,4,0,0"/>
                                                     </StackPanel>
-                                                    <Border Grid.Column="1" Background="#EAF4F0" CornerRadius="14" Padding="10,6">
-                                                        <TextBlock Text="{Binding Status}" Foreground="{StaticResource PrimaryGreenDarkBrush}" FontWeight="SemiBold"/>
+                                                    <Border Grid.Column="1" Background="{DynamicResource PrimaryLightBrush}" CornerRadius="14" Padding="10,6">
+                                                        <TextBlock Text="{Binding Status}" Foreground="{DynamicResource PrimaryGreenDarkBrush}" FontWeight="SemiBold"/>
                                                     </Border>
                                                 </Grid>
                                             </Border>
@@ -468,6 +468,25 @@
                         <Border Style="{StaticResource CardBorder}" Margin="0,0,0,18">
                             <StackPanel>
                                 <TextBlock Text="ACTIVE ALLERGIES" Style="{StaticResource CardTitle}" />
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="96" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Style="{StaticResource RoundedTextBox}"
+                                             Text="{Binding AlergieSubstanta, UpdateSourceTrigger=PropertyChanged}"
+                                             Tag="Substanta" Margin="0,0,8,0" />
+                                    <TextBox Grid.Column="1"
+                                             Style="{StaticResource RoundedTextBox}"
+                                             Text="{Binding AlergieSeveritate, UpdateSourceTrigger=PropertyChanged}"
+                                             Margin="0,0,8,0" />
+                                    <Button Grid.Column="2" Content="Adauga" Style="{StaticResource PrimaryButton}" Command="{Binding AddAlergieCommand}" />
+                                </Grid>
+                                <TextBox Style="{StaticResource RoundedTextBox}"
+                                         Text="{Binding AlergieObservatii, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="Observatii alergie"
+                                         Margin="0,0,0,12" />
                                 <ItemsControl ItemsSource="{Binding Alergii}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -476,12 +495,46 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="#FFF4E7" CornerRadius="14" Padding="10,6" Margin="0,0,8,8">
-                                                <TextBlock Text="{Binding Substanta}" Foreground="#A86713" FontWeight="SemiBold" />
+                                            <Border Background="{DynamicResource WarningBgBrush}" CornerRadius="14" Padding="10,6" Margin="0,0,8,8">
+                                                <TextBlock Text="{Binding Substanta}" Foreground="{DynamicResource WarningAmberBrush}" FontWeight="SemiBold" />
                                             </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource CardBorder}" Margin="0,0,0,18">
+                            <StackPanel>
+                                <TextBlock Text="TRIMITE ANALIZA" Style="{StaticResource CardTitle}" />
+                                <TextBlock Text="Rezultatul apare automat in pagina de analize a pacientului."
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                           Margin="0,0,0,12"/>
+                                <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding AnalizaLaborator, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="110" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding AnalizaTest, UpdateSourceTrigger=PropertyChanged}" Tag="Test" Margin="0,0,8,0" />
+                                    <TextBox Grid.Column="1" Style="{StaticResource RoundedTextBox}" Text="{Binding AnalizaValoare, UpdateSourceTrigger=PropertyChanged}" Tag="Valoare" />
+                                </Grid>
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="130" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Style="{StaticResource RoundedTextBox}" Text="{Binding AnalizaUnitate, UpdateSourceTrigger=PropertyChanged}" Tag="Unitate" Margin="0,0,8,0" />
+                                    <TextBox Grid.Column="1" Style="{StaticResource RoundedTextBox}" Text="{Binding AnalizaStatus, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                                <TextBox Style="{StaticResource RoundedTextBox}"
+                                         Height="72"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True"
+                                         VerticalContentAlignment="Top"
+                                         Text="{Binding AnalizaInterpretare, UpdateSourceTrigger=PropertyChanged}"
+                                         Margin="0,0,0,12" />
+                                <Button Content="Trimite analiza pacientului" Style="{StaticResource PrimaryButton}" Command="{Binding TrimiteAnalizaCommand}" />
                             </StackPanel>
                         </Border>
 
@@ -491,7 +544,7 @@
                                 <ItemsControl ItemsSource="{Binding IstoricConsltatii}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="#F8FAFC"
+                                            <Border Background="{DynamicResource BackgroundSecondaryBrush}"
                                                     BorderBrush="{StaticResource BorderBrushNeutral}"
                                                     BorderThickness="1"
                                                     CornerRadius="18"
@@ -499,7 +552,7 @@
                                                     Margin="0,0,0,10">
                                                 <StackPanel>
                                                     <TextBlock Text="{Binding DataConsultatie, StringFormat={}{0:dd MMM yyyy, HH:mm}}" FontWeight="SemiBold"/>
-                                                    <TextBlock Text="{Binding DiagnosticText}" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding DiagnosticText}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
                                                 </StackPanel>
                                             </Border>
                                         </DataTemplate>

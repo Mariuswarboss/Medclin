@@ -24,9 +24,9 @@
           <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
             <Style.Triggers>
               <DataTrigger Binding="{Binding ActiveFilter}" Value="Toate">
-                <Setter Property="Background"  Value="{StaticResource PrimaryLightBrush}"/>
-                <Setter Property="Foreground"  Value="{StaticResource PrimaryGreenDarkBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource AccentGreenBrush}"/>
+                <Setter Property="Background"  Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Foreground"  Value="{DynamicResource PrimaryGreenDarkBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource AccentGreenBrush}"/>
               </DataTrigger>
             </Style.Triggers>
           </Style>
@@ -38,9 +38,9 @@
           <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
             <Style.Triggers>
               <DataTrigger Binding="{Binding ActiveFilter}" Value="Viitoare">
-                <Setter Property="Background"  Value="{StaticResource PrimaryLightBrush}"/>
-                <Setter Property="Foreground"  Value="{StaticResource PrimaryGreenDarkBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource AccentGreenBrush}"/>
+                <Setter Property="Background"  Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Foreground"  Value="{DynamicResource PrimaryGreenDarkBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource AccentGreenBrush}"/>
               </DataTrigger>
             </Style.Triggers>
           </Style>
@@ -52,9 +52,9 @@
           <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
             <Style.Triggers>
               <DataTrigger Binding="{Binding ActiveFilter}" Value="Finalizate">
-                <Setter Property="Background"  Value="{StaticResource PrimaryLightBrush}"/>
-                <Setter Property="Foreground"  Value="{StaticResource PrimaryGreenDarkBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource AccentGreenBrush}"/>
+                <Setter Property="Background"  Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Foreground"  Value="{DynamicResource PrimaryGreenDarkBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource AccentGreenBrush}"/>
               </DataTrigger>
             </Style.Triggers>
           </Style>
@@ -66,9 +66,9 @@
           <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
             <Style.Triggers>
               <DataTrigger Binding="{Binding ActiveFilter}" Value="Anulate">
-                <Setter Property="Background"  Value="{StaticResource PrimaryLightBrush}"/>
-                <Setter Property="Foreground"  Value="{StaticResource PrimaryGreenDarkBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource AccentGreenBrush}"/>
+                <Setter Property="Background"  Value="{DynamicResource PrimaryLightBrush}"/>
+                <Setter Property="Foreground"  Value="{DynamicResource PrimaryGreenDarkBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource AccentGreenBrush}"/>
               </DataTrigger>
             </Style.Triggers>
           </Style>
@@ -81,12 +81,12 @@
       <ProgressBar IsIndeterminate="True" Height="3" Margin="0,0,0,6"
                    Visibility="{Binding IsLoading,
                    Converter={StaticResource BoolToVisibilityConverter}}"/>
-      <Border Background="#FCEDEC" CornerRadius="12" Padding="14,10"
+      <Border Background="{DynamicResource ErrorBgBrush}" CornerRadius="12" Padding="14,10"
               Margin="0,0,0,8"
               Visibility="{Binding ErrorMessage,
               Converter={StaticResource NullToVisibilityConverter}}">
         <TextBlock Text="{Binding ErrorMessage}"
-                   Foreground="{StaticResource ErrorRedBrush}"
+                   Foreground="{DynamicResource ErrorRedBrush}"
                    FontSize="12" TextWrapping="Wrap"/>
       </Border>
     </StackPanel>
@@ -125,21 +125,21 @@
 
                   <!-- Date badge -->
                   <Border CornerRadius="20,0,0,20"
-                          Background="{StaticResource PrimaryLightBrush}">
+                          Background="{DynamicResource PrimaryLightBrush}">
                     <StackPanel VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Margin="0,20">
                       <TextBlock Text="{Binding ZiNumar}"
                                  FontSize="24" FontWeight="Bold"
-                                 Foreground="{StaticResource PrimaryGreenDarkBrush}"
+                                 Foreground="{DynamicResource PrimaryGreenDarkBrush}"
                                  HorizontalAlignment="Center"/>
                       <TextBlock Text="{Binding LunaText}"
                                  FontSize="10" FontWeight="SemiBold"
-                                 Foreground="{StaticResource AccentGreenBrush}"
+                                 Foreground="{DynamicResource AccentGreenBrush}"
                                  HorizontalAlignment="Center"/>
                       <TextBlock Text="{Binding OraText}"
                                  FontSize="12" FontWeight="SemiBold"
-                                 Foreground="{StaticResource TextSecondaryBrush}"
+                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                  HorizontalAlignment="Center"
                                  Margin="0,6,0,0"/>
                     </StackPanel>
@@ -151,7 +151,7 @@
                               VerticalAlignment="Center">
                     <TextBlock Text="{Binding MedicComplet}"
                                FontSize="15" FontWeight="SemiBold"
-                               Foreground="{StaticResource TextPrimaryBrush}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
                                Margin="0,0,0,3"/>
                     <TextBlock Text="{Binding SpecialitateNume}"
                                Style="{StaticResource MutedText}"
@@ -159,7 +159,7 @@
                     <TextBlock Text="{Binding MotivVizita}"
                                TextWrapping="Wrap"
                                FontSize="12"
-                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
                                Visibility="{Binding MotivVizita,
                                Converter={StaticResource NullToVisibilityConverter}}"/>
                   </StackPanel>
@@ -174,29 +174,29 @@
                             Margin="0,0,0,8">
                       <Border.Style>
                         <Style TargetType="Border">
-                          <Setter Property="Background" Value="#F0F3F6"/>
+                          <Setter Property="Background" Value="{DynamicResource NeutralPillBgBrush}"/>
                           <Style.Triggers>
                             <DataTrigger Binding="{Binding Status}" Value="Confirmata">
-                              <Setter Property="Background" Value="{StaticResource BlueInfoBgBrush}"/>
+                              <Setter Property="Background" Value="{DynamicResource BlueInfoBgBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="In_asteptare">
-                              <Setter Property="Background" Value="#FFF3E0"/>
+                              <Setter Property="Background" Value="{DynamicResource WarningBgBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="In_cabinet">
-                              <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}"/>
+                              <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Finalizata">
-                              <Setter Property="Background" Value="#EDF7F3"/>
+                              <Setter Property="Background" Value="{DynamicResource SuccessBgBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Anulata">
-                              <Setter Property="Background" Value="#FCEDEC"/>
+                              <Setter Property="Background" Value="{DynamicResource ErrorBgBrush}"/>
                             </DataTrigger>
                           </Style.Triggers>
                         </Style>
                       </Border.Style>
                       <TextBlock Text="{Binding Status}"
                                  FontSize="11" FontWeight="SemiBold"
-                                 Foreground="{StaticResource TextSecondaryBrush}"/>
+                                 Foreground="{DynamicResource TextSecondaryBrush}"/>
                     </Border>
                     <Button Content="Anuleaz&#259;"
                             Style="{StaticResource DangerButton}"

@@ -73,7 +73,13 @@ public class PatientDashboardViewModel : BaseViewModel
     public Specialitate? SelectedSpecialitate
     {
         get => _selectedSpecialitate;
-        set => SetProperty(ref _selectedSpecialitate, value);
+        set
+        {
+            if (SetProperty(ref _selectedSpecialitate, value))
+            {
+                ApplyDoctorFilter();
+            }
+        }
     }
 
     public DateTime? SelectedDate

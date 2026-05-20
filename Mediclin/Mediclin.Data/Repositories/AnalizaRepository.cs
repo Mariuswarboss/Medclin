@@ -170,6 +170,40 @@ public class AnalizaRepository
         CreatLa = Convert.ToDateTime(row["creat_la"])
     };
 
+    public async Task<int> DeleteByPacientUntilAsync(int pacientId, DateTime dataLimita)
+    {
+        try
+        {
+            // Ștergem mai întâi valorile asociate (FK constraint)
+            const string sqlValori = """
+                DELETE va FROM valori_analize va
+                INNER JOIN rezultate_analize ra ON ra.id = va.rezultat_id
+                WHERE ra.pacient_id = @pid AND ra.data_recoltare <= @data
+                """;
+            await _db.ExecuteAsync(sqlValori, new Dictionary<string, object>
+            {
+                ["@pid"] = pacientId,
+                ["@data"] = dataLimita.Date
+            });
+
+            // Ștergem rezultatele
+            const string sqlRez = """
+                DELETE FROM rezultate_analize
+                WHERE pacient_id = @pid AND data_recoltare <= @data
+                """;
+            var affected = await _db.ExecuteAsync(sqlRez, new Dictionary<string, object>
+            {
+                ["@pid"] = pacientId,
+                ["@data"] = dataLimita.Date
+            });
+            return affected;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Ștergerea rezultatelor analizelor a eșuat.", ex);
+        }
+    }
+
     private static RezultatAnaliza MapAgg(Dictionary<string, object> row)
     {
         var r = MapPlain(row);

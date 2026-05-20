@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Assets\logo-mediclin.ico</ApplicationIcon>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
     <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
   </PropertyGroup>
@@ -28,6 +29,7 @@
     <ApplicationDefinition Include="App.xaml" />
     <Page Include="Resources\*.xaml" />
     <Page Include="Views\**\*.xaml" />
+    <Resource Include="Assets\logo-mediclin.png" />
   </ItemGroup>
 
   <ItemGroup>

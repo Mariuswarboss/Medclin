@@ -9,9 +9,9 @@
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <Style x:Key="RolePillButton" TargetType="ToggleButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushNeutral}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Padding" Value="20,10"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -28,14 +28,14 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Background" Value="#0F6E56"/>
-                                <Setter Property="BorderBrush" Value="#0F6E56"/>
+                                <Setter Property="Background" Value="{DynamicResource PrimaryGreenBrush}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryGreenBrush}"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#E1F5EE"/>
-                                <Setter Property="BorderBrush" Value="#1D9E75"/>
-                                <Setter Property="Foreground" Value="#085041"/>
+                                <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentGreenBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryGreenDarkBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -43,24 +43,24 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
+    <Grid Background="{DynamicResource BackgroundPrimaryBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Background="{StaticResource PrimaryGreenBrush}" Padding="40">
+        <Border Grid.Column="0" Background="{DynamicResource PrimaryGreenBrush}" Padding="40">
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="♥ MediClin" FontSize="30" Foreground="White" FontWeight="SemiBold" />
                 <TextBlock Text="Sistemul integrat de management clinic"
                            Margin="0,10,0,40"
-                           Foreground="{StaticResource PrimaryGreenLightBrush}" />
+                           Foreground="{DynamicResource PrimaryGreenLightBrush}" />
             </StackPanel>
         </Border>
 
-        <Border Grid.Column="1" Background="White" Padding="60">
+        <Border Grid.Column="1" Background="{DynamicResource BackgroundPrimaryBrush}" Padding="60">
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Cont nou" FontSize="22" FontWeight="SemiBold" />
+                <TextBlock Text="Cont nou" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
 
                 <Grid Margin="0,18,0,10">
                     <Grid.ColumnDefinitions>
@@ -73,7 +73,7 @@
                                  Style="{StaticResource RoundedTextBox}" />
                         <TextBlock IsHitTestVisible="False"
                                    Text="Prenume"
-                                   Foreground="#AAAAAA"
+                                   Foreground="{DynamicResource PlaceholderBrush}"
                                    Margin="12,0,0,0"
                                    VerticalAlignment="Center"
                                    FontSize="13">
@@ -98,7 +98,7 @@
                                  Style="{StaticResource RoundedTextBox}" />
                         <TextBlock IsHitTestVisible="False"
                                    Text="Nume"
-                                   Foreground="#AAAAAA"
+                                   Foreground="{DynamicResource PlaceholderBrush}"
                                    Margin="12,0,0,0"
                                    VerticalAlignment="Center"
                                    FontSize="13">
@@ -123,7 +123,7 @@
                     <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource RoundedTextBox}" />
                     <TextBlock IsHitTestVisible="False"
                                Text="exemplu@email.com"
-                               Foreground="#AAAAAA"
+                               Foreground="{DynamicResource PlaceholderBrush}"
                                Margin="12,0,0,0"
                                VerticalAlignment="Center"
                                FontSize="13">
@@ -146,7 +146,7 @@
                     <TextBox Text="{Binding Telefon, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource RoundedTextBox}" />
                     <TextBlock IsHitTestVisible="False"
                                Text="+373 XX XXX XXX"
-                               Foreground="#AAAAAA"
+                               Foreground="{DynamicResource PlaceholderBrush}"
                                Margin="12,0,0,0"
                                VerticalAlignment="Center"
                                FontSize="13">
@@ -172,26 +172,24 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Column="0" Margin="0,0,8,0">
-                        <PasswordBox Height="38"
-                                     Padding="12,8"
+                        <PasswordBox Style="{StaticResource RoundedPasswordBox}"
                                      helpers:PasswordBoxHelper.BindPassword="True"
                                      helpers:PasswordBoxHelper.BoundPassword="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock IsHitTestVisible="False"
                                    Text="Minim 8 caractere"
-                                   Foreground="#AAAAAA"
+                                   Foreground="{DynamicResource PlaceholderBrush}"
                                    Margin="12,0,0,0"
                                    VerticalAlignment="Center"
                                    FontSize="13"
                                    Visibility="{Binding IsParolaEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </Grid>
                     <Grid Grid.Column="1" Margin="8,0,0,0">
-                        <PasswordBox Height="38"
-                                     Padding="12,8"
+                        <PasswordBox Style="{StaticResource RoundedPasswordBox}"
                                      helpers:PasswordBoxHelper.BindPassword="True"
                                      helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmareParola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock IsHitTestVisible="False"
                                    Text="Repeta parola"
-                                   Foreground="#AAAAAA"
+                                   Foreground="{DynamicResource PlaceholderBrush}"
                                    Margin="12,0,0,0"
                                    VerticalAlignment="Center"
                                    FontSize="13"
@@ -201,14 +199,14 @@
 
                 <ProgressBar Height="8" Maximum="100" Value="{Binding PasswordStrength}" Margin="0,0,0,16">
                     <ProgressBar.Style>
-                        <Style TargetType="ProgressBar">
-                            <Setter Property="Foreground" Value="Red" />
+                        <Style TargetType="ProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
+                            <Setter Property="Foreground" Value="{DynamicResource ErrorRedBrush}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding PasswordStrength}" Value="66">
-                                    <Setter Property="Foreground" Value="Orange" />
+                                    <Setter Property="Foreground" Value="{DynamicResource WarningAmberBrush}" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding PasswordStrength}" Value="100">
-                                    <Setter Property="Foreground" Value="Green" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentGreenBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -217,7 +215,7 @@
 
                 <TextBlock Text="Selecteaza rolul:"
                            FontSize="12"
-                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
                            Margin="0,0,0,8" />
                 <Grid Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
@@ -257,16 +255,15 @@
                 <StackPanel Margin="0,0,0,16" Visibility="{Binding IsMedicSelected, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Text="Specialitate medicală"
                                FontSize="12"
-                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
                                Margin="0,0,0,8" />
                     <ComboBox ItemsSource="{Binding Specialitati}"
                               SelectedItem="{Binding SelectedSpecialitate, Mode=TwoWay}"
                               DisplayMemberPath="Nume"
-                              Height="40"
-                              Padding="8,4" />
+                              Style="{StaticResource RoundedComboBox}" />
                     <TextBlock Text="Specialitatea apare pe profilul dvs. și la verificarea de către administrator."
                                FontSize="11"
-                               Foreground="{StaticResource TextTertiaryBrush}"
+                               Foreground="{DynamicResource TextTertiaryBrush}"
                                Margin="0,8,0,0"
                                TextWrapping="Wrap" />
                 </StackPanel>
@@ -280,11 +277,11 @@
 
                 <TextBlock Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" Margin="0,10,0,0"
                            Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibilityConverter}}" />
-                <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource AccentGreenBrush}" Margin="0,6,0,0"
+                <TextBlock Text="{Binding SuccessMessage}" Foreground="{DynamicResource AccentGreenBrush}" Margin="0,6,0,0"
                            Visibility="{Binding SuccessMessage, Converter={StaticResource NullToVisibilityConverter}}" />
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                    <TextBlock Text="Ai deja cont?" VerticalAlignment="Center" />
+                    <TextBlock Text="Ai deja cont?" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" />
                     <Button Content="Autentifica-te" Style="{StaticResource LinkButton}" Margin="4,0,0,0"
                             Command="{Binding NavigateToLoginCommand}" />
                 </StackPanel>
