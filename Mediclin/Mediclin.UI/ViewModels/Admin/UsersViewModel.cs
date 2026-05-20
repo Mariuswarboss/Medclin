@@ -10,19 +10,23 @@ public class UsersViewModel : BaseViewModel
 {
     private readonly ApplicationServices _app;
     private readonly List<Utilizator> _toti = new();
+    private readonly Dictionary<int, string> _roluriPersistente = new();
     private string _cautare = string.Empty;
 
     public UsersViewModel(ApplicationServices app)
     {
         _app = app;
         Users = new ObservableCollection<Utilizator>();
+        RoleOptions = new ObservableCollection<string> { "pacient", "medic", "admin" };
         ActivateUserCommand = new AsyncRelayCommand(async p => await SetActivAsync(p, true));
         DeactivateUserCommand = new AsyncRelayCommand(async p => await SetActivAsync(p, false));
+        SaveRoleCommand = new AsyncRelayCommand(async p => await SaveRoleAsync(p));
         AddUserCommand = new RelayCommand(_ => AddUserInfo());
         _ = LoadAsync();
     }
 
     public ObservableCollection<Utilizator> Users { get; }
+    public ObservableCollection<string> RoleOptions { get; }
 
     public string Cautare
     {
@@ -38,6 +42,7 @@ public class UsersViewModel : BaseViewModel
 
     public ICommand ActivateUserCommand { get; }
     public ICommand DeactivateUserCommand { get; }
+    public ICommand SaveRoleCommand { get; }
     public ICommand AddUserCommand { get; }
 
     private static void AddUserInfo()
@@ -61,6 +66,18 @@ public class UsersViewModel : BaseViewModel
             return;
         }
 
+        var action = activ ? "activezi" : "dezactivezi";
+        var confirm = MessageBox.Show(
+            $"Sigur vrei sa {action} contul {u.NumeComplet} ({u.Email})?",
+            "Confirmare modificare utilizator",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (confirm != MessageBoxResult.Yes)
+        {
+            return;
+        }
+
         try
         {
             await _app.Utilizatori.SetActivAsync(u.Id, activ);
@@ -72,14 +89,67 @@ public class UsersViewModel : BaseViewModel
         }
     }
 
+    private async Task SaveRoleAsync(object? p)
+    {
+        if (p is not Utilizator u)
+        {
+            return;
+        }
+
+        var role = (u.Rol ?? string.Empty).Trim().ToLowerInvariant();
+        if (!RoleOptions.Contains(role))
+        {
+            MessageBox.Show("Rolul selectat nu este valid.", "MediClin - rol utilizator", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        _roluriPersistente.TryGetValue(u.Id, out var persistedRole);
+        if (string.Equals(persistedRole, role, StringComparison.OrdinalIgnoreCase))
+        {
+            MessageBox.Show("Rolul este deja salvat.", "MediClin - rol utilizator", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var confirm = MessageBox.Show(
+            $"Sigur vrei sa schimbi rolul pentru {u.NumeComplet} in {role}?",
+            "Confirmare schimbare rol",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (confirm != MessageBoxResult.Yes)
+        {
+            if (!string.IsNullOrWhiteSpace(persistedRole))
+            {
+                u.Rol = persistedRole;
+            }
+
+            ApplyFilter();
+            return;
+        }
+
+        try
+        {
+            u.Rol = role;
+            await _app.Utilizatori.UpdateAsync(u);
+            _roluriPersistente[u.Id] = role;
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Rolul nu a putut fi salvat: {ex.Message}", "Eroare", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
     private async Task LoadAsync()
     {
         try
         {
             _toti.Clear();
+            _roluriPersistente.Clear();
             foreach (var x in await _app.Utilizatori.GetAllAsync())
             {
                 _toti.Add(x);
+                _roluriPersistente[x.Id] = x.Rol;
             }
 
             ApplyFilter();

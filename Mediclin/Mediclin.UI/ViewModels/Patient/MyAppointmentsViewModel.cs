@@ -609,6 +609,17 @@ public class MyAppointmentsViewModel : BaseViewModel
 
     private async Task CancelAsync(int id)
     {
+        var confirm = MessageBox.Show(
+            "Sigur vrei sa anulezi aceasta programare?",
+            "Confirmare anulare programare",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (confirm != MessageBoxResult.Yes)
+        {
+            return;
+        }
+
         try
         {
             await _app.ProgramariRepo.CancelAsync(id, "Anulată de pacient din aplicație.");
@@ -621,5 +632,4 @@ public class MyAppointmentsViewModel : BaseViewModel
         }
     }
 }
-
 

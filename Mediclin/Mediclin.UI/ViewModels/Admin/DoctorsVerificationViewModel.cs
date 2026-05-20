@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Mediclin.Data.Models;
 using Mediclin.UI.Services;
@@ -24,6 +25,17 @@ public class DoctorsVerificationViewModel : BaseViewModel
     {
         if (p is Medic m)
         {
+            var confirm = MessageBox.Show(
+                $"Sigur vrei sa aprobi medicul {m.NumeCompletCuTitlu}?",
+                "Confirmare aprobare medic",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (confirm != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
             await _app.Medici.SetVerificatAsync(m.Id, true);
             await LoadAsync();
         }
@@ -33,6 +45,17 @@ public class DoctorsVerificationViewModel : BaseViewModel
     {
         if (p is Medic m)
         {
+            var confirm = MessageBox.Show(
+                $"Sigur vrei sa respingi medicul {m.NumeCompletCuTitlu}? Contul asociat va fi dezactivat.",
+                "Confirmare respingere medic",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (confirm != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
             await _app.Medici.SetVerificatAsync(m.Id, false);
             await _app.Utilizatori.SetActivAsync(m.UtilizatorId, false);
             await LoadAsync();

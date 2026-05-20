@@ -22,7 +22,16 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Nume complet" Binding="{Binding NumeComplet}" Width="2*" MinWidth="140" />
                 <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*" MinWidth="160" />
-                <DataGridTextColumn Header="Rol" Binding="{Binding Rol}" Width="100" />
+                <DataGridTemplateColumn Header="Rol" Width="180">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding DataContext.RoleOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                      SelectedItem="{Binding Rol, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Style="{StaticResource RoundedComboBox}"
+                                      MinWidth="130" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Înregistrat" Binding="{Binding CreatLa, StringFormat=dd.MM.yyyy HH:mm}" Width="150" />
                 <DataGridTemplateColumn Header="Status" Width="110">
                     <DataGridTemplateColumn.CellTemplate>
@@ -56,10 +65,14 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Acțiuni" Width="220">
+                <DataGridTemplateColumn Header="Acțiuni" Width="330">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="Salveaza rol" Margin="0,0,8,0" Padding="12,6"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding DataContext.SaveRoleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
                                 <Button Content="Activează" Margin="0,0,8,0" Padding="12,6"
                                         Command="{Binding DataContext.ActivateUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                         CommandParameter="{Binding}">
