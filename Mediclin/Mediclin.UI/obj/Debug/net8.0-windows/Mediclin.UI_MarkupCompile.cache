@@ -13,7 +13,7 @@ D:\medclin\Mediclin\Mediclin.UI\App.xaml
 42-1024485680
 
 91-1133548297
-208-1528059979
+208-1826457803
 Resources\Colors.Dark.xaml;Resources\Colors.xaml;Resources\Icons.xaml;Resources\Styles.xaml;Resources\Typography.xaml;Views\Admin\AdminDashboardView.xaml;Views\Admin\AdminMainWindow.xaml;Views\Admin\AuditLogsView.xaml;Views\Admin\DoctorsVerificationView.xaml;Views\Admin\FinancialView.xaml;Views\Admin\GlobalSettingsView.xaml;Views\Admin\UsersManagementView.xaml;Views\Auth\LoginWindow.xaml;Views\Auth\RegisterWindow.xaml;Views\Controls\AppointmentItemControl.xaml;Views\Controls\CalendarControl.xaml;Views\Controls\LoadingSpinnerControl.xaml;Views\Controls\MetricCardControl.xaml;Views\Controls\PatientCardControl.xaml;Views\Controls\SidebarMenuControl.xaml;Views\Controls\StatusBadgeControl.xaml;Views\Dialogs\AddAppointmentDialog.xaml;Views\Dialogs\AddPatientDialog.xaml;Views\Dialogs\ConfirmDeleteDialog.xaml;Views\Dialogs\PrescriptionDialog.xaml;Views\Doctor\AppointmentsView.xaml;Views\Doctor\DashboardView.xaml;Views\Doctor\DoctorMainWindow.xaml;Views\Doctor\EMRView.xaml;Views\Doctor\MessagesView.xaml;Views\Doctor\PatientsView.xaml;Views\Doctor\ReportsView.xaml;Views\Doctor\SettingsView.xaml;Views\Patient\AccountSettingsView.xaml;Views\Patient\LabResultsView.xaml;Views\Patient\MessagesView.xaml;Views\Patient\MyAppointmentsView.xaml;Views\Patient\MyEMRView.xaml;Views\Patient\PatientDashboardView.xaml;Views\Patient\PatientMainWindow.xaml;Views\Patient\PrescriptionsView.xaml;Views\Shared\NotificationsView.xaml;
 
 False

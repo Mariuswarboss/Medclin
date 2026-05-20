@@ -477,10 +477,11 @@
                                     <TextBox Style="{StaticResource RoundedTextBox}"
                                              Text="{Binding AlergieSubstanta, UpdateSourceTrigger=PropertyChanged}"
                                              Tag="Substanta" Margin="0,0,8,0" />
-                                    <TextBox Grid.Column="1"
-                                             Style="{StaticResource RoundedTextBox}"
-                                             Text="{Binding AlergieSeveritate, UpdateSourceTrigger=PropertyChanged}"
-                                             Margin="0,0,8,0" />
+                                    <ComboBox Grid.Column="1"
+                                              ItemsSource="{Binding AlergieSeveritateOptions}"
+                                              SelectedItem="{Binding AlergieSeveritate, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource RoundedComboBox}"
+                                              Margin="0,0,8,0" />
                                     <Button Grid.Column="2" Content="Adauga" Style="{StaticResource PrimaryButton}" Command="{Binding AddAlergieCommand}" />
                                 </Grid>
                                 <TextBox Style="{StaticResource RoundedTextBox}"

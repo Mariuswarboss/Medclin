@@ -208,7 +208,12 @@ public class PacientRepository : IRepository<Pacient>
     {
         try
         {
-            const string sql = "SELECT * FROM alergii WHERE pacient_id=@pid ORDER BY severitate DESC, substanta";
+            var columns = await GetAlergiiColumnsAsync();
+            var nameColumn = columns.Contains("substanta") ? "substanta"
+                : columns.Contains("denumire") ? "denumire"
+                : "id";
+            var severityOrder = columns.Contains("severitate") ? "severitate DESC, " : string.Empty;
+            var sql = $"SELECT * FROM alergii WHERE pacient_id=@pid ORDER BY {severityOrder}{nameColumn}";
             return (await _db.QueryAsync(sql, new Dictionary<string, object> { ["@pid"] = pacientId })).Select(MapAlergie).ToList();
         }
         catch (Exception ex)
@@ -221,17 +226,33 @@ public class PacientRepository : IRepository<Pacient>
     {
         try
         {
-            const string sql = """
-                INSERT INTO alergii (pacient_id, substanta, severitate, observatii)
-                VALUES (@pacient_id, @substanta, @severitate, @observatii)
-                """;
-            await _db.ExecuteAsync(sql, new Dictionary<string, object>
+            var columns = await GetAlergiiColumnsAsync();
+            var nameColumn = columns.Contains("substanta") ? "substanta"
+                : columns.Contains("denumire") ? "denumire"
+                : throw new InvalidOperationException("Tabela alergii nu are coloana pentru denumirea alergiei.");
+            var notesColumn = columns.Contains("observatii") ? "observatii"
+                : columns.Contains("simptome") ? "simptome"
+                : null;
+            var insertColumns = notesColumn is null
+                ? $"pacient_id, {nameColumn}, severitate"
+                : $"pacient_id, {nameColumn}, severitate, {notesColumn}";
+            var insertValues = notesColumn is null
+                ? "@pacient_id, @substanta, @severitate"
+                : "@pacient_id, @substanta, @severitate, @observatii";
+            var sql = $"INSERT INTO alergii ({insertColumns}) VALUES ({insertValues})";
+            var parameters = new Dictionary<string, object>
             {
                 ["@pacient_id"] = a.PacientId,
                 ["@substanta"] = a.Substanta,
-                ["@severitate"] = a.Severitate,
-                ["@observatii"] = (object?)a.Observatii ?? DBNull.Value
-            });
+                ["@severitate"] = a.Severitate
+            };
+            if (notesColumn is not null)
+            {
+                parameters["@observatii"] = (object?)a.Observatii ?? DBNull.Value;
+            }
+
+            await _db.ExecuteAsync(sql, new Dictionary<string, object>
+            (parameters));
         }
         catch (Exception ex)
         {
@@ -281,14 +302,34 @@ public class PacientRepository : IRepository<Pacient>
         };
     }
 
+    private async Task<HashSet<string>> GetAlergiiColumnsAsync()
+    {
+        const string sql = """
+            SELECT COLUMN_NAME
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'alergii'
+            """;
+        var rows = await _db.QueryAsync(sql);
+        return rows
+            .Select(row => row["COLUMN_NAME"]?.ToString() ?? string.Empty)
+            .Where(column => !string.IsNullOrWhiteSpace(column))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
     private static Alergie MapAlergie(Dictionary<string, object> row) => new()
     {
         Id = Convert.ToInt32(row["id"]),
         PacientId = Convert.ToInt32(row["pacient_id"]),
-        Substanta = row["substanta"].ToString() ?? string.Empty,
-        Severitate = row["severitate"].ToString() ?? string.Empty,
-        Observatii = row["observatii"] == DBNull.Value ? null : row["observatii"].ToString()
+        Substanta = ReadText(row, "substanta") ?? ReadText(row, "denumire") ?? string.Empty,
+        Severitate = ReadText(row, "severitate") ?? string.Empty,
+        Observatii = ReadText(row, "observatii") ?? ReadText(row, "simptome")
     };
+
+    private static string? ReadText(Dictionary<string, object> row, string key)
+    {
+        return row.TryGetValue(key, out var value) && value != DBNull.Value ? value?.ToString() : null;
+    }
 
     private static Dictionary<string, object> Params(Pacient pacient) => new()
     {

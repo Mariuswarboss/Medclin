@@ -30,7 +30,7 @@ public class EMRViewModel : BaseViewModel
     private string _greutate = string.Empty;
     private string _inaltime = string.Empty;
     private string _alergieSubstanta = string.Empty;
-    private string _alergieSeveritate = "Medie";
+    private string _alergieSeveritate = "Moderata";
     private string _alergieObservatii = string.Empty;
     private string _analizaLaborator = "MediClin Lab";
     private string _analizaTest = string.Empty;
@@ -60,6 +60,13 @@ public class EMRViewModel : BaseViewModel
         Alergii = new ObservableCollection<Alergie>();
         BoliCronice = new ObservableCollection<BolaCronica>();
         RetetActive = new ObservableCollection<Reteta>();
+        AlergieSeveritateOptions = new ObservableCollection<string>
+        {
+            "Usoara",
+            "Moderata",
+            "Severa",
+            "Anafilaxie"
+        };
         DiagnosisOptions = new ObservableCollection<DiagnosisOption>
         {
             new("I10", "Hipertensiune esențială"),
@@ -105,6 +112,7 @@ public class EMRViewModel : BaseViewModel
     public ObservableCollection<Alergie> Alergii { get; }
     public ObservableCollection<BolaCronica> BoliCronice { get; }
     public ObservableCollection<Reteta> RetetActive { get; }
+    public ObservableCollection<string> AlergieSeveritateOptions { get; }
     public ObservableCollection<DiagnosisOption> DiagnosisOptions { get; }
 
     public Consultatie? CurrentConsultatie
@@ -730,20 +738,39 @@ public class EMRViewModel : BaseViewModel
             {
                 PacientId = CurrentPacient.Id,
                 Substanta = AlergieSubstanta.Trim(),
-                Severitate = string.IsNullOrWhiteSpace(AlergieSeveritate) ? "Medie" : AlergieSeveritate.Trim(),
+                Severitate = NormalizeAlergieSeveritate(AlergieSeveritate),
                 Observatii = string.IsNullOrWhiteSpace(AlergieObservatii) ? null : AlergieObservatii.Trim()
             };
 
             await _app.Pacienti.AddAlergieAsync(alergie);
             Alergii.Add(alergie);
             AlergieSubstanta = string.Empty;
+            AlergieSeveritate = "Moderata";
             AlergieObservatii = string.Empty;
             await ShowToastAsync(true, "Alergia a fost adaugata.");
         }
         catch (Exception ex)
         {
-            await ShowToastAsync(false, $"Alergia nu a putut fi adaugata: {ex.Message}");
+            await ShowToastAsync(false, $"Alergia nu a putut fi adaugata: {GetDetailedMessage(ex)}");
         }
+    }
+
+    private static string NormalizeAlergieSeveritate(string? severitate)
+    {
+        var normalized = (severitate ?? string.Empty).Trim().ToLowerInvariant();
+        return normalized switch
+        {
+            "usoara" or "ușoară" or "usoară" => "Usoara",
+            "medie" or "mediu" or "moderata" or "moderată" => "Moderata",
+            "severa" or "severă" or "grava" or "gravă" => "Severa",
+            "anafilaxie" => "Anafilaxie",
+            _ => "Moderata"
+        };
+    }
+
+    private static string GetDetailedMessage(Exception ex)
+    {
+        return ex.InnerException is null ? ex.Message : ex.InnerException.Message;
     }
 
     private async Task TrimiteAnalizaAsync()
