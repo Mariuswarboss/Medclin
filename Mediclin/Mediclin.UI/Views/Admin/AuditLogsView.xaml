@@ -5,19 +5,28 @@
         <StackPanel DockPanel.Dock="Top">
             <TextBlock Text="Jurnale activitate" Style="{StaticResource HeadingText}" />
             <StackPanel Orientation="Horizontal" Margin="0,12">
-                <Button Content="Toate" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" />
-                <Button Content="Info" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" />
-                <Button Content="Avertisment" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" />
-                <Button Content="Eroare" Style="{StaticResource DangerButton}" />
+                <Button Content="Toate" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0"
+                        Command="{Binding SetSeverityCommand}" CommandParameter="{x:Null}" />
+                <Button Content="Info" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0"
+                        Command="{Binding SetSeverityCommand}" CommandParameter="Info" />
+                <Button Content="Avertisment" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0"
+                        Command="{Binding SetSeverityCommand}" CommandParameter="Warning" />
+                <Button Content="Eroare" Style="{StaticResource DangerButton}"
+                        Command="{Binding SetSeverityCommand}" CommandParameter="Error" />
             </StackPanel>
         </StackPanel>
-        <DataGrid Style="{StaticResource DataGridStyle}" ItemsSource="{Binding AuditLogs}">
+
+        <DataGrid Style="{StaticResource DataGridStyle}"
+                  ItemsSource="{Binding Rows}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Moment" Binding="{Binding TimestampLabel}" Width="150" />
-                <DataGridTextColumn Header="Severitate" Binding="{Binding Severity}" Width="120" />
-                <DataGridTextColumn Header="Utilizator" Binding="{Binding User}" Width="180" />
-                <DataGridTextColumn Header="Acțiune" Binding="{Binding Action}" Width="*" />
-                <DataGridTextColumn Header="Modul" Binding="{Binding Module}" Width="120" />
+                <DataGridTextColumn Header="Moment" Binding="{Binding Moment}" Width="150" />
+                <DataGridTextColumn Header="Severitate" Binding="{Binding Severitate}" Width="120" />
+                <DataGridTextColumn Header="Utilizator" Binding="{Binding Utilizator}" Width="180" />
+                <DataGridTextColumn Header="Actiune" Binding="{Binding Actiune}" Width="*" />
+                <DataGridTextColumn Header="Modul" Binding="{Binding Modul}" Width="120" />
                 <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="120" />
             </DataGrid.Columns>
         </DataGrid>

@@ -40,7 +40,7 @@ public class JurnalRepository
         {
             const string sql = """
                 INSERT INTO jurnal_activitate (utilizator_id, actiune, modul, detalii, ip_adresa, severitate, creat_la)
-                VALUES (@utilizator_id, @actiune, @modul, @detalii, @ip_adresa, @severitate, NOW())
+                VALUES (@utilizator_id, @actiune, @modul, JSON_OBJECT('message', @detalii), @ip_adresa, @severitate, NOW())
                 """;
             await _db.ExecuteAsync(sql, new Dictionary<string, object>
             {

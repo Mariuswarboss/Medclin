@@ -21,7 +21,7 @@ public class MedicRepository : IRepository<Medic>
                 FROM medici m
                 INNER JOIN utilizatori u ON u.id = m.utilizator_id
                 INNER JOIN specialitati s ON s.id = m.specialitate_id
-                WHERE u.activ = 1
+                WHERE u.activ = 1 AND LOWER(u.rol) = 'medic'
                 ORDER BY u.nume, u.prenume
                 """;
             return (await _db.QueryAsync(sql)).Select(MapJoined).ToList();
@@ -61,7 +61,7 @@ public class MedicRepository : IRepository<Medic>
                 FROM medici m
                 INNER JOIN utilizatori u ON u.id = m.utilizator_id
                 INNER JOIN specialitati s ON s.id = m.specialitate_id
-                WHERE m.utilizator_id = @uid
+                WHERE m.utilizator_id = @uid AND LOWER(u.rol) = 'medic'
                 """;
             var rows = await _db.QueryAsync(sql, new Dictionary<string, object> { ["@uid"] = utilizatorId });
             return rows.Count == 0 ? null : MapJoined(rows[0]);
@@ -81,7 +81,7 @@ public class MedicRepository : IRepository<Medic>
                 FROM medici m
                 INNER JOIN utilizatori u ON u.id = m.utilizator_id
                 INNER JOIN specialitati s ON s.id = m.specialitate_id
-                WHERE m.specialitate_id = @sid AND u.activ = 1
+                WHERE m.specialitate_id = @sid AND u.activ = 1 AND LOWER(u.rol) = 'medic'
                 ORDER BY u.nume, u.prenume
                 """;
             return (await _db.QueryAsync(sql, new Dictionary<string, object> { ["@sid"] = specialitateId })).Select(MapJoined).ToList();

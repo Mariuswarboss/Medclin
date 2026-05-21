@@ -1,0 +1,5 @@
+D:\medclin\Mediclin\publish\MediClin-single\Mediclin.UI.pdb
+D:\medclin\Mediclin\publish\MediClin-single\appsettings.json
+D:\medclin\Mediclin\publish\MediClin-single\Mediclin.Business.pdb
+D:\medclin\Mediclin\publish\MediClin-single\Mediclin.Data.pdb
+D:\medclin\Mediclin\publish\MediClin-single\Mediclin.UI.exe

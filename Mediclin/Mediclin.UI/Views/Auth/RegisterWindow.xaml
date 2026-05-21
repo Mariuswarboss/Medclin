@@ -7,6 +7,7 @@
     <Window.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
         <Style x:Key="RolePillButton" TargetType="ToggleButton">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushNeutral}"/>
@@ -172,9 +173,29 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Column="0" Margin="0,0,8,0">
-                        <PasswordBox Style="{StaticResource RoundedPasswordBox}"
-                                     helpers:PasswordBoxHelper.BindPassword="True"
-                                     helpers:PasswordBoxHelper.BoundPassword="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <PasswordBox Grid.Column="0"
+                                         Style="{StaticResource RoundedPasswordBox}"
+                                         helpers:PasswordBoxHelper.BindPassword="True"
+                                         helpers:PasswordBoxHelper.BoundPassword="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Visibility="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                         Margin="0,0,6,0" />
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding Parola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource RoundedTextBox}"
+                                     Visibility="{Binding IsPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                     Margin="0,0,6,0" />
+                            <ToggleButton Grid.Column="1"
+                                          Content="{Binding PasswordVisibilityText}"
+                                          IsChecked="{Binding IsPasswordVisible, Mode=TwoWay}"
+                                          Style="{StaticResource RolePillToggleButton}"
+                                          MinWidth="76"
+                                          Padding="10,8" />
+                        </Grid>
                         <TextBlock IsHitTestVisible="False"
                                    Text="Minim 8 caractere"
                                    Foreground="{DynamicResource PlaceholderBrush}"
@@ -184,9 +205,29 @@
                                    Visibility="{Binding IsParolaEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </Grid>
                     <Grid Grid.Column="1" Margin="8,0,0,0">
-                        <PasswordBox Style="{StaticResource RoundedPasswordBox}"
-                                     helpers:PasswordBoxHelper.BindPassword="True"
-                                     helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmareParola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <PasswordBox Grid.Column="0"
+                                         Style="{StaticResource RoundedPasswordBox}"
+                                         helpers:PasswordBoxHelper.BindPassword="True"
+                                         helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmareParola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Visibility="{Binding IsConfirmPasswordVisible, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                         Margin="0,0,6,0" />
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding ConfirmareParola, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource RoundedTextBox}"
+                                     Visibility="{Binding IsConfirmPasswordVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                     Margin="0,0,6,0" />
+                            <ToggleButton Grid.Column="1"
+                                          Content="{Binding ConfirmPasswordVisibilityText}"
+                                          IsChecked="{Binding IsConfirmPasswordVisible, Mode=TwoWay}"
+                                          Style="{StaticResource RolePillToggleButton}"
+                                          MinWidth="76"
+                                          Padding="10,8" />
+                        </Grid>
                         <TextBlock IsHitTestVisible="False"
                                    Text="Repeta parola"
                                    Foreground="{DynamicResource PlaceholderBrush}"

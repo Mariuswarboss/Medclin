@@ -21,6 +21,7 @@ public class LoginViewModel : BaseViewModel
     private string _parola = string.Empty;
     private string _errorMessage = string.Empty;
     private bool _isLoading;
+    private bool _isPasswordVisible;
 
     public LoginViewModel(IAuthService authService, ApplicationServices app)
     {
@@ -63,6 +64,20 @@ public class LoginViewModel : BaseViewModel
     }
 
     public bool IsParolaEmpty => string.IsNullOrEmpty(Parola);
+
+    public bool IsPasswordVisible
+    {
+        get => _isPasswordVisible;
+        set
+        {
+            if (SetProperty(ref _isPasswordVisible, value))
+            {
+                OnPropertyChanged(nameof(PasswordVisibilityText));
+            }
+        }
+    }
+
+    public string PasswordVisibilityText => IsPasswordVisible ? "Ascunde" : "Arata";
 
     public ICommand LoginCommand { get; }
     public ICommand NavigateToRegisterCommand { get; }

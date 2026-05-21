@@ -32,6 +32,8 @@ public class RegisterViewModel : BaseViewModel
     private bool _isPacientSelected = true;
     private bool _isMedicSelected;
     private bool _isAdminSelected;
+    private bool _isPasswordVisible;
+    private bool _isConfirmPasswordVisible;
     private Specialitate? _selectedSpecialitate;
 
     public RegisterViewModel(IAuthService authService, ApplicationServices app)
@@ -82,6 +84,33 @@ public class RegisterViewModel : BaseViewModel
     public string RolSelectat { get => _rolSelectat; set => SetProperty(ref _rolSelectat, value); }
     public bool IsParolaEmpty => string.IsNullOrEmpty(Parola);
     public bool IsConfirmareParolaEmpty => string.IsNullOrEmpty(ConfirmareParola);
+
+    public bool IsPasswordVisible
+    {
+        get => _isPasswordVisible;
+        set
+        {
+            if (SetProperty(ref _isPasswordVisible, value))
+            {
+                OnPropertyChanged(nameof(PasswordVisibilityText));
+            }
+        }
+    }
+
+    public bool IsConfirmPasswordVisible
+    {
+        get => _isConfirmPasswordVisible;
+        set
+        {
+            if (SetProperty(ref _isConfirmPasswordVisible, value))
+            {
+                OnPropertyChanged(nameof(ConfirmPasswordVisibilityText));
+            }
+        }
+    }
+
+    public string PasswordVisibilityText => IsPasswordVisible ? "Ascunde" : "Arata";
+    public string ConfirmPasswordVisibilityText => IsConfirmPasswordVisible ? "Ascunde" : "Arata";
 
     public bool IsPacientSelected
     {

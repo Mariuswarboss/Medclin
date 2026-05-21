@@ -81,6 +81,7 @@ public class UsersViewModel : BaseViewModel
         try
         {
             await _app.Utilizatori.SetActivAsync(u.Id, activ);
+            await _app.JurnalRepo.WriteAsync(_app.CurrentUserId, activ ? "ACTIVATE_USER" : "DEACTIVATE_USER", "Utilizatori", $"{u.Email} - {u.NumeComplet}", "127.0.0.1", "Info");
             await LoadAsync();
         }
         catch (Exception ex)
@@ -106,7 +107,10 @@ public class UsersViewModel : BaseViewModel
         _roluriPersistente.TryGetValue(u.Id, out var persistedRole);
         if (string.Equals(persistedRole, role, StringComparison.OrdinalIgnoreCase))
         {
-            MessageBox.Show("Rolul este deja salvat.", "MediClin - rol utilizator", MessageBoxButton.OK, MessageBoxImage.Information);
+            await UserProfileInitializer.EnsureRoleProfileAsync(_app, u);
+            await _app.JurnalRepo.WriteAsync(_app.CurrentUserId, "VERIFY_ROLE_PROFILE", "Utilizatori", $"Profil verificat pentru {u.Email} ({role})", "127.0.0.1", "Info");
+            await LoadAsync();
+            MessageBox.Show("Rolul este deja salvat. Profilul asociat rolului a fost verificat.", "MediClin - rol utilizator", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
@@ -131,7 +135,9 @@ public class UsersViewModel : BaseViewModel
         {
             u.Rol = role;
             await _app.Utilizatori.UpdateAsync(u);
+            await UserProfileInitializer.EnsureRoleProfileAsync(_app, u);
             _roluriPersistente[u.Id] = role;
+            await _app.JurnalRepo.WriteAsync(_app.CurrentUserId, "CHANGE_USER_ROLE", "Utilizatori", $"{u.Email} -> {role}", "127.0.0.1", "Info");
             await LoadAsync();
         }
         catch (Exception ex)

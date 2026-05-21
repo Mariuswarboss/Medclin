@@ -37,6 +37,7 @@ public class DoctorsVerificationViewModel : BaseViewModel
             }
 
             await _app.Medici.SetVerificatAsync(m.Id, true);
+            await _app.JurnalRepo.WriteAsync(_app.CurrentUserId, "APPROVE_DOCTOR", "Medici", $"{m.Email} - {m.NumeCompletCuTitlu}", "127.0.0.1", "Info");
             await LoadAsync();
         }
     }
@@ -58,6 +59,7 @@ public class DoctorsVerificationViewModel : BaseViewModel
 
             await _app.Medici.SetVerificatAsync(m.Id, false);
             await _app.Utilizatori.SetActivAsync(m.UtilizatorId, false);
+            await _app.JurnalRepo.WriteAsync(_app.CurrentUserId, "REJECT_DOCTOR", "Medici", $"{m.Email} - {m.NumeCompletCuTitlu}", "127.0.0.1", "Warning");
             await LoadAsync();
         }
     }
@@ -71,6 +73,12 @@ public class DoctorsVerificationViewModel : BaseViewModel
     {
         try
         {
+            foreach (var user in (await _app.Utilizatori.GetAllAsync()).Where(u =>
+                         u.Activ && string.Equals(u.Rol?.Trim(), "medic", StringComparison.OrdinalIgnoreCase)))
+            {
+                await UserProfileInitializer.EnsureRoleProfileAsync(_app, user);
+            }
+
             var toti = await _app.Medici.GetAllAsync();
             InAsteptare.Clear();
             Verificati.Clear();

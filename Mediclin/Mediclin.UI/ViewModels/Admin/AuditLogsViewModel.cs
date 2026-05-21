@@ -7,34 +7,34 @@ using Mediclin.UI.ViewModels;
 
 namespace Mediclin.UI.ViewModels.Admin;
 
+public sealed class AuditLogRow
+{
+    public string Moment { get; init; } = string.Empty;
+    public string Severitate { get; init; } = string.Empty;
+    public string Utilizator { get; init; } = string.Empty;
+    public string Actiune { get; init; } = string.Empty;
+    public string Modul { get; init; } = string.Empty;
+    public string Ip { get; init; } = string.Empty;
+}
+
 public class AuditLogsViewModel : BaseViewModel
 {
     private readonly ApplicationServices _app;
-    private int _page = 1;
     private string? _severitate;
     private string _cautare = string.Empty;
 
     public AuditLogsViewModel(ApplicationServices app)
     {
         _app = app;
-        Rows = new ObservableCollection<Dictionary<string, object>>();
-        PreviousCommand = new RelayCommand(_ => ShiftPage(-1), _ => Page > 1);
-        NextCommand = new RelayCommand(_ => ShiftPage(1), _ => Page < TotalPages);
+        Rows = new ObservableCollection<AuditLogRow>();
+        SetSeverityCommand = new RelayCommand(p => SetSeverity(p as string));
         _ = LoadAsync();
         var t = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
         t.Tick += async (_, _) => await LoadAsync();
         t.Start();
     }
 
-    public ObservableCollection<Dictionary<string, object>> Rows { get; }
-
-    public int Page
-    {
-        get => _page;
-        set => SetProperty(ref _page, value);
-    }
-
-    public int TotalPages { get; private set; } = 1;
+    public ObservableCollection<AuditLogRow> Rows { get; }
 
     public string? SeveritateFiltru
     {
@@ -43,7 +43,6 @@ public class AuditLogsViewModel : BaseViewModel
         {
             if (SetProperty(ref _severitate, value))
             {
-                Page = 1;
                 _ = LoadAsync();
             }
         }
@@ -52,34 +51,72 @@ public class AuditLogsViewModel : BaseViewModel
     public string Cautare
     {
         get => _cautare;
-        set => SetProperty(ref _cautare, value);
+        set
+        {
+            if (SetProperty(ref _cautare, value))
+            {
+                _ = LoadAsync();
+            }
+        }
     }
 
-    public RelayCommand PreviousCommand { get; }
-    public RelayCommand NextCommand { get; }
+    public RelayCommand SetSeverityCommand { get; }
 
-    private void ShiftPage(int d)
+    private void SetSeverity(string? severity)
     {
-        Page = Math.Max(1, Page + d);
-        _ = LoadAsync();
+        SeveritateFiltru = severity;
     }
 
     private async Task LoadAsync()
     {
         try
         {
-            var (rows, total) = await _app.JurnalRepo.GetPagedAsync(Page, 50, SeveritateFiltru, Cautare);
-            TotalPages = Math.Max(1, (int)Math.Ceiling(total / 50.0));
-            OnPropertyChanged(nameof(TotalPages));
-            Rows.Clear();
-            foreach (var r in rows)
+            var rows = await _app.JurnalRepo.GetRecentAsync(100);
+            var filtered = rows.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(SeveritateFiltru))
             {
-                Rows.Add(r);
+                filtered = filtered.Where(r => Read(r, "severitate").Equals(SeveritateFiltru, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(Cautare))
+            {
+                var q = Cautare.Trim();
+                filtered = filtered.Where(r =>
+                    Read(r, "actiune").Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                    Read(r, "modul").Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                    Read(r, "utilizator_nume").Contains(q, StringComparison.OrdinalIgnoreCase));
+            }
+
+            Rows.Clear();
+            foreach (var r in filtered)
+            {
+                Rows.Add(new AuditLogRow
+                {
+                    Moment = ReadDate(r, "creat_la"),
+                    Severitate = Read(r, "severitate"),
+                    Utilizator = Read(r, "utilizator_nume"),
+                    Actiune = Read(r, "actiune"),
+                    Modul = Read(r, "modul"),
+                    Ip = Read(r, "ip_adresa")
+                });
             }
         }
         catch
         {
             // ignorat
         }
+    }
+
+    private static string Read(Dictionary<string, object> row, string key)
+    {
+        return row.TryGetValue(key, out var value) && value != DBNull.Value ? value?.ToString() ?? string.Empty : string.Empty;
+    }
+
+    private static string ReadDate(Dictionary<string, object> row, string key)
+    {
+        return row.TryGetValue(key, out var value) && value != DBNull.Value && DateTime.TryParse(value.ToString(), out var date)
+            ? date.ToString("dd.MM.yyyy HH:mm")
+            : string.Empty;
     }
 }
